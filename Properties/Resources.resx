@@ -121,14 +121,35 @@
   <data name="Banco_Dados_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Banco_Dados.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Config_Servico_BD_CORAC_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Config_Servico_BD_CORAC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Config_Update_CORAC_128px_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Config_Update_CORAC_128px.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Config_Update_CORAC_256px_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Config_Update_CORAC_256px.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Config_Userassword_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Config_Userassword_256px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Conf_Autent_HTTP" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Conf_Autent_HTTP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Internet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Internet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LDAP_CORAC" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\LDAP_CORAC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Registro_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Registro_128px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Registro_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Registro_256px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tipo_Autenticacao" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tipo_Autenticacao.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Update_System_126px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Update_System_126px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

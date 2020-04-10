@@ -73,9 +73,69 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Conf_Autent_HTTP {
+            get {
+                object obj = ResourceManager.GetObject("Conf_Autent_HTTP", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_Servico_BD_CORAC_256px {
+            get {
+                object obj = ResourceManager.GetObject("Config_Servico_BD_CORAC_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_Update_CORAC_128px_fw {
+            get {
+                object obj = ResourceManager.GetObject("Config_Update_CORAC_128px_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_Update_CORAC_256px_fw {
+            get {
+                object obj = ResourceManager.GetObject("Config_Update_CORAC_256px_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_Userassword_256px {
+            get {
+                object obj = ResourceManager.GetObject("Config_Userassword_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Internet {
             get {
                 object obj = ResourceManager.GetObject("Internet", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap LDAP_CORAC {
+            get {
+                object obj = ResourceManager.GetObject("LDAP_CORAC", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -96,6 +156,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap Registro_256px {
             get {
                 object obj = ResourceManager.GetObject("Registro_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Tipo_Autenticacao {
+            get {
+                object obj = ResourceManager.GetObject("Tipo_Autenticacao", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -104,5 +104,32 @@
   <ItemGroup>
     <None Include="Resources\Banco_Dados.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config_Update_CORAC_256px.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config_Update_CORAC_128px.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LDAP_CORAC.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Tipo_Autenticacao.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Conf_Autent_HTTP.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config_UserPass.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconfinder_user_925901.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config_Userassword_256px.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config_Servico_BD_CORAC.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
