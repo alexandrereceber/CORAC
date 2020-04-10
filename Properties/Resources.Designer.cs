@@ -63,6 +63,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Banco_Dados_256px {
+            get {
+                object obj = ResourceManager.GetObject("Banco_Dados_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Internet {
             get {
                 object obj = ResourceManager.GetObject("Internet", resourceCulture);
