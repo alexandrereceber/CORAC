@@ -17,11 +17,6 @@ namespace CORAC
             InitializeComponent();
         }
 
-        private void Status_Internet_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             Bitmap Obj = (Bitmap)picture_Internet_CORAC.Image;
@@ -46,5 +41,42 @@ namespace CORAC
             //int p = e.X;
             //int c = e.Y;
         }
+
+        private void textBox_Atualizacao_Caminho_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Caminho do servidor para verificar se existe nova versão do sistema.";
+        }
+
+        private void textBox_LDAP_Caminho_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Caminho do servidor LDAP ou Active Directory";
+
+        }
+
+        private void textBox_Credencial_Usuario_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Nome de usuário que será utilizado para autenticação nos diversos servidores.";
+
+        }
+
+        private void textBox_Credencial_Senha_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Senha para autenticação do usuário.";
+
+        }
+
+        private void textBox5_BD_CORAC_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Endereço WEB do servidor de banco de dados do CORAC";
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            this.WindowState = FormWindowState.Minimized;
+            
+
+            Comp_Notication.ShowBalloonTip(1000,"dd","dd",ToolTipIcon.Error);
+                        }
     }
 }
