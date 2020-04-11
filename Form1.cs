@@ -67,7 +67,9 @@ namespace CORAC
 
         private void CORAC_TPrincipal_Load(object sender, EventArgs e)
         {
-            
+            Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
         }
 
         private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)

@@ -96,8 +96,7 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.Notificacao = new System.Windows.Forms.NotifyIcon(this.components);
             this.Status_Informacao = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.Data_Sistema_TLPrincipal = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
@@ -900,28 +899,21 @@
             // Status_Informacao
             // 
             this.Status_Informacao.Name = "Status_Informacao";
-            this.Status_Informacao.Size = new System.Drawing.Size(790, 17);
+            this.Status_Informacao.Size = new System.Drawing.Size(759, 17);
             this.Status_Informacao.Spring = true;
             this.Status_Informacao.ToolTipText = "Barra de status";
             // 
-            // toolStripStatusLabel1
+            // Data_Sistema_TLPrincipal
             // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(34, 17);
-            this.toolStripStatusLabel1.Text = "Data:";
-            // 
-            // toolStripStatusLabel2
-            // 
-            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            this.toolStripStatusLabel2.Size = new System.Drawing.Size(65, 17);
-            this.toolStripStatusLabel2.Text = "09/05/1981";
+            this.Data_Sistema_TLPrincipal.Name = "Data_Sistema_TLPrincipal";
+            this.Data_Sistema_TLPrincipal.Size = new System.Drawing.Size(65, 17);
+            this.Data_Sistema_TLPrincipal.Text = "09/05/1981";
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Status_Informacao,
-            this.toolStripStatusLabel1,
-            this.toolStripStatusLabel2});
+            this.Data_Sistema_TLPrincipal});
             this.statusStrip1.Location = new System.Drawing.Point(5, 570);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(904, 22);
@@ -935,6 +927,7 @@
             this.ClientSize = new System.Drawing.Size(914, 597);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.tabCORAC);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.ImeMode = System.Windows.Forms.ImeMode.Alpha;
             this.Name = "CORAC_TPrincipal";
@@ -1038,8 +1031,7 @@
         public System.Windows.Forms.NotifyIcon Notificacao;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel Status_Informacao;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
+        private System.Windows.Forms.ToolStripStatusLabel Data_Sistema_TLPrincipal;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.PictureBox pictureBox8;
         private System.Windows.Forms.PictureBox pictureBox7;
