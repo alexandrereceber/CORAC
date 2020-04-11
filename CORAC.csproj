@@ -131,5 +131,35 @@
   <ItemGroup>
     <None Include="Resources\Config_Servico_BD_CORAC.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\512px_Corac_3.fw-1.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\128px_Corac_1PB.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\128px_Corac.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Powershell_Core.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AcessoRemoto.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AcessoRemoto.PB.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Status_Config.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sair.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Sair.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Config.fw.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

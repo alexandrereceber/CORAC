@@ -83,6 +83,36 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Config_39px {
+            get {
+                object obj = ResourceManager.GetObject("Config_39px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_AcessoRemoto_128px {
+            get {
+                object obj = ResourceManager.GetObject("Config_AcessoRemoto_128px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Config_CORAC_128px_fw {
+            get {
+                object obj = ResourceManager.GetObject("Config_CORAC_128px_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Config_Servico_BD_CORAC_256px {
             get {
                 object obj = ResourceManager.GetObject("Config_Servico_BD_CORAC_256px", resourceCulture);
@@ -117,6 +147,16 @@ namespace CORAC.Properties {
             get {
                 object obj = ResourceManager.GetObject("Config_Userassword_256px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Icon semelhante a (Ícone).
+        /// </summary>
+        internal static System.Drawing.Icon ICON_MAN {
+            get {
+                object obj = ResourceManager.GetObject("ICON_MAN", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
         
@@ -156,6 +196,66 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap Registro_256px {
             get {
                 object obj = ResourceManager.GetObject("Registro_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Icon semelhante a (Ícone).
+        /// </summary>
+        internal static System.Drawing.Icon Sair {
+            get {
+                object obj = ResourceManager.GetObject("Sair", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Sair1 {
+            get {
+                object obj = ResourceManager.GetObject("Sair1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Status_AcessoRemoto_128px {
+            get {
+                object obj = ResourceManager.GetObject("Status_AcessoRemoto_128px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Icon semelhante a (Ícone).
+        /// </summary>
+        internal static System.Drawing.Icon Status_Config {
+            get {
+                object obj = ResourceManager.GetObject("Status_Config", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Status_CORAC_128px_fw {
+            get {
+                object obj = ResourceManager.GetObject("Status_CORAC_128px_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Status_PS_Core_128px {
+            get {
+                object obj = ResourceManager.GetObject("Status_PS_Core_128px", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

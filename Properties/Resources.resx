@@ -121,6 +121,15 @@
   <data name="Banco_Dados_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Banco_Dados.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Config_39px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Config.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Config_AcessoRemoto_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AcessoRemoto.PB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Config_CORAC_128px_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\128px_Corac.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Config_Servico_BD_CORAC_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Config_Servico_BD_CORAC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -136,6 +145,9 @@
   <data name="Conf_Autent_HTTP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Conf_Autent_HTTP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ICON_MAN" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\512px_Corac_3.fw-1.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Internet" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Internet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -147,6 +159,24 @@
   </data>
   <data name="Registro_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Registro_256px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sair" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Sair.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Sair1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Sair.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Status_AcessoRemoto_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AcessoRemoto.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Status_Config" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Status_Config.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Status_CORAC_128px_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\128px_Corac_1PB.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Status_PS_Core_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Powershell_Core.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Tipo_Autenticacao" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Tipo_Autenticacao.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace CORAC
 {
     static class Program
@@ -16,7 +17,10 @@ namespace CORAC
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new CORAC_TPrincipal());
+            Form CORAC = new CORAC_TPrincipal();
+            
+
+            Application.Run();
         }
     }
 }

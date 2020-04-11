@@ -17,24 +17,6 @@ namespace CORAC
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            Bitmap Obj = (Bitmap)picture_Internet_CORAC.Image;
-            for (var i = 0; i < Obj.Height; i++) 
-            {
-                for (var ii = 0; ii < Obj.Width; ii++)
-                {
-                   Color g = Obj.GetPixel(i, ii);
-                    if(g.A == 255 && g.R==33 && g.G==117 && g.B == 170)
-                    {
-                        Obj.SetPixel(i, ii,Color.Red);
-                    }
-                }
-            }
-            picture_Internet_CORAC.Image = Obj;
-
-        }
-
 
         private void picture_Status_CORAC_MouseClick(object sender, MouseEventArgs e)
         {
@@ -73,10 +55,69 @@ namespace CORAC
 
         private void button8_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
-            
+                       
 
-            Comp_Notication.ShowBalloonTip(1000,"dd","dd",ToolTipIcon.Error);
-                        }
+            
+        }
+
+        private void toolStripMenuItem1_MAN_Click(object sender, EventArgs e)
+        {
+            this.Show();
+        }
+
+        private void CORAC_TPrincipal_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Comp_Notication_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void CORAC_TPrincipal_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+            else Notificacao.Visible = false;
+
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
+
+    //Bitmap Obj = (Bitmap)picture_Internet_CORAC.Image;
+    //        for (var i = 0; i<Obj.Height; i++) 
+    //        {
+    //            for (var ii = 0; ii<Obj.Width; ii++)
+    //            {
+    //               Color g = Obj.GetPixel(i, ii);
+    //                if(g.A == 255 && g.R==33 && g.G==117 && g.B == 170)
+    //                {
+    //                    Obj.SetPixel(i, ii, Color.Red);
+    //                }
+    //            }
+    //        }
+    //        picture_Internet_CORAC.Image = Obj;
 }
