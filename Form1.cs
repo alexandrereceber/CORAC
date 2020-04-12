@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using RegistroWindows;
 
 namespace CORAC
 {
@@ -14,8 +15,24 @@ namespace CORAC
     {
         public CORAC_TPrincipal()
         {
+            RegistroWin32 ChavesCORAC = new RegistroWin32();
+            if(!ChavesCORAC.Existe_Chave_CORAC())
+            {
+                if (!ChavesCORAC.Criar_Chaves_Campos_CORAC())
+                {
+                    MessageBox.Show("Não foi possível obter acesso ao registro. A aplicações está terminando!");
+                    Application.Exit();
+                }
+
+            }
+            else
+            {
+                ChavesCORAC
+            }
+
+
             InitializeComponent();
-            
+
         }
 
 
@@ -54,12 +71,6 @@ namespace CORAC
 
         }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-                       
-
-            
-        }
 
         private void toolStripMenuItem1_MAN_Click(object sender, EventArgs e)
         {
