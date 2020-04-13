@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
+using ServerClienteOnline.TratadorDeErros;
 using System.IO;
 using System.Management.Automation;
 using System.Security;

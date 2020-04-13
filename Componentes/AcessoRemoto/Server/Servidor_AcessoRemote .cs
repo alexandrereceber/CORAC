@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using System.Windows;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
+using ServerClienteOnline.TratadorDeErros;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing;
 

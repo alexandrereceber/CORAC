@@ -51,42 +51,43 @@
             this.Registro_Status_GroupBox = new System.Windows.Forms.GroupBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.button3 = new System.Windows.Forms.Button();
-            this.Config = new System.Windows.Forms.TabPage();
+            this.Tab_Config = new System.Windows.Forms.TabPage();
+            this.button8 = new System.Windows.Forms.Button();
             this.tableLayoutPanel_Principal = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.textBox_Path_ServerPorta_AR = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.textBox_Path_ServerIP_AR = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.button10 = new System.Windows.Forms.Button();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.textBox_Path_ServerPorta_CORAC = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.textBox_Path_ServerIP_CORAC = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.pictureBox8 = new System.Windows.Forms.PictureBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button6 = new System.Windows.Forms.Button();
-            this.textBox5_BD_CORAC = new System.Windows.Forms.TextBox();
+            this.textBox_Path_ServerWEB_CORAC = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
             this.pictureBox5 = new System.Windows.Forms.PictureBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.button7 = new System.Windows.Forms.Button();
-            this.textBox_Credencial_Senha = new System.Windows.Forms.TextBox();
+            this.textBox_Password = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox_Credencial_Usuario = new System.Windows.Forms.TextBox();
+            this.textBox_Username = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox_Atualizacao_Caminho = new System.Windows.Forms.TextBox();
+            this.Text_Box_Path_Update_CORAC = new System.Windows.Forms.TextBox();
             this.Caminho_Serv_Atual_Corac = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox_LDAP_Caminho = new System.Windows.Forms.TextBox();
-            this.radioButton_Autenticacao_WEB = new System.Windows.Forms.RadioButton();
-            this.radioButton_Autenticacao_LDAP = new System.Windows.Forms.RadioButton();
+            this.textBox_Path_Type_AutenticationLDAP = new System.Windows.Forms.TextBox();
+            this.radioButton_WEB_Type_Autentication = new System.Windows.Forms.RadioButton();
+            this.radioButton_LDAP_Type_Autentication = new System.Windows.Forms.RadioButton();
             this.pictureBox6_HTTP = new System.Windows.Forms.PictureBox();
             this.pictureBox5_LDAP = new System.Windows.Forms.PictureBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
@@ -98,7 +99,9 @@
             this.Status_Informacao = new System.Windows.Forms.ToolStripStatusLabel();
             this.Data_Sistema_TLPrincipal = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.button8 = new System.Windows.Forms.Button();
+            this.Tab_Log = new System.Windows.Forms.TabPage();
+            this.groupBox_LogSystem = new System.Windows.Forms.GroupBox();
+            this.webBrowser_Log = new System.Windows.Forms.WebBrowser();
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
             this.Layout_Organizacao_CORAC.SuspendLayout();
@@ -114,7 +117,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.Registro_Status_GroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.Config.SuspendLayout();
+            this.Tab_Config.SuspendLayout();
             this.tableLayoutPanel_Principal.SuspendLayout();
             this.groupBox6.SuspendLayout();
             this.groupBox5.SuspendLayout();
@@ -132,12 +135,15 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox7)).BeginInit();
             this.context_CORAC_ICONE_MAN.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.Tab_Log.SuspendLayout();
+            this.groupBox_LogSystem.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabCORAC
             // 
             this.tabCORAC.Controls.Add(this.Tab_Status);
-            this.tabCORAC.Controls.Add(this.Config);
+            this.tabCORAC.Controls.Add(this.Tab_Config);
+            this.tabCORAC.Controls.Add(this.Tab_Log);
             this.tabCORAC.Location = new System.Drawing.Point(8, 8);
             this.tabCORAC.Name = "tabCORAC";
             this.tabCORAC.SelectedIndex = 0;
@@ -161,7 +167,7 @@
             this.Layout_Organizacao_CORAC.ColumnCount = 3;
             this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 327F));
+            this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 329F));
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox8, 2, 1);
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox7, 1, 1);
             this.Layout_Organizacao_CORAC.Controls.Add(this.Internet_Status_GroupBox, 0, 0);
@@ -184,9 +190,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox8.Controls.Add(this.pictureBox10);
             this.groupBox8.Controls.Add(this.button11);
-            this.groupBox8.Location = new System.Drawing.Point(555, 264);
+            this.groupBox8.Location = new System.Drawing.Point(553, 264);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(321, 252);
+            this.groupBox8.Size = new System.Drawing.Size(323, 252);
             this.groupBox8.TabIndex = 9;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Acesso Remoto";
@@ -202,7 +208,7 @@
             this.pictureBox10.InitialImage = null;
             this.pictureBox10.Location = new System.Drawing.Point(94, 55);
             this.pictureBox10.Name = "pictureBox10";
-            this.pictureBox10.Size = new System.Drawing.Size(149, 131);
+            this.pictureBox10.Size = new System.Drawing.Size(151, 131);
             this.pictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox10.TabIndex = 3;
             this.pictureBox10.TabStop = false;
@@ -223,9 +229,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox7.Controls.Add(this.pictureBox9);
             this.groupBox7.Controls.Add(this.button9);
-            this.groupBox7.Location = new System.Drawing.Point(280, 264);
+            this.groupBox7.Location = new System.Drawing.Point(279, 264);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(267, 252);
+            this.groupBox7.Size = new System.Drawing.Size(266, 252);
             this.groupBox7.TabIndex = 9;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "PowerShell CORAC";
@@ -241,7 +247,7 @@
             this.pictureBox9.InitialImage = null;
             this.pictureBox9.Location = new System.Drawing.Point(67, 55);
             this.pictureBox9.Name = "pictureBox9";
-            this.pictureBox9.Size = new System.Drawing.Size(133, 131);
+            this.pictureBox9.Size = new System.Drawing.Size(132, 131);
             this.pictureBox9.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox9.TabIndex = 3;
             this.pictureBox9.TabStop = false;
@@ -264,7 +270,7 @@
             this.Internet_Status_GroupBox.Controls.Add(this.picture_Internet_CORAC);
             this.Internet_Status_GroupBox.Location = new System.Drawing.Point(5, 5);
             this.Internet_Status_GroupBox.Name = "Internet_Status_GroupBox";
-            this.Internet_Status_GroupBox.Size = new System.Drawing.Size(267, 251);
+            this.Internet_Status_GroupBox.Size = new System.Drawing.Size(266, 251);
             this.Internet_Status_GroupBox.TabIndex = 7;
             this.Internet_Status_GroupBox.TabStop = false;
             this.Internet_Status_GroupBox.Text = "Internet";
@@ -274,7 +280,7 @@
             this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.button1.Location = new System.Drawing.Point(84, 181);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(74, 23);
+            this.button1.Size = new System.Drawing.Size(73, 23);
             this.button1.TabIndex = 2;
             this.button1.Text = "Verificar";
             this.button1.UseVisualStyleBackColor = true;
@@ -288,7 +294,7 @@
             this.picture_Internet_CORAC.InitialImage = null;
             this.picture_Internet_CORAC.Location = new System.Drawing.Point(55, 45);
             this.picture_Internet_CORAC.Name = "picture_Internet_CORAC";
-            this.picture_Internet_CORAC.Size = new System.Drawing.Size(133, 131);
+            this.picture_Internet_CORAC.Size = new System.Drawing.Size(132, 131);
             this.picture_Internet_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Internet_CORAC.TabIndex = 1;
             this.picture_Internet_CORAC.TabStop = false;
@@ -300,9 +306,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Atualizacao_Status_GoupBox.Controls.Add(this.picture_Atualizacoes_CORAC);
             this.Atualizacao_Status_GoupBox.Controls.Add(this.button2);
-            this.Atualizacao_Status_GoupBox.Location = new System.Drawing.Point(280, 5);
+            this.Atualizacao_Status_GoupBox.Location = new System.Drawing.Point(279, 5);
             this.Atualizacao_Status_GoupBox.Name = "Atualizacao_Status_GoupBox";
-            this.Atualizacao_Status_GoupBox.Size = new System.Drawing.Size(267, 251);
+            this.Atualizacao_Status_GoupBox.Size = new System.Drawing.Size(266, 251);
             this.Atualizacao_Status_GoupBox.TabIndex = 8;
             this.Atualizacao_Status_GoupBox.TabStop = false;
             this.Atualizacao_Status_GoupBox.Text = "Atualizações";
@@ -318,7 +324,7 @@
             this.picture_Atualizacoes_CORAC.InitialImage = null;
             this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(67, 45);
             this.picture_Atualizacoes_CORAC.Name = "picture_Atualizacoes_CORAC";
-            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(133, 131);
+            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(132, 131);
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
@@ -341,7 +347,7 @@
             this.Banco_Dados_Status_GroupBox.Controls.Add(this.button4);
             this.Banco_Dados_Status_GroupBox.Location = new System.Drawing.Point(5, 264);
             this.Banco_Dados_Status_GroupBox.Name = "Banco_Dados_Status_GroupBox";
-            this.Banco_Dados_Status_GroupBox.Size = new System.Drawing.Size(267, 252);
+            this.Banco_Dados_Status_GroupBox.Size = new System.Drawing.Size(266, 252);
             this.Banco_Dados_Status_GroupBox.TabIndex = 10;
             this.Banco_Dados_Status_GroupBox.TabStop = false;
             this.Banco_Dados_Status_GroupBox.Text = "Banco de Dados";
@@ -355,7 +361,7 @@
             this.pictureBox2.InitialImage = null;
             this.pictureBox2.Location = new System.Drawing.Point(66, 55);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(113, 131);
+            this.pictureBox2.Size = new System.Drawing.Size(112, 131);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox2.TabIndex = 3;
             this.pictureBox2.TabStop = false;
@@ -365,7 +371,7 @@
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.button4.Location = new System.Drawing.Point(86, 192);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(74, 23);
+            this.button4.Size = new System.Drawing.Size(73, 23);
             this.button4.TabIndex = 4;
             this.button4.Text = "Verificar";
             this.button4.UseVisualStyleBackColor = true;
@@ -375,7 +381,7 @@
             this.Registro_Status_GroupBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Registro_Status_GroupBox.Controls.Add(this.pictureBox1);
             this.Registro_Status_GroupBox.Controls.Add(this.button3);
-            this.Registro_Status_GroupBox.Location = new System.Drawing.Point(565, 14);
+            this.Registro_Status_GroupBox.Location = new System.Drawing.Point(564, 14);
             this.Registro_Status_GroupBox.Name = "Registro_Status_GroupBox";
             this.Registro_Status_GroupBox.Size = new System.Drawing.Size(300, 232);
             this.Registro_Status_GroupBox.TabIndex = 9;
@@ -406,17 +412,27 @@
             this.button3.Text = "Verificar";
             this.button3.UseVisualStyleBackColor = true;
             // 
-            // Config
+            // Tab_Config
             // 
-            this.Config.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.Config.Controls.Add(this.button8);
-            this.Config.Controls.Add(this.tableLayoutPanel_Principal);
-            this.Config.Location = new System.Drawing.Point(4, 22);
-            this.Config.Name = "Config";
-            this.Config.Padding = new System.Windows.Forms.Padding(3);
-            this.Config.Size = new System.Drawing.Size(893, 538);
-            this.Config.TabIndex = 1;
-            this.Config.Text = "Configurações";
+            this.Tab_Config.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Tab_Config.Controls.Add(this.button8);
+            this.Tab_Config.Controls.Add(this.tableLayoutPanel_Principal);
+            this.Tab_Config.Location = new System.Drawing.Point(4, 22);
+            this.Tab_Config.Name = "Tab_Config";
+            this.Tab_Config.Padding = new System.Windows.Forms.Padding(3);
+            this.Tab_Config.Size = new System.Drawing.Size(893, 538);
+            this.Tab_Config.TabIndex = 1;
+            this.Tab_Config.Text = "Configurações";
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(748, 509);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.TabIndex = 1;
+            this.button8.Text = "&Salvar";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // tableLayoutPanel_Principal
             // 
@@ -455,9 +471,9 @@
             // groupBox6
             // 
             this.groupBox6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.groupBox6.Controls.Add(this.textBox2);
+            this.groupBox6.Controls.Add(this.textBox_Path_ServerPorta_AR);
             this.groupBox6.Controls.Add(this.label6);
-            this.groupBox6.Controls.Add(this.textBox4);
+            this.groupBox6.Controls.Add(this.textBox_Path_ServerIP_AR);
             this.groupBox6.Controls.Add(this.label8);
             this.groupBox6.Controls.Add(this.button10);
             this.groupBox6.Location = new System.Drawing.Point(91, 428);
@@ -467,13 +483,14 @@
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Acesso Remoto";
             // 
-            // textBox2
+            // textBox_Path_ServerPorta_AR
             // 
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(406, 28);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(191, 22);
-            this.textBox2.TabIndex = 10;
+            this.textBox_Path_ServerPorta_AR.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_ServerPorta_AR.Location = new System.Drawing.Point(406, 28);
+            this.textBox_Path_ServerPorta_AR.Name = "textBox_Path_ServerPorta_AR";
+            this.textBox_Path_ServerPorta_AR.Size = new System.Drawing.Size(191, 22);
+            this.textBox_Path_ServerPorta_AR.TabIndex = 10;
+            this.textBox_Path_ServerPorta_AR.Tag = "Path_ServerPorta_AR";
             // 
             // label6
             // 
@@ -486,13 +503,14 @@
             this.label6.TabIndex = 9;
             this.label6.Text = "Porta:";
             // 
-            // textBox4
+            // textBox_Path_ServerIP_AR
             // 
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(99, 28);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(191, 22);
-            this.textBox4.TabIndex = 8;
+            this.textBox_Path_ServerIP_AR.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_ServerIP_AR.Location = new System.Drawing.Point(99, 28);
+            this.textBox_Path_ServerIP_AR.Name = "textBox_Path_ServerIP_AR";
+            this.textBox_Path_ServerIP_AR.Size = new System.Drawing.Size(191, 22);
+            this.textBox_Path_ServerIP_AR.TabIndex = 8;
+            this.textBox_Path_ServerIP_AR.Tag = "Path_ServerIP_AR";
             // 
             // label8
             // 
@@ -517,9 +535,9 @@
             // groupBox5
             // 
             this.groupBox5.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.groupBox5.Controls.Add(this.textBox3);
+            this.groupBox5.Controls.Add(this.textBox_Path_ServerPorta_CORAC);
             this.groupBox5.Controls.Add(this.label7);
-            this.groupBox5.Controls.Add(this.textBox1);
+            this.groupBox5.Controls.Add(this.textBox_Path_ServerIP_CORAC);
             this.groupBox5.Controls.Add(this.label5);
             this.groupBox5.Location = new System.Drawing.Point(91, 344);
             this.groupBox5.Name = "groupBox5";
@@ -528,13 +546,14 @@
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Servidor CORAC";
             // 
-            // textBox3
+            // textBox_Path_ServerPorta_CORAC
             // 
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(406, 24);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(191, 22);
-            this.textBox3.TabIndex = 6;
+            this.textBox_Path_ServerPorta_CORAC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_ServerPorta_CORAC.Location = new System.Drawing.Point(406, 24);
+            this.textBox_Path_ServerPorta_CORAC.Name = "textBox_Path_ServerPorta_CORAC";
+            this.textBox_Path_ServerPorta_CORAC.Size = new System.Drawing.Size(191, 22);
+            this.textBox_Path_ServerPorta_CORAC.TabIndex = 6;
+            this.textBox_Path_ServerPorta_CORAC.Tag = "Path_ServerPorta_CORAC";
             // 
             // label7
             // 
@@ -547,14 +566,14 @@
             this.label7.TabIndex = 5;
             this.label7.Text = "Porta:";
             // 
-            // textBox1
+            // textBox_Path_ServerIP_CORAC
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(95, 24);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(191, 22);
-            this.textBox1.TabIndex = 4;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.textBox_Path_ServerIP_CORAC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_ServerIP_CORAC.Location = new System.Drawing.Point(95, 24);
+            this.textBox_Path_ServerIP_CORAC.Name = "textBox_Path_ServerIP_CORAC";
+            this.textBox_Path_ServerIP_CORAC.Size = new System.Drawing.Size(191, 22);
+            this.textBox_Path_ServerIP_CORAC.TabIndex = 4;
+            this.textBox_Path_ServerIP_CORAC.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label5
             // 
@@ -582,7 +601,7 @@
             // 
             this.groupBox4.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox4.Controls.Add(this.button6);
-            this.groupBox4.Controls.Add(this.textBox5_BD_CORAC);
+            this.groupBox4.Controls.Add(this.textBox_Path_ServerWEB_CORAC);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Location = new System.Drawing.Point(89, 260);
             this.groupBox4.Name = "groupBox4";
@@ -601,14 +620,15 @@
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
-            // textBox5_BD_CORAC
+            // textBox_Path_ServerWEB_CORAC
             // 
-            this.textBox5_BD_CORAC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox5_BD_CORAC.Location = new System.Drawing.Point(95, 28);
-            this.textBox5_BD_CORAC.Name = "textBox5_BD_CORAC";
-            this.textBox5_BD_CORAC.Size = new System.Drawing.Size(292, 22);
-            this.textBox5_BD_CORAC.TabIndex = 4;
-            this.textBox5_BD_CORAC.Enter += new System.EventHandler(this.textBox5_BD_CORAC_Enter);
+            this.textBox_Path_ServerWEB_CORAC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_ServerWEB_CORAC.Location = new System.Drawing.Point(95, 28);
+            this.textBox_Path_ServerWEB_CORAC.Name = "textBox_Path_ServerWEB_CORAC";
+            this.textBox_Path_ServerWEB_CORAC.Size = new System.Drawing.Size(292, 22);
+            this.textBox_Path_ServerWEB_CORAC.TabIndex = 4;
+            this.textBox_Path_ServerWEB_CORAC.Tag = "Path_ServerWEB_CORAC";
+            this.textBox_Path_ServerWEB_CORAC.Enter += new System.EventHandler(this.textBox5_BD_CORAC_Enter);
             // 
             // label4
             // 
@@ -647,9 +667,9 @@
             // 
             this.groupBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox3.Controls.Add(this.button7);
-            this.groupBox3.Controls.Add(this.textBox_Credencial_Senha);
+            this.groupBox3.Controls.Add(this.textBox_Password);
             this.groupBox3.Controls.Add(this.label2);
-            this.groupBox3.Controls.Add(this.textBox_Credencial_Usuario);
+            this.groupBox3.Controls.Add(this.textBox_Username);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Location = new System.Drawing.Point(88, 172);
             this.groupBox3.Name = "groupBox3";
@@ -667,15 +687,16 @@
             this.button7.Text = "Autenticar";
             this.button7.UseVisualStyleBackColor = true;
             // 
-            // textBox_Credencial_Senha
+            // textBox_Password
             // 
-            this.textBox_Credencial_Senha.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_Credencial_Senha.Location = new System.Drawing.Point(402, 28);
-            this.textBox_Credencial_Senha.Name = "textBox_Credencial_Senha";
-            this.textBox_Credencial_Senha.Size = new System.Drawing.Size(195, 22);
-            this.textBox_Credencial_Senha.TabIndex = 5;
-            this.textBox_Credencial_Senha.UseSystemPasswordChar = true;
-            this.textBox_Credencial_Senha.Enter += new System.EventHandler(this.textBox_Credencial_Senha_Enter);
+            this.textBox_Password.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Password.Location = new System.Drawing.Point(402, 28);
+            this.textBox_Password.Name = "textBox_Password";
+            this.textBox_Password.Size = new System.Drawing.Size(195, 22);
+            this.textBox_Password.TabIndex = 5;
+            this.textBox_Password.Tag = "Password";
+            this.textBox_Password.UseSystemPasswordChar = true;
+            this.textBox_Password.Enter += new System.EventHandler(this.textBox_Credencial_Senha_Enter);
             // 
             // label2
             // 
@@ -688,14 +709,15 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "Senha:";
             // 
-            // textBox_Credencial_Usuario
+            // textBox_Username
             // 
-            this.textBox_Credencial_Usuario.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_Credencial_Usuario.Location = new System.Drawing.Point(95, 28);
-            this.textBox_Credencial_Usuario.Name = "textBox_Credencial_Usuario";
-            this.textBox_Credencial_Usuario.Size = new System.Drawing.Size(191, 22);
-            this.textBox_Credencial_Usuario.TabIndex = 4;
-            this.textBox_Credencial_Usuario.Enter += new System.EventHandler(this.textBox_Credencial_Usuario_Enter);
+            this.textBox_Username.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Username.Location = new System.Drawing.Point(95, 28);
+            this.textBox_Username.Name = "textBox_Username";
+            this.textBox_Username.Size = new System.Drawing.Size(191, 22);
+            this.textBox_Username.TabIndex = 4;
+            this.textBox_Username.Tag = "Username";
+            this.textBox_Username.Enter += new System.EventHandler(this.textBox_Credencial_Usuario_Enter);
             // 
             // label1
             // 
@@ -724,7 +746,7 @@
             this.groupBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox1.Controls.Add(this.button5);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.textBox_Atualizacao_Caminho);
+            this.groupBox1.Controls.Add(this.Text_Box_Path_Update_CORAC);
             this.groupBox1.Controls.Add(this.Caminho_Serv_Atual_Corac);
             this.groupBox1.Location = new System.Drawing.Point(91, 3);
             this.groupBox1.Name = "groupBox1";
@@ -753,14 +775,15 @@
             this.label3.TabIndex = 2;
             this.label3.Text = "Caminho:";
             // 
-            // textBox_Atualizacao_Caminho
+            // Text_Box_Path_Update_CORAC
             // 
-            this.textBox_Atualizacao_Caminho.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_Atualizacao_Caminho.Location = new System.Drawing.Point(95, 28);
-            this.textBox_Atualizacao_Caminho.Name = "textBox_Atualizacao_Caminho";
-            this.textBox_Atualizacao_Caminho.Size = new System.Drawing.Size(357, 22);
-            this.textBox_Atualizacao_Caminho.TabIndex = 1;
-            this.textBox_Atualizacao_Caminho.Enter += new System.EventHandler(this.textBox_Atualizacao_Caminho_Enter);
+            this.Text_Box_Path_Update_CORAC.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Text_Box_Path_Update_CORAC.Location = new System.Drawing.Point(95, 28);
+            this.Text_Box_Path_Update_CORAC.Name = "Text_Box_Path_Update_CORAC";
+            this.Text_Box_Path_Update_CORAC.Size = new System.Drawing.Size(357, 22);
+            this.Text_Box_Path_Update_CORAC.TabIndex = 1;
+            this.Text_Box_Path_Update_CORAC.Tag = "Path_Update_CORAC";
+            this.Text_Box_Path_Update_CORAC.Enter += new System.EventHandler(this.textBox_Atualizacao_Caminho_Enter);
             // 
             // Caminho_Serv_Atual_Corac
             // 
@@ -775,9 +798,9 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.groupBox2.Controls.Add(this.textBox_LDAP_Caminho);
-            this.groupBox2.Controls.Add(this.radioButton_Autenticacao_WEB);
-            this.groupBox2.Controls.Add(this.radioButton_Autenticacao_LDAP);
+            this.groupBox2.Controls.Add(this.textBox_Path_Type_AutenticationLDAP);
+            this.groupBox2.Controls.Add(this.radioButton_WEB_Type_Autentication);
+            this.groupBox2.Controls.Add(this.radioButton_LDAP_Type_Autentication);
             this.groupBox2.Controls.Add(this.pictureBox6_HTTP);
             this.groupBox2.Controls.Add(this.pictureBox5_LDAP);
             this.groupBox2.Location = new System.Drawing.Point(88, 86);
@@ -787,36 +810,39 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Tipo Autenticação";
             // 
-            // textBox_LDAP_Caminho
+            // textBox_Path_Type_AutenticationLDAP
             // 
-            this.textBox_LDAP_Caminho.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox_LDAP_Caminho.Location = new System.Drawing.Point(240, 41);
-            this.textBox_LDAP_Caminho.Name = "textBox_LDAP_Caminho";
-            this.textBox_LDAP_Caminho.Size = new System.Drawing.Size(181, 22);
-            this.textBox_LDAP_Caminho.TabIndex = 5;
-            this.textBox_LDAP_Caminho.Enter += new System.EventHandler(this.textBox_LDAP_Caminho_Enter);
+            this.textBox_Path_Type_AutenticationLDAP.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox_Path_Type_AutenticationLDAP.Location = new System.Drawing.Point(240, 41);
+            this.textBox_Path_Type_AutenticationLDAP.Name = "textBox_Path_Type_AutenticationLDAP";
+            this.textBox_Path_Type_AutenticationLDAP.Size = new System.Drawing.Size(181, 22);
+            this.textBox_Path_Type_AutenticationLDAP.TabIndex = 5;
+            this.textBox_Path_Type_AutenticationLDAP.Tag = "Path_Type_AutenticationLDAP";
+            this.textBox_Path_Type_AutenticationLDAP.Enter += new System.EventHandler(this.textBox_LDAP_Caminho_Enter);
             // 
-            // radioButton_Autenticacao_WEB
+            // radioButton_WEB_Type_Autentication
             // 
-            this.radioButton_Autenticacao_WEB.AutoSize = true;
-            this.radioButton_Autenticacao_WEB.Location = new System.Drawing.Point(589, 44);
-            this.radioButton_Autenticacao_WEB.Name = "radioButton_Autenticacao_WEB";
-            this.radioButton_Autenticacao_WEB.Size = new System.Drawing.Size(50, 17);
-            this.radioButton_Autenticacao_WEB.TabIndex = 3;
-            this.radioButton_Autenticacao_WEB.TabStop = true;
-            this.radioButton_Autenticacao_WEB.Text = "WEB";
-            this.radioButton_Autenticacao_WEB.UseVisualStyleBackColor = true;
+            this.radioButton_WEB_Type_Autentication.AutoSize = true;
+            this.radioButton_WEB_Type_Autentication.Location = new System.Drawing.Point(598, 44);
+            this.radioButton_WEB_Type_Autentication.Name = "radioButton_WEB_Type_Autentication";
+            this.radioButton_WEB_Type_Autentication.Size = new System.Drawing.Size(50, 17);
+            this.radioButton_WEB_Type_Autentication.TabIndex = 3;
+            this.radioButton_WEB_Type_Autentication.TabStop = true;
+            this.radioButton_WEB_Type_Autentication.Tag = "WEB_Type_Autentication";
+            this.radioButton_WEB_Type_Autentication.Text = "WEB";
+            this.radioButton_WEB_Type_Autentication.UseVisualStyleBackColor = true;
             // 
-            // radioButton_Autenticacao_LDAP
+            // radioButton_LDAP_Type_Autentication
             // 
-            this.radioButton_Autenticacao_LDAP.AutoSize = true;
-            this.radioButton_Autenticacao_LDAP.Location = new System.Drawing.Point(161, 44);
-            this.radioButton_Autenticacao_LDAP.Name = "radioButton_Autenticacao_LDAP";
-            this.radioButton_Autenticacao_LDAP.Size = new System.Drawing.Size(73, 17);
-            this.radioButton_Autenticacao_LDAP.TabIndex = 2;
-            this.radioButton_Autenticacao_LDAP.TabStop = true;
-            this.radioButton_Autenticacao_LDAP.Text = "LDAP/AD";
-            this.radioButton_Autenticacao_LDAP.UseVisualStyleBackColor = true;
+            this.radioButton_LDAP_Type_Autentication.AutoSize = true;
+            this.radioButton_LDAP_Type_Autentication.Location = new System.Drawing.Point(161, 44);
+            this.radioButton_LDAP_Type_Autentication.Name = "radioButton_LDAP_Type_Autentication";
+            this.radioButton_LDAP_Type_Autentication.Size = new System.Drawing.Size(73, 17);
+            this.radioButton_LDAP_Type_Autentication.TabIndex = 2;
+            this.radioButton_LDAP_Type_Autentication.TabStop = true;
+            this.radioButton_LDAP_Type_Autentication.Tag = "LDAP_Type_Autentication";
+            this.radioButton_LDAP_Type_Autentication.Text = "LDAP/AD";
+            this.radioButton_LDAP_Type_Autentication.UseVisualStyleBackColor = true;
             // 
             // pictureBox6_HTTP
             // 
@@ -922,14 +948,35 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // button8
+            // Tab_Log
             // 
-            this.button8.Location = new System.Drawing.Point(748, 509);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
-            this.button8.TabIndex = 1;
-            this.button8.Text = "&Salvar";
-            this.button8.UseVisualStyleBackColor = true;
+            this.Tab_Log.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.Tab_Log.Controls.Add(this.groupBox_LogSystem);
+            this.Tab_Log.Location = new System.Drawing.Point(4, 22);
+            this.Tab_Log.Name = "Tab_Log";
+            this.Tab_Log.Size = new System.Drawing.Size(893, 538);
+            this.Tab_Log.TabIndex = 2;
+            this.Tab_Log.Text = "Log";
+            // 
+            // groupBox_LogSystem
+            // 
+            this.groupBox_LogSystem.Controls.Add(this.webBrowser_Log);
+            this.groupBox_LogSystem.Location = new System.Drawing.Point(19, 17);
+            this.groupBox_LogSystem.Name = "groupBox_LogSystem";
+            this.groupBox_LogSystem.Size = new System.Drawing.Size(855, 506);
+            this.groupBox_LogSystem.TabIndex = 0;
+            this.groupBox_LogSystem.TabStop = false;
+            this.groupBox_LogSystem.Text = "Logs";
+            // 
+            // webBrowser_Log
+            // 
+            this.webBrowser_Log.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowser_Log.Location = new System.Drawing.Point(3, 16);
+            this.webBrowser_Log.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowser_Log.Name = "webBrowser_Log";
+            this.webBrowser_Log.Size = new System.Drawing.Size(849, 487);
+            this.webBrowser_Log.TabIndex = 0;
+            this.webBrowser_Log.WebBrowserShortcutsEnabled = false;
             // 
             // CORAC_TPrincipal
             // 
@@ -963,7 +1010,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.Registro_Status_GroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.Config.ResumeLayout(false);
+            this.Tab_Config.ResumeLayout(false);
             this.tableLayoutPanel_Principal.ResumeLayout(false);
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
@@ -988,6 +1035,8 @@
             this.context_CORAC_ICONE_MAN.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.Tab_Log.ResumeLayout(false);
+            this.groupBox_LogSystem.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -997,7 +1046,7 @@
 
         private System.Windows.Forms.TabControl tabCORAC;
         private System.Windows.Forms.TabPage Tab_Status;
-        private System.Windows.Forms.TabPage Config;
+        private System.Windows.Forms.TabPage Tab_Config;
         private System.Windows.Forms.TableLayoutPanel Layout_Organizacao_CORAC;
         private System.Windows.Forms.GroupBox Internet_Status_GroupBox;
         private System.Windows.Forms.Button button1;
@@ -1017,14 +1066,14 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.PictureBox pictureBox6_HTTP;
         private System.Windows.Forms.PictureBox pictureBox5_LDAP;
-        private System.Windows.Forms.RadioButton radioButton_Autenticacao_WEB;
-        private System.Windows.Forms.RadioButton radioButton_Autenticacao_LDAP;
+        private System.Windows.Forms.RadioButton radioButton_WEB_Type_Autentication;
+        private System.Windows.Forms.RadioButton radioButton_LDAP_Type_Autentication;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.TextBox textBox_Credencial_Senha;
+        private System.Windows.Forms.TextBox textBox_Password;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox_Credencial_Usuario;
+        private System.Windows.Forms.TextBox textBox_Username;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox5;
         private System.Windows.Forms.GroupBox groupBox4;
@@ -1034,9 +1083,9 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.TextBox textBox5_BD_CORAC;
-        private System.Windows.Forms.TextBox textBox_Atualizacao_Caminho;
-        private System.Windows.Forms.TextBox textBox_LDAP_Caminho;
+        private System.Windows.Forms.TextBox textBox_Path_ServerWEB_CORAC;
+        private System.Windows.Forms.TextBox Text_Box_Path_Update_CORAC;
+        private System.Windows.Forms.TextBox textBox_Path_Type_AutenticationLDAP;
         private System.Windows.Forms.ContextMenuStrip context_CORAC_ICONE_MAN;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1_MAN;
         public System.Windows.Forms.NotifyIcon Notificacao;
@@ -1049,13 +1098,13 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox textBox_Path_ServerIP_CORAC;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox textBox_Path_ServerPorta_CORAC;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox textBox_Path_ServerPorta_AR;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.TextBox textBox_Path_ServerIP_AR;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.PictureBox pictureBox9;
@@ -1064,6 +1113,9 @@
         private System.Windows.Forms.PictureBox pictureBox10;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.TabPage Tab_Log;
+        private System.Windows.Forms.GroupBox groupBox_LogSystem;
+        private System.Windows.Forms.WebBrowser webBrowser_Log;
     }
 }
 

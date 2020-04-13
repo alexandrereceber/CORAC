@@ -6,25 +6,36 @@ namespace CORAC
 {
     public partial class CORAC_TPrincipal : Form
     {
-        public CORAC_TPrincipal()
+        RegistroWin32 ChavesCORAC;
+
+        private void ObterConfiguracoes()
         {
-            RegistroWin32 ChavesCORAC = new RegistroWin32();
-            if(!ChavesCORAC.Existe_Chave_CORAC())
+            ChavesCORAC = new RegistroWin32();
+            ChavesCORAC.SetTratador_Erros(ServerClienteOnline.Utilidades.TipoSaidaErros.Arquivo);
+            ChavesCORAC.Componente_Log = webBrowser_Log;
+
+            if (!ChavesCORAC.Existe_Chave_CORAC())
             {
                 if (!ChavesCORAC.Criar_Chaves_Campos_CORAC())
                 {
                     MessageBox.Show("Não foi possível obter acesso ao registro. A aplicações está terminando!");
                     Application.Exit();
                 }
+                else
+                {
+                    ChavesCORAC.LocalMachine_CamposChave("software\\CORAC");
+                }
 
             }
             else
             {
-                //ChavesCORAC.LocalMachine_CamposChave();
+                ChavesCORAC.LocalMachine_CamposChave("software\\CORAC");
             }
+        }
+        public CORAC_TPrincipal()
+        {
 
-
-            InitializeComponent();
+           InitializeComponent();
 
         }
 
@@ -67,14 +78,35 @@ namespace CORAC
 
         private void toolStripMenuItem1_MAN_Click(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Minimized;
             this.Show();
         }
 
         private void CORAC_TPrincipal_Load(object sender, EventArgs e)
         {
-            Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            try
+            {
+                Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
+                this.MaximizeBox = false;
+                this.MinimizeBox = false;
+                ObterConfiguracoes();
+                Text_Box_Path_Update_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC");
+                radioButton_LDAP_Type_Autentication.Checked = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
+                radioButton_WEB_Type_Autentication.Checked = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("WEB_Type_Autentication"));
+                textBox_Path_Type_AutenticationLDAP.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Type_AutenticationLDAP");
+                textBox_Username.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Username");
+                textBox_Password.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Password");
+                textBox_Path_ServerWEB_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Server_WEB");
+                textBox_Path_ServerIP_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
+                textBox_Path_ServerPorta_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC");
+                textBox_Path_ServerIP_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC");
+                textBox_Path_ServerPorta_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_AR");
+            }
+            catch(Exception E)
+            {
+                webBrowser_Log.DocumentText = E.Message;
+            }
+
 
         }
 
@@ -110,6 +142,11 @@ namespace CORAC
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
         {
 
         }

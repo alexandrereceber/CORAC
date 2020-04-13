@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
+using ServerClienteOnline.TratadorDeErros;
 
 namespace ServerClienteOnline.Gerenciador.ClientesConectados
 {

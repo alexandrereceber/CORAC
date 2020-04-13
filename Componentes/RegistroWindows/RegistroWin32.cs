@@ -1,40 +1,87 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Win32;
+using ServerClienteOnline.TratadorDeErros;
 using ServerClienteOnline.Utilidades;
-
+using System.Windows.Forms;
 
 namespace RegistroWindows
+
 {
-    struct CamposCORAC
-    {
-        public string Path_Update_CORAC;
-        public string Type_Autentication;
-        public string Username;
-        public string Password;
-        public string Path_Server_CORAC;
-        public string IP_Listen_Host_CORAC;
-        public string Porta_Listen_Host_CORAC;
-        public string IP_Listen_AR;
-        public string Porta_Listen_AR;
-
-    }
-
+    
     class RegistroWin32: Tratador_Erros, IDisposable
     {
         private RegistryKey Corrente_User, LocalMachine;
 
         //Lista contendo o valores de configuração do sistemaCORAC
-        List<KeyValuePair<string, string>> KeysValues;
 
+        List<KeyValuePair<string, string>> KeysValues;
+        public WebBrowser Componente_Log { get; set; }
         public RegistroWin32()
         {
             Corrente_User = Registry.CurrentUser;
             LocalMachine = Registry.LocalMachine;
+        }
+
+        /**
+         * <summary>
+         * grava o valor de uma chave no registro do windows.
+         * <para>
+         * <paramref name="ListaCamposValores"/> - Contém um conjunto de chaves e valores que serão gravados no registro do windwos.
+         * </para>
+         * </summary>
+         */
+        public bool Gravar_ConteudoCampo(TipoChave TipoChave, string Chave, string Campo, string Valor)
+        {
+            try
+            {
+                if(TipoChave == TipoChave.LocalMachine)
+                {
+                    RegistryKey CORAC = LocalMachine.OpenSubKey(Chave);
+                    CORAC.SetValue(Campo, Valor);
+                    return true;
+                }
+                else
+                {
+                    RegistryKey CORAC = Corrente_User.OpenSubKey(Chave);
+                    CORAC.SetValue(Campo, Valor);
+                    return true;
+                }
+
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, GetType().Name);
+
+                if (GetError() && TSaida_Error == TipoSaidaErros.Componente || TSaida_Error == TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
+                return false;
+
+            }
+        }
+
+
+        /**
+         * <summary>
+         * Busca o valor de uma chave no registro do windows.
+         * <para>
+         * <paramref name="Campo"/> - Nome do campo para o qual se deseja buscar o seu valor no registro do windows.
+         * </para>
+         * </summary>
+         */
+        public object Obter_ConteudoCampo(string Campo)
+        {
+            if (KeysValues == null) return null;
+            if (KeysValues?.Count == 0) return null;
+
+            foreach (KeyValuePair<string, string> Position in KeysValues)
+            {
+                if (Position.Key == Campo) return Position.Value;
+            }
+
+            return null;
         }
 
         /**
@@ -50,7 +97,7 @@ namespace RegistroWindows
                 RegistryKey CORAC = LocalMachine.OpenSubKey("SOFTWARE\\CORAC");
                 if (CORAC == null)
                 {
-                    CORAC.Close();
+                    //CORAC.Close();
                     return false;
                 }
                 else
@@ -62,6 +109,11 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
+
+                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
                 return false;
 
             }
@@ -83,7 +135,9 @@ namespace RegistroWindows
                 System.Reflection.FieldInfo[] Campos = CMP.GetType().GetFields();
                 foreach(System.Reflection.FieldInfo CPMIndividual in Campos)
                 {
-                    CORAC.SetValue(CPMIndividual.Name, "");
+                    string Tipo = CPMIndividual.FieldType.Name;
+                    Tipo = Tipo == "Boolean" ? "false" : "";
+                    CORAC.SetValue(CPMIndividual.Name, Tipo);
                 }
 
                 CORAC.Close();
@@ -92,6 +146,11 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
+
+                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
                 return false;
 
             }
@@ -118,6 +177,11 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
+
+                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
                 return false;
             }
 
@@ -128,6 +192,7 @@ namespace RegistroWindows
         public bool LocalMachine_CamposChave(string Chave)
         {
             KeysValues = new List<KeyValuePair<string, string>>();
+
             try
             {
                 RegistryKey SubChave = LocalMachine.OpenSubKey(Chave, true);
@@ -143,6 +208,10 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
+                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
                 return false;
             }
 
@@ -162,6 +231,10 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
+                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
+                {
+                    Componente_Log.DocumentText += getH;
+                }
             }
         }
 

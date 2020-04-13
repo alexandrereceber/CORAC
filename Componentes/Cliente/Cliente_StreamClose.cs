@@ -8,6 +8,7 @@ using System.Net;
 using System.IO;
 using Newtonsoft.Json;
 using ServerClienteOnline.Utilidades;
+using ServerClienteOnline.TratadorDeErros;
 using ServerClienteOnline.Interfaces;
 using System.Windows.Forms;
 using System.Xml;

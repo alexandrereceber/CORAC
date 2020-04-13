@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using System.Windows;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
+using ServerClienteOnline.TratadorDeErros;
 
 namespace ServerClienteOnline.Server
 {

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.IO;
 using Newtonsoft.Json;
 using System.Windows;
+using ServerClienteOnline.TratadorDeErros;
 
 
 namespace ServerClienteOnline.Server

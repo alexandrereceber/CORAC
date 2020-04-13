@@ -65,6 +65,7 @@
     <Compile Include="Componentes\Servidor\Servidor_HTTP.cs" />
     <Compile Include="Componentes\Servidor\Servidor_StreamClose.cs" />
     <Compile Include="Componentes\Servidor\Servidor_StreamOpen.cs" />
+    <Compile Include="Componentes\TratadorDeErros\TratadorErros.cs" />
     <Compile Include="Componentes\Utilidades\Util.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

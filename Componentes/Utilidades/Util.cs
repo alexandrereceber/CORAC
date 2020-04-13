@@ -293,9 +293,15 @@ namespace ServerClienteOnline.Utilidades
                                     ShowWindow = 0,
                                     EventWindow = 1,
                                     Console = 2,
-                                    Arquivo = 3
+                                    Arquivo = 3,
+                                    Componente = 4,
+                                    ComponenteAndFile = 5
                                 };
-
+    public enum TipoChave
+    {
+        LocalMachine = 0,
+        CurrenteUser = 1
+    }
     /**
      * <summary>
      * Formato do pacote será transmitido entre os serviços de Cliente/Serviço.
@@ -346,104 +352,20 @@ namespace ServerClienteOnline.Utilidades
         Servidor    = 0xFFFFFF
     }
 
-    public abstract class Tratador_Erros : IDisposable
+    struct CamposCORAC
     {
-        protected bool Excecao = false;
-        protected Exception DadosExcecao = null;
-        protected TipoSaidaErros TSaida_Error { get; set; }
+        public string Path_Update_CORAC;
+        public bool LDAP_Type_Autentication;
+        public bool WEB_Type_Autentication;
+        public string Path_Type_AutenticationLDAP;
+        public string Username;
+        public string Password;
+        public string Path_Server_WEB;
+        public string Path_Server_CORAC;
+        public string Path_ServerIP_CORAC;
+        public int Path_ServerPorta_CORAC;
+        public string Path_ServerIP_AR;
+        public int Path_ServerPorta_AR;
 
-        string  H = null,
-                Mensagem = null,
-                HelpLink = null,
-                Source = null,
-                StackTrace = null;
-        public bool GetError()
-        {
-            return Excecao;
-        }
-
-        public string getH { get { return H; } }
-        public Exception GetException()
-        {
-            return DadosExcecao;
-        }
-
-        public void SetTratador_Erros(TipoSaidaErros T)
-        {
-            TSaida_Error = T;
-        }
-        /**
-         * Data: 27/02/2019
-         * Trata de todos os erros dentro da classe.
-         * Return: False
-         */
-        protected void TratadorErros(Exception e, string NomeClasse)
-        {
-            Excecao = true;
-            DadosExcecao = e;
-
-
-
-            int Hresult = e.HResult;
-            /**
-             * Função que personaliza as mensagens enviadas.
-             */
-            switch (Hresult)
-            {
-                case 33:
-                    Mensagem = e.Message;       //Mensagem personalizada
-                    HelpLink = e.HelpLink;      //Mensagem personalizada
-                    Source = e.Source;          //Mensagem personalizada
-                    StackTrace = e.StackTrace;  //Mensagem personalizada
-
-                    break;
-
-                default:
-                    Mensagem = e.Message;
-                    HelpLink = e.HelpLink;
-                    Source = e.Source;
-                    StackTrace = e.StackTrace;
-
-                    break;
-            }
-            H = "<div>" +
-                    "<table>" +
-                        "<tr><td>HResult: </td><td>" + Convert.ToString(e.HResult) + "</td></tr>" +
-                        "<tr><td>Data: </td><td>" + DateTime.Now + "</td></tr>" +
-                        "<tr><td>HelpLink: </td><td>" + HelpLink + "</td></tr>" +
-                        "<tr><td>Source: </td><td>" + Source + "</td></tr>" +
-                        "<tr><td>StackTracer: </td><td>" + StackTrace + "</td></tr>" +
-                        "<tr><td>Mensagem: </td><td>" + Mensagem + "</td></tr>" +
-                    "</table>" +
-               "</div>";
-
-
-            switch (TSaida_Error)
-            {
-                case TipoSaidaErros.ShowWindow:
-                    System.Windows.Forms.MessageBox.Show(H);
-                    break;
-
-                case TipoSaidaErros.EventWindow:
-                    System.Diagnostics.EventLog EventosLogos = new System.Diagnostics.EventLog();
-                    EventosLogos.Source = "application";
-                    EventosLogos.WriteEntry(H, System.Diagnostics.EventLogEntryType.Error, 5000);
-                    break;
-
-                case TipoSaidaErros.Console:
-                    Console.WriteLine(H);
-                    break;
-
-                case TipoSaidaErros.Arquivo:
-                    File.AppendAllText(".\\" + NomeClasse + ".html", H);
-
-                    break;
-            }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
     }
 }

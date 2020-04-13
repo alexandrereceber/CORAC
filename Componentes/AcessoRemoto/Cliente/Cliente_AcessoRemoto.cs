@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 using ServerClienteOnline.Utilidades;
+using ServerClienteOnline.TratadorDeErros;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ServerClienteOnline.AcessoRemoto.Cliente

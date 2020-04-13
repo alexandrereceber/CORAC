@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using ServerClienteOnline.Interfaces;
 using Microsoft.PowerShell;
 using ServerClienteOnline.Utilidades;
+using ServerClienteOnline.TratadorDeErros;
 using System.IO;
 
 /**
