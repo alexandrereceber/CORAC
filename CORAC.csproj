@@ -33,8 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.PowerShell.2.ReferenceAssemblies.1.0.0\lib\net2\System.Management.Automation.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -46,6 +52,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Componentes\AcessoRemoto\Cliente\Cliente_AcessoRemoto.cs" />
+    <Compile Include="Componentes\AcessoRemoto\Server\Servidor_AcessoRemote .cs" />
+    <Compile Include="Componentes\Autenticacao\Autenticador.cs" />
+    <Compile Include="Componentes\CamadaDadosWEB\CamadaDados.cs" />
+    <Compile Include="Componentes\Cliente\Cliente_StreamClose.cs" />
+    <Compile Include="Componentes\Cliente\Cliente_StreamOpen.cs" />
+    <Compile Include="Componentes\Conectividade\Connectivity.cs" />
+    <Compile Include="Componentes\Gerenciador\ClientesConectados\GerenciadorClientes.cs" />
+    <Compile Include="Componentes\Interfaces\IServidorCliente.cs" />
+    <Compile Include="Componentes\Powershell\Power_Shell.cs" />
+    <Compile Include="Componentes\Servidor\Servidor_HTTP.cs" />
+    <Compile Include="Componentes\Servidor\Servidor_StreamClose.cs" />
+    <Compile Include="Componentes\Servidor\Servidor_StreamOpen.cs" />
+    <Compile Include="Componentes\Utilidades\Util.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -54,7 +74,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistroWindows\RegistroWin32.cs" />
+    <Compile Include="Componentes\RegistroWindows\RegistroWin32.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -63,6 +83,7 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

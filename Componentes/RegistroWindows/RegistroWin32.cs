@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
+using ServerClienteOnline.Utilidades;
+
 
 namespace RegistroWindows
 {
@@ -22,12 +24,12 @@ namespace RegistroWindows
 
     }
 
-    class RegistroWin32:IDisposable
+    class RegistroWin32: Tratador_Erros, IDisposable
     {
         private RegistryKey Corrente_User, LocalMachine;
 
         //Lista contendo o valores de configuração do sistemaCORAC
-        private List<CamposCORAC> CORAC_Registro = new List<CamposCORAC>();
+        List<KeyValuePair<string, string>> KeysValues;
 
         public RegistroWin32()
         {
@@ -43,18 +45,26 @@ namespace RegistroWindows
          */
         public bool Existe_Chave_CORAC()
         {
-            RegistryKey CORAC = LocalMachine.OpenSubKey("SOFTWARE\\CORAC");
-            if (CORAC == null)
+            try
             {
-                CORAC.Close();
+                RegistryKey CORAC = LocalMachine.OpenSubKey("SOFTWARE\\CORAC");
+                if (CORAC == null)
+                {
+                    CORAC.Close();
+                    return false;
+                }
+                else
+                {
+                    CORAC.Close();
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, GetType().Name);
                 return false;
-            }
-            else
-            {
-                CORAC.Close();
-                return true;
-            }
 
+            }
         }
 
         /**
@@ -81,6 +91,7 @@ namespace RegistroWindows
             }
             catch (Exception e)
             {
+                TratadorErros(e, GetType().Name);
                 return false;
 
             }
@@ -89,9 +100,9 @@ namespace RegistroWindows
         /**
          * Busca os campos de uma determinada chave, dentro da chave Raíz CurrenteUser.
          */
-        public List<KeyValuePair<string, string>> CurrentUSer_CamposChave(string Chave)
+        public bool CurrentUSer_CamposChave(string Chave)
         {
-            List<KeyValuePair<string, string>> KeysValues = new List<KeyValuePair<string, string>>();
+            KeysValues = new List<KeyValuePair<string, string>>();
             try
             {
                 RegistryKey SubChave = LocalMachine.OpenSubKey(Chave, true);
@@ -102,21 +113,21 @@ namespace RegistroWindows
                     KeysValues.Add(new KeyValuePair<string, string>(i, (string)Vlr));
                 }
 
-                return KeysValues;
+                return true;
             }
             catch (Exception e)
             {
-
-                return null;
+                TratadorErros(e, GetType().Name);
+                return false;
             }
 
         }
         /**
          * Obtém os campos da chave indicada e retorna em um lista.
          */
-        public List<KeyValuePair<string, string>> LocalMachine_CamposChave(string Chave)
+        public bool LocalMachine_CamposChave(string Chave)
         {
-            List<KeyValuePair<string, string>> KeysValues = new List<KeyValuePair<string, string>>();
+            KeysValues = new List<KeyValuePair<string, string>>();
             try
             {
                 RegistryKey SubChave = LocalMachine.OpenSubKey(Chave, true);
@@ -127,12 +138,12 @@ namespace RegistroWindows
                     KeysValues.Add(new KeyValuePair<string, string>(i, (string)Vlr));
                 }
 
-                return KeysValues;
+                return true;
             }
             catch (Exception e)
             {
-
-                return null;
+                TratadorErros(e, GetType().Name);
+                return false;
             }
 
         }
@@ -150,7 +161,7 @@ namespace RegistroWindows
             }
             catch (Exception e)
             {
-
+                TratadorErros(e, GetType().Name);
             }
         }
 

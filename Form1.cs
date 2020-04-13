@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RegistroWindows;
+using System;
 using System.Windows.Forms;
-using RegistroWindows;
 
 namespace CORAC
 {
@@ -27,7 +20,7 @@ namespace CORAC
             }
             else
             {
-                ChavesCORAC
+                //ChavesCORAC.LocalMachine_CamposChave();
             }
 
 
