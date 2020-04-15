@@ -6,9 +6,12 @@ using ServerClienteOnline.Utilidades;
 using System.Text.RegularExpressions;
 using System.Net;
 using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace CORAC
 {
+
     public partial class CORAC_TPrincipal : Form
     {
         RegistroWin32 ChavesCORAC;
@@ -512,10 +515,26 @@ namespace CORAC
                     HTTP_CORAC.Method = "POST";
                     HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
                     HTTP_CORAC.Timeout = 3;
-                    Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+                    WebResponse DadosStream = await HTTP_CORAC.GetResponseAsync();
+                    Stream dataStream = DadosStream.GetResponseStream();
 
-                    pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+                    char[] Dados_CORAC_Signature = new char[67];
 
+                    StreamReader LerDados_CORAC = new StreamReader(dataStream);
+                    await LerDados_CORAC.ReadAsync(Dados_CORAC_Signature, 0, 67);
+                    byte[] D = ASCIIEncoding.UTF8.GetBytes(Dados_CORAC_Signature);
+                    string Dados = ASCIIEncoding.UTF8.GetString(D);
+                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                    if(Sign.Sistema =="CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                    {
+                        pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+                    }
+                    else
+                    {
+                        pictureBox_Servidor_WEB.Image = Properties.Resources.No_Acepty;
+                    }
+                    
+                    
                 }
                 catch (Exception E)
                 {
@@ -545,6 +564,15 @@ namespace CORAC
 
             }
         }
+    }
+
+    class Assinatura
+    {
+        [JsonProperty("Sistema")]
+        public string Sistema { get; set; }
+
+        [JsonProperty("Signacture")]
+        public string Signacture { get; set; }
     }
 
     //Bitmap Obj = (Bitmap)picture_Internet_CORAC.Image;
