@@ -1,17 +1,58 @@
 ﻿using RegistroWindows;
 using System;
 using System.Windows.Forms;
+using System.Collections.Generic;
+using ServerClienteOnline.Utilidades;
+using System.Text.RegularExpressions;
+using System.Net;
+using System.IO;
 
 namespace CORAC
 {
     public partial class CORAC_TPrincipal : Form
     {
         RegistroWin32 ChavesCORAC;
+        List<KeyValuePair<string, string>> KeysValues;
+
+        private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
+        {
+            int count = 0;
+            try
+            {
+                if (KeysValues == null) KeysValues = new List<KeyValuePair<string, string>>();
+                if(KeysValues.Count > 0)
+                {
+                    foreach(KeyValuePair<string, string> ParChvVlr in KeysValues)
+                    {
+                        if(ParChvVlr.Key == Chave)
+                        {
+                            if (ParChvVlr.Value == Valor) return true;
+                            KeysValues.RemoveAt(count);
+                            KeysValues.Add(new KeyValuePair<string, string>(Chave, Valor));
+                            return true;
+                        }
+                        count++;
+                    }
+                    KeysValues.Add(new KeyValuePair<string, string>(Chave, Valor));
+                }
+                else
+                {
+                    KeysValues.Add(new KeyValuePair<string, string>(Chave, Valor));
+                }
+            }catch(Exception E)
+            {
+                return false;
+            }
+
+
+            return true;
+
+        }
 
         private void ObterConfiguracoes()
         {
             ChavesCORAC = new RegistroWin32();
-            ChavesCORAC.SetTratador_Erros(ServerClienteOnline.Utilidades.TipoSaidaErros.Arquivo);
+            ChavesCORAC.SetTratador_Erros(TipoSaidaErros.ComponenteAndFile);
             ChavesCORAC.Componente_Log = webBrowser_Log;
 
             if (!ChavesCORAC.Existe_Chave_CORAC())
@@ -71,7 +112,7 @@ namespace CORAC
 
         private void textBox5_BD_CORAC_Enter(object sender, EventArgs e)
         {
-            Status_Informacao.Text = "Endereço WEB do servidor de banco de dados do CORAC";
+            Status_Informacao.Text = "Endereço WEB do servidor de banco de dados do CORAC.";
 
         }
 
@@ -91,15 +132,35 @@ namespace CORAC
                 this.MinimizeBox = false;
                 ObterConfiguracoes();
                 Text_Box_Path_Update_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC");
-                radioButton_LDAP_Type_Autentication.Checked = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
-                radioButton_WEB_Type_Autentication.Checked = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("WEB_Type_Autentication"));
-                textBox_Path_Type_AutenticationLDAP.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Type_AutenticationLDAP");
+                
+                bool AutenticLDAP = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
+                if (AutenticLDAP)
+                {
+                    textBox_Path_Type_AutenticationLDAP.Enabled = true;
+                    radioButton_LDAP_Type_Autentication.Checked = true;
+                }
+                else
+                {
+                    textBox_Path_Type_AutenticationLDAP.Enabled = false;
+                }
+                bool AutenticWEB = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("WEB_Type_Autentication"));
+                if (AutenticWEB)
+                {
+                    textBox_Path_Type_AutenticationLDAP.Enabled = false;
+                    radioButton_WEB_Type_Autentication.Checked = true;
+                }
+                else
+                {
+
+                }
+
+                textBox_Path_Type_AutenticationLDAP.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Type_AutenticationLDAP");
                 textBox_Username.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Username");
                 textBox_Password.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Password");
-                textBox_Path_ServerWEB_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Server_WEB");
+                textBox_Path_ServerWEB_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
                 textBox_Path_ServerIP_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
                 textBox_Path_ServerPorta_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC");
-                textBox_Path_ServerIP_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC");
+                textBox_Path_ServerIP_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_AR");
                 textBox_Path_ServerPorta_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_AR");
             }
             catch(Exception E)
@@ -146,9 +207,343 @@ namespace CORAC
 
         }
 
-        private void button8_Click(object sender, EventArgs e)
+        private void SalvaConfiguracoes_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                DialogResult Resposta = MessageBox.Show("Tem certeza que deseja realizar essa operação?", "Salvar configurações", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (Resposta == DialogResult.Yes)
+                {
+                    if (KeysValues == null) MessageBox.Show("Nenhuma alteração foi identificada.", "Alterações");
+                    if (KeysValues.Count > 0)
+                    {
+                        if(ChavesCORAC.Gravar_ConteudoCampo(TipoChave.LocalMachine, "software\\CORAC", ref KeysValues))
+                        {
+                            MessageBox.Show("O dados foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("O dados não foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        //KeysValues.Clear();
+                    }
+                }
+            }
+            catch (Exception E)
+            {
+                webBrowser_Log.DocumentText = E.Message;
+            }
+            
+        }
+
+        private void Text_Box_Path_Update_CORAC_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerPorta_CORAC_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void textBox_Path_Type_AutenticationLDAP_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Username_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Password_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerWEB_CORAC_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerIP_CORAC_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerPorta_CORAC_Leave(object sender, EventArgs e)
+        {
+
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerIP_AR_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void textBox_Path_ServerPorta_AR_Leave(object sender, EventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            if (T.Modified)
+            {
+                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
+            }
+        }
+
+        private void radioButton_LDAP_Type_Autentication_Click(object sender, EventArgs e)
+        {
+            RadioButton T = sender as RadioButton;
+
+            if (T.Checked)
+            {
+                textBox_Path_Type_AutenticationLDAP.Enabled = false;
+                textBox_Path_Type_AutenticationLDAP.Clear();
+                ArmazenarAlteracoesCampos((string)T.Tag, Convert.ToString(T.Checked));
+                ArmazenarAlteracoesCampos("LDAP_Type_Autentication", "False");
+            }
+        }
+
+        private void radioButton_WEB_Type_Autentication_Click(object sender, EventArgs e)
+        {
+            textBox_Path_Type_AutenticationLDAP.Clear();
+            textBox_Path_Type_AutenticationLDAP.Enabled = false;
+            Status_Informacao.Text = "Autenticação WEB. Utiliza o endereço do servidor CORAC WEB.";
+
+        }
+
+        private void textBox_Path_ServerIP_CORAC_Enter(object sender, EventArgs e)
+        {
+            textBox_Path_Type_AutenticationLDAP.Enabled = true;
+            Status_Informacao.Text = "Autenticação LDAP.";
+
+        }
+
+        private void textBox_Path_ServerPorta_CORAC_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Porta do servidor local CORAC.";
+
+        }
+
+        private void textBox_Path_ServerIP_AR_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Endereço do servidor local de acesso remoto.";
+
+        }
+
+        private void textBox_Path_ServerPorta_AR_Enter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "Porta do servidor local de acesso remoto.";
+
+        }
+
+        private void radioButton_LDAP_Type_Autentication_Leave(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_Path_ServerPorta_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            decimal Porta;
+            if (decimal.TryParse(T.Text, out Porta))
+            {
+                if (!(Porta > 1000 && Porta < 65535))
+                {
+                    T.Clear();
+                    MessageBox.Show("O valor da porta deve estar entre 1000 e 65535", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                T.Clear();
+                MessageBox.Show("O valor digitado não representa um número de porta válida!", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+        }
+
+        private void textBox_Path_ServerPorta_CORAC_TextChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox_Path_ServerPorta_AR_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox T = sender as TextBox;
+
+            decimal Porta;
+            if (decimal.TryParse(T.Text, out Porta))
+            {
+                if (!(Porta > 1000 && Porta < 65535))
+                {
+                    T.Clear();
+                    MessageBox.Show("O valor da porta deve estar entre 1000 e 65535.","Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    e.Cancel = true;
+                }
+            }
+            else
+            {
+                T.Clear();
+                MessageBox.Show("O valor digitado não representa um número de porta válida!", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                e.Cancel = true;
+            }
+        }
+
+        private void radioButton_LDAP_Type_Autentication_Click_1(object sender, EventArgs e)
+        {
+            RadioButton T = sender as RadioButton;
+
+            if (T.Checked)
+            {
+                textBox_Path_Type_AutenticationLDAP.Enabled = true;
+                ArmazenarAlteracoesCampos((string)T.Tag, Convert.ToString(T.Checked));
+                ArmazenarAlteracoesCampos("LDAP_Type_Autentication", "True");
+            }
+        }
+
+        private void Text_Box_Path_Update_CORAC_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void Text_Box_Path_Update_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox T = (TextBox)sender;
+            if (T.Modified)
+            {
+                Regex CampoCORACAtualiza = new Regex("^http[s]?://");
+                if (!CampoCORACAtualiza.IsMatch(T.Text))
+                {
+                    e.Cancel = true;
+                    MessageBox.Show("O campo precisa iniciar com http(s)://", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+
+            }
+        }
+
+        private async void button_Verificar_Atualizacao_CORAC_Click(object sender, EventArgs e)
+        {
+            if (Text_Box_Path_Update_CORAC.Text.Length > 0)
+            {
+                try
+                {
+                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Wait;
+                    Uri EndURI = new Uri(Text_Box_Path_Update_CORAC.Text);
+                    WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
+                    HTTP_CORAC.Method = "POST";
+                    HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
+                    HTTP_CORAC.Timeout = 3;
+                    Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+                    
+                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
+
+                }
+                catch (Exception E)
+                {
+                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.No_Acepty;
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Endereço inválido!", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+        }
+
+        private async void button_Servidor_WEB_Click(object sender, EventArgs e)
+        {
+            if (textBox_Path_ServerWEB_CORAC.Text.Length > 0)
+            {
+                try
+                {
+                    pictureBox_Servidor_WEB.Image = Properties.Resources.Wait;
+                    Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
+                    WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
+                    HTTP_CORAC.Method = "POST";
+                    HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
+                    HTTP_CORAC.Timeout = 3;
+                    Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+
+                    pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+
+                }
+                catch (Exception E)
+                {
+                    pictureBox_Servidor_WEB.Image = Properties.Resources.No_Acepty;
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Endereço inválido!", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+        }
+
+        private void textBox_Path_ServerWEB_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            TextBox T = (TextBox)sender;
+            if (T.Modified)
+            {
+                Regex CampoCORACAtualiza = new Regex("^http[s]?://");
+                if (!CampoCORACAtualiza.IsMatch(T.Text))
+                {
+                    e.Cancel = true;
+                    MessageBox.Show("O campo precisa iniciar com http(s)://", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                }
+
+            }
         }
     }
 

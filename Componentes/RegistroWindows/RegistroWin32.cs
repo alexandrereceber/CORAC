@@ -31,20 +31,28 @@ namespace RegistroWindows
          * </para>
          * </summary>
          */
-        public bool Gravar_ConteudoCampo(TipoChave TipoChave, string Chave, string Campo, string Valor)
+        public bool Gravar_ConteudoCampo(TipoChave TipoChave, string Chave, ref List<KeyValuePair<string, string>> ChavesAndValores)
         {
             try
             {
                 if(TipoChave == TipoChave.LocalMachine)
                 {
-                    RegistryKey CORAC = LocalMachine.OpenSubKey(Chave);
-                    CORAC.SetValue(Campo, Valor);
+                    RegistryKey CORAC = LocalMachine.OpenSubKey(Chave, true);
+                    foreach (KeyValuePair<string, string> Chaves in ChavesAndValores)
+                    {
+                        CORAC.SetValue(Chaves.Key, Chaves.Value);
+                    }
+                    ChavesAndValores.Clear();
                     return true;
                 }
                 else
                 {
-                    RegistryKey CORAC = Corrente_User.OpenSubKey(Chave);
-                    CORAC.SetValue(Campo, Valor);
+                    RegistryKey CORAC = Corrente_User.OpenSubKey(Chave, true);
+                    foreach (KeyValuePair<string, string> Chaves in ChavesAndValores)
+                    {
+                        CORAC.SetValue(Chaves.Key, Chaves.Value);
+                    }
+                    ChavesAndValores.Clear();
                     return true;
                 }
 
@@ -53,7 +61,7 @@ namespace RegistroWindows
             {
                 TratadorErros(e, GetType().Name);
 
-                if (GetError() && TSaida_Error == TipoSaidaErros.Componente || TSaida_Error == TipoSaidaErros.ComponenteAndFile)
+                if ((GetError() && TSaida_Error == TipoSaidaErros.Componente) || TSaida_Error == TipoSaidaErros.ComponenteAndFile)
                 {
                     Componente_Log.DocumentText += getH;
                 }

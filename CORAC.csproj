@@ -184,5 +184,17 @@
   <ItemGroup>
     <None Include="Resources\Config.fw.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\refresh.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\iconAcepty.fw.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Error_Verify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\verified.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

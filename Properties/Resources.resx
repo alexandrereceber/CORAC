@@ -118,6 +118,9 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Acepty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\verified.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="Banco_Dados_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Banco_Dados.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -145,6 +148,9 @@
   <data name="Conf_Autent_HTTP" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Conf_Autent_HTTP.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="iconAcepty_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\iconAcepty.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ICON_MAN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\512px_Corac_3.fw-1.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -153,6 +159,9 @@
   </data>
   <data name="LDAP_CORAC" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\LDAP_CORAC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="No_Acepty" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Error_Verify.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Registro_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Registro_128px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -186,5 +195,8 @@
   </data>
   <data name="Update_System_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Update_System_256px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Wait" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\refresh.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

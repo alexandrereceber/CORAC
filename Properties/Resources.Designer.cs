@@ -63,6 +63,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Acepty {
+            get {
+                object obj = ResourceManager.GetObject("Acepty", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Banco_Dados_256px {
             get {
                 object obj = ResourceManager.GetObject("Banco_Dados_256px", resourceCulture);
@@ -163,6 +173,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap iconAcepty_fw {
+            get {
+                object obj = ResourceManager.GetObject("iconAcepty_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Internet {
             get {
                 object obj = ResourceManager.GetObject("Internet", resourceCulture);
@@ -176,6 +196,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap LDAP_CORAC {
             get {
                 object obj = ResourceManager.GetObject("LDAP_CORAC", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap No_Acepty {
+            get {
+                object obj = ResourceManager.GetObject("No_Acepty", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -286,6 +316,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap Update_System_256px {
             get {
                 object obj = ResourceManager.GetObject("Update_System_256px", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Wait {
+            get {
+                object obj = ResourceManager.GetObject("Wait", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

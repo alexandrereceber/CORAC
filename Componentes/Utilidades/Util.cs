@@ -360,7 +360,7 @@ namespace ServerClienteOnline.Utilidades
         public string Path_Type_AutenticationLDAP;
         public string Username;
         public string Password;
-        public string Path_Server_WEB;
+        public string Path_ServerWEB_CORAC;
         public string Path_Server_CORAC;
         public string Path_ServerIP_CORAC;
         public int Path_ServerPorta_CORAC;
