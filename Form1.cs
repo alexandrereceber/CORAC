@@ -8,6 +8,9 @@ using System.Net;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using ServerClienteOnline.Conectividade;
+using System.Drawing;
+using System.Threading.Tasks;
 
 namespace CORAC
 {
@@ -76,12 +79,279 @@ namespace CORAC
                 ChavesCORAC.LocalMachine_CamposChave("software\\CORAC");
             }
         }
-        public CORAC_TPrincipal()
-        {
 
-           InitializeComponent();
+        private void CheckComponentes()
+        {
+            try
+            {
+
+            }catch(Exception e)
+            {
+                webBrowser_Log.DocumentText += e.Message;
+
+            }
+        }
+
+        /**
+         * <summary>
+             Alterar a cor de uma imagem para outra.
+             <list type="number">
+                 <item><paramref name="Caixa_Imagem_Status"/>: Picture onde está localizada a imagem;</item>
+                 <item><paramref name="Cor"/>: Cor que deseja localizar para substituição;</item>
+                 <item><paramref name="Substituir_Cor"/>: Cor para substituição;</item>
+             </list>
+          </summary>
+         */
+        private Bitmap Change_Color(Image Imagems, Color Cor, Color Substituir_Cor)
+        {
+            try
+            {
+                Bitmap Obj = (Bitmap)Imagems;
+                for (var ii = 0; ii < Obj.Height; ii++)
+                {
+                    for (var i = 0; i < Obj.Width; i++)
+                    {
+                        Color g = Obj.GetPixel(i, ii);
+                        if (g.A == Cor.A && g.R == Cor.R && g.G == Cor.G && g.B == Cor.B)
+                        {
+                            Obj.SetPixel(i, ii, Substituir_Cor);
+                        }
+                    }
+                }
+                
+                return Obj;
+            }
+            catch (Exception e)
+            {
+                webBrowser_Log.DocumentText += e.Message;
+                return null;
+            }
+
 
         }
+
+        /**
+         * <summary>
+            Verifica se existe saída para internet.
+         * </summary>
+         */
+        private async Task<bool> Verirficar_Conectividade()
+        {
+
+            Image CopiaImagem = picture_Internet_Status.Image;
+            picture_Internet_Status.SizeMode = PictureBoxSizeMode.CenterImage;
+            picture_Internet_Status.Image = Properties.Resources.Wait;
+
+            if (await Conexoes.VerificarConectividade())
+            {
+                Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+                Color Azul = Color.FromArgb(255, 0, 1, 255);
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
+                picture_Internet_Status.Image = Internet_ON;
+                return true;
+            }
+            else
+            {
+                Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+                Color Azul = Color.FromArgb(255, 0, 1, 255);
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
+                picture_Internet_Status.Image = Internet_ON;
+                return false;
+            }
+
+
+        }
+
+        /**
+         * <summary>
+            Verifica se existe atualizações do sistema CORAC, esta verificação é realizada através da internet em um site próprio.
+         * </summary>
+         */
+        private async Task<bool> Verificar_Atualizacoes()
+        {
+            Image CopiaImagem = picture_Atualizacoes_CORAC.Image;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+
+            try
+            {
+                picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
+                HTTP_CORAC.Method = "POST";
+                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
+                HTTP_CORAC.Timeout = 3;
+                Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+
+                /**
+                 * Falta implementar mais  
+                 */
+
+
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                picture_Atualizacoes_CORAC.Image = Internet_ON;
+
+                return true;
+            }
+            catch (Exception E)
+            {
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+
+                picture_Atualizacoes_CORAC.Image = Internet_ON;
+                
+                webBrowser_Log.DocumentText += E.Message;
+                
+                return false;
+            }
+        }
+
+        /**
+         * <summary>
+            Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
+         * </summary>
+         */
+        private async Task<bool> Verificar_Registro()
+        {
+            Image CopiaImagem = pictureBox_Registro_CORAC.Image;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+
+            try
+            {
+                pictureBox_Registro_CORAC.Image = Properties.Resources.Wait;
+                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                Uri EndURI = new Uri("http://192.168.15.4/CORAC/REGISTRO");
+                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
+                HTTP_CORAC.Method = "POST";
+                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
+                HTTP_CORAC.Timeout = 3;
+                Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+
+                /**
+                 * Falta implementar mais complexa envolvendo o Banco de dados 
+                 */
+
+
+                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox_Registro_CORAC.Image = Internet_ON;
+
+                return true;
+            }
+            catch (Exception E)
+            {
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul , Vermelho);
+                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox_Registro_CORAC.Image = Internet_ON;
+                
+                webBrowser_Log.DocumentText += E.Message;
+
+                return false;
+            }
+        }
+
+        /**
+         * <summary>
+            Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
+         * </summary>
+         */
+        private async Task<bool> Verificar_Servidor_CORAC()
+        {
+            Image CopiaImagem = pictureBox_Servidor_CORAC.Image;
+            pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            try
+            {
+                pictureBox_Servidor_CORAC.Image = Properties.Resources.Wait;
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
+                HTTP_CORAC.Method = "POST";
+                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
+                HTTP_CORAC.Timeout = 3;
+                WebResponse DadosStream = await HTTP_CORAC.GetResponseAsync();
+                Stream dataStream = DadosStream.GetResponseStream();
+
+                char[] Dados_CORAC_Signature = new char[67];
+
+                StreamReader LerDados_CORAC = new StreamReader(dataStream);
+                await LerDados_CORAC.ReadAsync(Dados_CORAC_Signature, 0, 67);
+                byte[] D = ASCIIEncoding.UTF8.GetBytes(Dados_CORAC_Signature);
+                string Dados = ASCIIEncoding.UTF8.GetString(D);
+                Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+
+                pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+
+                if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    pictureBox_Servidor_CORAC.Image = Internet_ON;
+
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    pictureBox_Servidor_CORAC.Image = Internet_ON;
+                    return false;
+                }
+
+
+            }
+            catch (Exception E)
+            {
+                pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                pictureBox_Servidor_CORAC.Image = Internet_ON;
+                
+                webBrowser_Log.DocumentText += E.Message;
+
+                return true;
+
+            }
+        }
+
+        private async Task<bool> Loaders()
+        {
+            if (await Verirficar_Conectividade())
+            {
+                Task Atualiza = Task.Run(Verificar_Atualizacoes);
+                Task Registro = Task.Run(Verificar_Registro);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public CORAC_TPrincipal()
+        {
+            ObterConfiguracoes();
+
+            InitializeComponent();
+
+            Loaders();
+
+        }
+
 
 
         private void picture_Status_CORAC_MouseClick(object sender, MouseEventArgs e)
@@ -122,7 +392,7 @@ namespace CORAC
 
         private void toolStripMenuItem1_MAN_Click(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Minimized;
+            //this.WindowState = FormWindowState.Minimized;
             this.Show();
         }
 
@@ -133,7 +403,7 @@ namespace CORAC
                 Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
-                ObterConfiguracoes();
+
                 Text_Box_Path_Update_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC");
                 
                 bool AutenticLDAP = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
@@ -168,7 +438,7 @@ namespace CORAC
             }
             catch(Exception E)
             {
-                webBrowser_Log.DocumentText = E.Message;
+                webBrowser_Log.DocumentText += E.Message;
             }
 
 
@@ -564,7 +834,72 @@ namespace CORAC
 
             }
         }
+
+        private void picture_Internet_Status_MouseClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void picture_Internet_Status_MouseMove(object sender, MouseEventArgs e)
+        {
+           
+        }
+
+        private async void button_VerificarInternet_Click(object sender, EventArgs e)
+        {
+            Button B = (Button)sender;
+            B.Enabled = false;
+            try
+            {
+                await Verirficar_Conectividade();
+            }finally
+            {
+                B.Enabled = true;
+            }
+        }
+
+        private async void button_AtualizacoesCORAC_Click(object sender, EventArgs e)
+        {
+            Button B = (Button)sender;
+            B.Enabled = false;
+            try
+            {
+                await Verificar_Atualizacoes();
+            }finally
+            {
+                B.Enabled = true;
+            }
+        }
+
+        private async void button_RegistroMaquina_Click(object sender, EventArgs e)
+        {
+            Button B = (Button)sender;
+            B.Enabled = false;
+            try
+            {
+                await Verificar_Registro();
+            }
+            finally
+            {
+                B.Enabled = true;
+            }
+        }
+
+        private async void button_Server_WEB_CORAC_Click(object sender, EventArgs e)
+        {
+            Button B = (Button)sender;
+            B.Enabled = false;
+            try
+            {
+                await Verificar_Servidor_CORAC();
+            }
+            finally
+            {
+                B.Enabled = true;
+            }
+        }
     }
+
 
     class Assinatura
     {
@@ -575,17 +910,5 @@ namespace CORAC
         public string Signacture { get; set; }
     }
 
-    //Bitmap Obj = (Bitmap)picture_Internet_CORAC.Image;
-    //        for (var i = 0; i<Obj.Height; i++) 
-    //        {
-    //            for (var ii = 0; ii<Obj.Width; ii++)
-    //            {
-    //               Color g = Obj.GetPixel(i, ii);
-    //                if(g.A == 255 && g.R==33 && g.G==117 && g.B == 170)
-    //                {
-    //                    Obj.SetPixel(i, ii, Color.Red);
-    //                }
-    //            }
-    //        }
-    //        picture_Internet_CORAC.Image = Obj;
+
 }

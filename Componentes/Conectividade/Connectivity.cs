@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.NetworkInformation;
+using ServerClienteOnline.TratadorDeErros;
 
 namespace ServerClienteOnline.Conectividade
 {
@@ -29,17 +30,18 @@ namespace ServerClienteOnline.Conectividade
     class Conexoes
     {
         private static List<ListaConexoesHost> IPIdentificados;
+        private static Exception Erros = null;
 
         /**
          * <summary>
          * Verifica a conectividade do host para a rede local ou internet.
          * <para>
-         * <paramref name="Endereco"/> Informando um endereço, o método tentará realizar a verificação da conectividade até o endereço.
+         * <paramref name="Endereco"/>: Informando um endereço, o método tentará realizar a verificação da conectividade até o endereço.
          * Caso não seja informado um endereço o sistema tentará acesso ao www.google.com.br. Poderá ser tanto um IP quanto um endereço de domínio.
          * </para>
          * </summary>
          */
-        public static bool VerificarConectividade(string Endereco = null)
+        public async static Task<bool> VerificarConectividade(string Endereco = null)
         {
             try
             {
@@ -48,18 +50,24 @@ namespace ServerClienteOnline.Conectividade
 
                 PingOptions Opcoes = new PingOptions();
                 Opcoes.DontFragment = true;
+                byte[] Bufered = new byte[78];
 
+                
                 Endereco = Endereco == null ? "www.google.com.br": Endereco;
-                PingReply Replay = Enviar.Send(Endereco);
+                PingReply Replay = await Enviar.SendPingAsync(Endereco, 1000, Bufered, Opcoes);
 
                 if (Replay.Status == IPStatus.Success) return true; else return false;
             }
             catch (Exception e)
             {
+                Erros = e;
                 return false;
             }
 
         }
+
+        public static Exception get_Erro { get; }
+
         public static bool CXRedeDisponivel()
         {
             return NetworkInterface.GetIsNetworkAvailable();
