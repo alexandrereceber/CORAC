@@ -8,7 +8,7 @@ using System.IO;
 
 namespace ServerClienteOnline.TratadorDeErros
 {
-    public abstract class Tratador_Erros : IDisposable
+    public class Tratador_Erros : IDisposable
     {
         protected bool Excecao = false;
         protected Exception DadosExcecao = null;
@@ -44,7 +44,7 @@ namespace ServerClienteOnline.TratadorDeErros
          * Trata de todos os erros dentro da classe.
          * Return: False
          */
-        protected void TratadorErros(Exception e, string NomeClasse)
+        public void TratadorErros(Exception e, string NomeClasse)
         {
             Excecao = true;
             DadosExcecao = e;

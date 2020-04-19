@@ -16,7 +16,6 @@ namespace RegistroWindows
         //Lista contendo o valores de configuração do sistemaCORAC
 
         List<KeyValuePair<string, string>> KeysValues;
-        public WebBrowser Componente_Log { get; set; }
         public RegistroWin32()
         {
             Corrente_User = Registry.CurrentUser;
@@ -60,11 +59,6 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
-
-                if ((GetError() && TSaida_Error == TipoSaidaErros.Componente) || TSaida_Error == TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
                 return false;
 
             }
@@ -118,10 +112,6 @@ namespace RegistroWindows
             {
                 TratadorErros(e, GetType().Name);
 
-                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
                 return false;
 
             }
@@ -155,10 +145,6 @@ namespace RegistroWindows
             {
                 TratadorErros(e, GetType().Name);
 
-                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
                 return false;
 
             }
@@ -186,10 +172,6 @@ namespace RegistroWindows
             {
                 TratadorErros(e, GetType().Name);
 
-                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
                 return false;
             }
 
@@ -216,10 +198,7 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
-                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
+
                 return false;
             }
 
@@ -239,10 +218,6 @@ namespace RegistroWindows
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
-                if (GetError() && TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.Componente || TSaida_Error == ServerClienteOnline.Utilidades.TipoSaidaErros.ComponenteAndFile)
-                {
-                    Componente_Log.DocumentText += getH;
-                }
             }
         }
 

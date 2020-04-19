@@ -9,8 +9,10 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using ServerClienteOnline.Conectividade;
+using ServerClienteOnline.TratadorDeErros;
 using System.Drawing;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace CORAC
 {
@@ -59,7 +61,6 @@ namespace CORAC
         {
             ChavesCORAC = new RegistroWin32();
             ChavesCORAC.SetTratador_Erros(TipoSaidaErros.ComponenteAndFile);
-            ChavesCORAC.Componente_Log = webBrowser_Log;
 
             if (!ChavesCORAC.Existe_Chave_CORAC())
             {
@@ -82,14 +83,7 @@ namespace CORAC
 
         private void CheckComponentes()
         {
-            try
-            {
 
-            }catch(Exception e)
-            {
-                webBrowser_Log.DocumentText += e.Message;
-
-            }
         }
 
         /**
@@ -123,7 +117,9 @@ namespace CORAC
             }
             catch (Exception e)
             {
-                webBrowser_Log.DocumentText += e.Message;
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(e, GetType().Name);
                 return null;
             }
 
@@ -178,39 +174,50 @@ namespace CORAC
 
             try
             {
-                picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
-                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
-                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
-                HTTP_CORAC.Method = "POST";
-                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
-                HTTP_CORAC.Timeout = 3;
-                Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
+                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
+                    picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
 
-                /**
-                 * Falta implementar mais  
-                 */
+                    Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+
+                    HttpClient URL = new HttpClient();
+                    var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                    var content = new FormUrlEncodedContent(pairs);
+
+                    HttpResponseMessage Conteudo =  URL.PostAsync(EndURI, content).Result;
 
 
-                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    if (Conteudo.IsSuccessStatusCode)
+                    {
+                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                        picture_Atualizacoes_CORAC.Image = Internet_ON;
 
+                        return true;
+                    }
+                    else
+                    {
+                        Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                        picture_Atualizacoes_CORAC.Image = Internet_ON;
+                        return false;
+                    }
 
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
-                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                picture_Atualizacoes_CORAC.Image = Internet_ON;
-
-                return true;
             }
             catch (Exception E)
             {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
 
                 picture_Atualizacoes_CORAC.Image = Internet_ON;
-                
-                webBrowser_Log.DocumentText += E.Message;
-                
+
                 return false;
             }
         }
@@ -229,37 +236,51 @@ namespace CORAC
 
             try
             {
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
+
                 pictureBox_Registro_CORAC.Image = Properties.Resources.Wait;
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
 
                 Uri EndURI = new Uri("http://192.168.15.4/CORAC/REGISTRO");
-                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
-                HTTP_CORAC.Method = "POST";
-                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
-                HTTP_CORAC.Timeout = 3;
-                Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
 
-                /**
-                 * Falta implementar mais complexa envolvendo o Banco de dados 
-                 */
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                var content = new FormUrlEncodedContent(pairs);
+
+                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+
+                if (Conteudo.IsSuccessStatusCode)
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox_Registro_CORAC.Image = Internet_ON;
+
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox_Registro_CORAC.Image = Internet_ON;
+                    return false;
+                }
 
 
-                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-
-
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
-                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox_Registro_CORAC.Image = Internet_ON;
-
-                return true;
             }
             catch (Exception E)
             {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+
                 Bitmap Internet_ON = Change_Color(CopiaImagem, Azul , Vermelho);
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_Registro_CORAC.Image = Internet_ON;
-                
-                webBrowser_Log.DocumentText += E.Message;
 
                 return false;
             }
@@ -279,49 +300,64 @@ namespace CORAC
             Color Azul = Color.FromArgb(255, 0, 1, 255);
             try
             {
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
+
                 pictureBox_Servidor_CORAC.Image = Properties.Resources.Wait;
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
-                WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
-                HTTP_CORAC.Method = "POST";
-                HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
-                HTTP_CORAC.Timeout = 3;
-                WebResponse DadosStream = await HTTP_CORAC.GetResponseAsync();
-                Stream dataStream = DadosStream.GetResponseStream();
 
-                char[] Dados_CORAC_Signature = new char[67];
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
 
-                StreamReader LerDados_CORAC = new StreamReader(dataStream);
-                await LerDados_CORAC.ReadAsync(Dados_CORAC_Signature, 0, 67);
-                byte[] D = ASCIIEncoding.UTF8.GetBytes(Dados_CORAC_Signature);
-                string Dados = ASCIIEncoding.UTF8.GetString(D);
-                Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                var content = new FormUrlEncodedContent(pairs);
+
+                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
 
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
-
-                if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                if (Conteudo.IsSuccessStatusCode)
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
-                    pictureBox_Servidor_CORAC.Image = Internet_ON;
+                    string Dados = await Conteudo.Content.ReadAsStringAsync();
+                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                    if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                    {
+                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                        pictureBox_Servidor_CORAC.Image = Internet_ON;
+                        return true;
+                    }
+                    else
+                    {
 
-                    return true;
+                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                        pictureBox_Servidor_CORAC.Image = Internet_ON;
+                        return true;
+                    }
+
+
+
                 }
                 else
                 {
                     Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                     pictureBox_Servidor_CORAC.Image = Internet_ON;
                     return false;
                 }
 
 
+
             }
             catch (Exception E)
             {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
                 pictureBox_Servidor_CORAC.Image = Internet_ON;
-                
-                webBrowser_Log.DocumentText += E.Message;
 
                 return true;
 
@@ -334,10 +370,13 @@ namespace CORAC
             {
                 Task Atualiza = Task.Run(Verificar_Atualizacoes);
                 Task Registro = Task.Run(Verificar_Registro);
+                Task ServidroCorac = Task.Run(Verificar_Servidor_CORAC);
                 return true;
             }
             else
             {
+
+
                 return false;
             }
         }
@@ -438,7 +477,9 @@ namespace CORAC
             }
             catch(Exception E)
             {
-                webBrowser_Log.DocumentText += E.Message;
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
             }
 
 
@@ -493,7 +534,7 @@ namespace CORAC
                         if(ChavesCORAC.Gravar_ConteudoCampo(TipoChave.LocalMachine, "software\\CORAC", ref KeysValues))
                         {
                             MessageBox.Show("O dados foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        }
+                            ObterConfiguracoes();                   }
                         else
                         {
                             MessageBox.Show("O dados não foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -504,9 +545,11 @@ namespace CORAC
             }
             catch (Exception E)
             {
-                webBrowser_Log.DocumentText = E.Message;
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
             }
-            
+
         }
 
         private void Text_Box_Path_Update_CORAC_Leave(object sender, EventArgs e)
@@ -751,13 +794,27 @@ namespace CORAC
                 {
                     pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Wait;
                     Uri EndURI = new Uri(Text_Box_Path_Update_CORAC.Text);
-                    WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
-                    HTTP_CORAC.Method = "POST";
-                    HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
-                    HTTP_CORAC.Timeout = 3;
-                    Stream dataStream = await HTTP_CORAC.GetRequestStreamAsync();
-                    
-                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
+                    HttpClient URL = new HttpClient();
+                    var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                    var content = new FormUrlEncodedContent(pairs);
+
+                    HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+
+
+                    if (Conteudo.IsSuccessStatusCode)
+                    {
+                        pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
+                    }
+                    else
+                    {
+                        pictureBox_Atualizacao_CORAC.Image = Properties.Resources.No_Acepty;
+
+                    }
+
 
                 }
                 catch (Exception E)
@@ -781,30 +838,40 @@ namespace CORAC
                 {
                     pictureBox_Servidor_WEB.Image = Properties.Resources.Wait;
                     Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
-                    WebRequest HTTP_CORAC = WebRequest.CreateHttp(EndURI);
-                    HTTP_CORAC.Method = "POST";
-                    HTTP_CORAC.ContentType = "application/x-www-form-urlencoded";
-                    HTTP_CORAC.Timeout = 3;
-                    WebResponse DadosStream = await HTTP_CORAC.GetResponseAsync();
-                    Stream dataStream = DadosStream.GetResponseStream();
 
-                    char[] Dados_CORAC_Signature = new char[67];
+                    HttpClient URL = new HttpClient();
+                    var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
 
-                    StreamReader LerDados_CORAC = new StreamReader(dataStream);
-                    await LerDados_CORAC.ReadAsync(Dados_CORAC_Signature, 0, 67);
-                    byte[] D = ASCIIEncoding.UTF8.GetBytes(Dados_CORAC_Signature);
-                    string Dados = ASCIIEncoding.UTF8.GetString(D);
-                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
-                    if(Sign.Sistema =="CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                    var content = new FormUrlEncodedContent(pairs);
+
+                    HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+
+                    pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                    if (Conteudo.IsSuccessStatusCode)
                     {
-                        pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+                        string Dados = await Conteudo.Content.ReadAsStringAsync();
+                        Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                        if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                        {
+                            pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+
+                        }
+                        else
+                        {
+                            pictureBox_Servidor_WEB.Image = Properties.Resources.No_Acepty;
+                        }
+
                     }
                     else
                     {
                         pictureBox_Servidor_WEB.Image = Properties.Resources.No_Acepty;
+
                     }
-                    
-                    
+
                 }
                 catch (Exception E)
                 {
@@ -860,6 +927,7 @@ namespace CORAC
 
         private async void button_AtualizacoesCORAC_Click(object sender, EventArgs e)
         {
+            
             Button B = (Button)sender;
             B.Enabled = false;
             try
@@ -897,6 +965,48 @@ namespace CORAC
             {
                 B.Enabled = true;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string[] ArquivosLOG = Directory.GetFiles(".\\", "*.html");
+            listBox_FILE_LOG.Items.Clear();
+            foreach(string i in ArquivosLOG)
+            {
+                listBox_FILE_LOG.Items.Add(i);
+            }
+        }
+
+        private async void listBox_FILE_LOG_SelectedValueChanged(object sender, EventArgs e)
+        {
+            ListBox L = (ListBox)sender;
+
+            try
+            {
+                L.Enabled = false;
+                if (L.SelectedItem as string != "")
+                {
+                    using (FileStream Abrir_File = File.OpenRead(L.SelectedItem as string))
+                    {
+                        byte[] LetTudo = new byte[Abrir_File.Length];
+                        await Abrir_File.ReadAsync(LetTudo, 0, (int)Abrir_File.Length);
+                        webBrowser1.DocumentText = ASCIIEncoding.UTF8.GetString(LetTudo);
+                    }
+
+                }
+            }
+            catch(Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+            }
+            finally
+            {
+                L.Enabled = true;
+
+            }
+
         }
     }
 
