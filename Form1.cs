@@ -13,6 +13,10 @@ using ServerClienteOnline.TratadorDeErros;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Net.Http;
+using ServerClienteOnline.Server;
+using Power_Shell.AmbienteExecucao;
+using ServerClienteOnline.MetodosAutenticacao;
+using ServerClienteOnline.Gerenciador.ClientesConectados;
 
 namespace CORAC
 {
@@ -21,6 +25,10 @@ namespace CORAC
     {
         RegistroWin32 ChavesCORAC;
         List<KeyValuePair<string, string>> KeysValues;
+        /**
+         * Gerente de autenticação do servidor WEBPowershell
+         */
+        GerenciadorClientes GerenteClientes = new GerenciadorClientes();
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
         {
@@ -176,35 +184,35 @@ namespace CORAC
             {
                 if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
-                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
-                    picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+                picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
 
-                    Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
 
-                    HttpClient URL = new HttpClient();
-                    var pairs = new List<KeyValuePair<string, string>>
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
                                         {
                                             new KeyValuePair<string, string>("login", "abc")
                                         };
 
-                    var content = new FormUrlEncodedContent(pairs);
+                var content = new FormUrlEncodedContent(pairs);
+                URL.Timeout = TimeSpan.FromSeconds(3);
+                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
 
-                    HttpResponseMessage Conteudo =  URL.PostAsync(EndURI, content).Result;
 
+                if (Conteudo.IsSuccessStatusCode)
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    picture_Atualizacoes_CORAC.Image = Internet_ON;
 
-                    if (Conteudo.IsSuccessStatusCode)
-                    {
-                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
-                        picture_Atualizacoes_CORAC.Image = Internet_ON;
-
-                        return true;
-                    }
-                    else
-                    {
-                        Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
-                        picture_Atualizacoes_CORAC.Image = Internet_ON;
-                        return false;
-                    }
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    picture_Atualizacoes_CORAC.Image = Internet_ON;
+                    return false;
+                }
 
             }
             catch (Exception E)
@@ -250,6 +258,8 @@ namespace CORAC
                                         };
 
                 var content = new FormUrlEncodedContent(pairs);
+                
+                URL.Timeout = TimeSpan.FromSeconds(3);
 
                 HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
 
@@ -313,6 +323,8 @@ namespace CORAC
 
                 var content = new FormUrlEncodedContent(pairs);
 
+                URL.Timeout = TimeSpan.FromSeconds(3);
+
                 HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
 
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -364,21 +376,156 @@ namespace CORAC
             }
         }
 
+        /**
+          * <summary>
+             Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
+          * </summary>
+          */
+        private async Task<bool> Iniciar_Servidor_PowerShell()
+        {
+            Image CopiaImagem = pictureBox_Powershell.Image;
+            pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            try
+            {
+
+                pictureBox_Powershell.Image = Properties.Resources.Wait;
+
+                //------------------SERVIDOR POWERSHELL-----------------------------------------------------------------
+
+                Ambiente_PowerShell AbrirComando = new Ambiente_PowerShell();
+                //AbrirComando.tipoSaida(TiposSaidas.TXT);
+                AbrirComando.StartServidor();
+
+                Autenticador_WEB Autent_WEB = new Autenticador_WEB();
+
+
+                //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
+
+                string EndString = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
+                int EndPorta =     Convert.ToInt16(ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC"));
+
+                Servidor_HTTP ServidorWEB_Local = new Servidor_HTTP();
+                ServidorWEB_Local.SetTratador_Erros(TipoSaidaErros.Arquivo);
+
+                ServidorWEB_Local.AddPrefixos(null, EndString, "Pacotes/", EndPorta);
+
+                ServidorWEB_Local.AtribuirExecutor = AbrirComando;
+                ServidorWEB_Local.Autenticador = Autent_WEB;
+                ServidorWEB_Local.Gerenciador_Cliente = GerenteClientes;
+
+                bool Server_HTTP = await Task.Run(ServidorWEB_Local.StartServidor);
+                
+                //------------------------------------------------------------------------------------------------------
+
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Server_HTTP)
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    pictureBox_Powershell.Image = Internet_ON;
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    pictureBox_Powershell.Image = Internet_ON;
+                    return true;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
+                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                pictureBox_Powershell.Image = Internet_ON;
+
+                return true;
+
+            }
+        }
         private async Task<bool> Loaders()
         {
+            Task Atualizar, Registro, ServidorCORAC, Powerhell_WEB;
+            int Atualizar_ID = 0, Registro_ID = 0, ServidorCORAC_ID = 0, Powerhell_WEB_ID = 0;
+            List<Task> Servicos = new List<Task>();
+
             if (await Verirficar_Conectividade())
             {
-                Task Atualiza = Task.Run(Verificar_Atualizacoes);
-                Task Registro = Task.Run(Verificar_Registro);
-                Task ServidroCorac = Task.Run(Verificar_Servidor_CORAC);
-                return true;
+                Atualizar = Task.Run(Verificar_Atualizacoes);
+                Atualizar_ID = Atualizar.Id;
+
+                Registro = Task.Run(Verificar_Registro);
+                Registro_ID = Registro.Id;
+
+                ServidorCORAC = Task.Run(Verificar_Servidor_CORAC);
+                ServidorCORAC_ID = ServidorCORAC.Id;
+
+                Servicos.Add(Atualizar);
+                Servicos.Add(Registro);
+                Servicos.Add(ServidorCORAC);
+
             }
             else
             {
-
-
-                return false;
+                button_AtualizacoesCORAC.Enabled = true;
+                button_RegistroMaquina.Enabled = true;
+                button_Server_WEB_CORAC.Enabled = true;
             }
+
+            Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
+            Powerhell_WEB_ID = Powerhell_WEB.Id;
+
+            Servicos.Add(Powerhell_WEB);
+
+            while (Servicos.Count > 0)
+            {
+                Task Tarefa = await Task.WhenAny(Servicos);
+                if(Tarefa.Id == Atualizar_ID)
+                {
+                    Servicos.Remove(Tarefa);
+                    button_AtualizacoesCORAC.Enabled = true;
+
+                }else if(Tarefa.Id == Registro_ID){
+
+                    Servicos.Remove(Tarefa);
+                    button_RegistroMaquina.Enabled = true;
+                }
+                else if (Tarefa.Id == ServidorCORAC_ID)
+                {
+
+                    Servicos.Remove(Tarefa);
+                    button_Server_WEB_CORAC.Enabled = true;
+
+                }
+                else if (Tarefa.Id == Powerhell_WEB_ID)
+                {
+
+                    Servicos.Remove(Tarefa);
+                    Task<bool> Result = (Task<bool>)Tarefa;
+                    if (Result.Result)
+                    {
+                        button_Start_PowerShellCORAC.Enabled = false;
+                        button_Stop_PowerShellCORAC.Enabled = true;
+                    }
+                    else
+                    {
+                        button_Start_PowerShellCORAC.Enabled = true;
+                        button_Stop_PowerShellCORAC.Enabled = false;
+                    }
+
+                }
+            }
+
+
+            return true;
+
         }
 
         public CORAC_TPrincipal()
@@ -1005,6 +1152,30 @@ namespace CORAC
             {
                 L.Enabled = true;
 
+            }
+
+        }
+
+        private async void button_PowerShellCORAC_Click(object sender, EventArgs e)
+        {
+            Button T = (Button)sender;
+            T.Enabled = false;
+            try
+            {
+                bool ServerCORAC = await Task.Run(Iniciar_Servidor_PowerShell);
+                if (ServerCORAC)
+                {
+                    T.Enabled = false;
+                    button_Stop_PowerShellCORAC.Enabled = true;
+                }
+                else
+                {
+                    T.Enabled = true;
+                    button_Stop_PowerShellCORAC.Enabled = false;
+                }
+            }catch(Exception E)
+            {
+                T.Enabled = true;
             }
 
         }

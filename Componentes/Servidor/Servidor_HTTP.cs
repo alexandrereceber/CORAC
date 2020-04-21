@@ -11,6 +11,7 @@ using System.Windows;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
 using ServerClienteOnline.TratadorDeErros;
+using System.Threading.Tasks;
 
 namespace ServerClienteOnline.Server
 {
@@ -38,6 +39,47 @@ namespace ServerClienteOnline.Server
                 TratadorErros(e, this.GetType().Name);
 
             }
+        }
+
+        /**
+            <summary>
+                Verifica se os serviços auxiliares estão configurados.
+            </summary>
+         */
+        private void Checked_Servicos_Auxiliares()
+        {
+            try
+            {
+                if (_CMDs == null) throw new Exception("Nenhum tratador de comados foi identificado.");
+                if (_Auth == null) throw new Exception("Nenhum processador de autenticação foi identificado.");
+                if (_GerenciadorCliente == null) throw new Exception("Nenhum gerenciado de processo foi identificado.");
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+
+            }
+
+        }
+        /**
+       * Data: 20/04/2019
+       * Propriedade que atribui uma classe que executará comandos e retornará uma reposta.
+       * Return: IRuntime
+       */
+        public IRuntime AtribuirExecutor
+        {
+            set { _CMDs = value; }
+        }
+
+
+        /**
+          * Data: 20/04/2019
+          * Propriedade que atribui uma classe que executará comandos e retornará uma reposta.
+          * Return: IGCliente
+          */
+        public IGClienteHTML Gerenciador_Cliente
+        {
+            set { _GerenciadorCliente = value; }
         }
 
         /**
@@ -69,6 +111,8 @@ namespace ServerClienteOnline.Server
         {
             try
             {
+                Checked_Servicos_Auxiliares();
+
                 Servidor = new HttpListener();
                 //Servidor.Prefixes.Add("http://*:"+ Port +"/");
                 PrefixoServidor();
@@ -76,7 +120,8 @@ namespace ServerClienteOnline.Server
                 Servidor.Start();
                 
                 IAsyncResult AceitarCliente = Servidor.BeginGetContext(new AsyncCallback(IniciarConversa), Servidor);
-                return true;
+
+                return true; ;
             }
             catch (Exception e)
             {
@@ -101,7 +146,6 @@ namespace ServerClienteOnline.Server
             //// You must close the output stream.
             //output.Close();
 
-            return true;
         }
 
         /**
@@ -281,9 +325,7 @@ namespace ServerClienteOnline.Server
                         case TipoPacote.Comando:
                         Pacote_Comando CMM = (Pacote_Comando)QTP; //Transforma string em um objeto da classe Pacote_Auth
 
-                        bool _Autenticado = (bool)_Auth?.HTML_Autenticado(CMM.Chave);
-
-                        if(_Auth == null) throw new Exception("Nenhum processo de autenticação foi definido.");
+                        bool _Autenticado = (bool)_Auth.HTML_Autenticado(CMM.Chave);
 
                         if (!_Autenticado) throw new Exception("Usuário não autenticado.");
 
