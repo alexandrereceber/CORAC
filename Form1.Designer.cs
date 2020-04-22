@@ -176,7 +176,7 @@
             this.Layout_Organizacao_CORAC.ColumnCount = 3;
             this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 367F));
+            this.Layout_Organizacao_CORAC.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 369F));
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox8, 2, 1);
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox7, 1, 1);
             this.Layout_Organizacao_CORAC.Controls.Add(this.Internet_Status_GroupBox, 0, 0);
@@ -199,9 +199,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox8.Controls.Add(this.pictureBox10);
             this.groupBox8.Controls.Add(this.button_Start_AR_CORAC);
-            this.groupBox8.Location = new System.Drawing.Point(515, 264);
+            this.groupBox8.Location = new System.Drawing.Point(513, 264);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(361, 252);
+            this.groupBox8.Size = new System.Drawing.Size(363, 252);
             this.groupBox8.TabIndex = 9;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Acesso Remoto";
@@ -217,7 +217,7 @@
             this.pictureBox10.InitialImage = null;
             this.pictureBox10.Location = new System.Drawing.Point(101, 55);
             this.pictureBox10.Name = "pictureBox10";
-            this.pictureBox10.Size = new System.Drawing.Size(144, 131);
+            this.pictureBox10.Size = new System.Drawing.Size(146, 131);
             this.pictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox10.TabIndex = 3;
             this.pictureBox10.TabStop = false;
@@ -240,9 +240,9 @@
             this.groupBox7.Controls.Add(this.button_Stop_PowerShellCORAC);
             this.groupBox7.Controls.Add(this.pictureBox_Powershell);
             this.groupBox7.Controls.Add(this.button_Start_PowerShellCORAC);
-            this.groupBox7.Location = new System.Drawing.Point(260, 264);
+            this.groupBox7.Location = new System.Drawing.Point(259, 264);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(247, 252);
+            this.groupBox7.Size = new System.Drawing.Size(246, 252);
             this.groupBox7.TabIndex = 9;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "PowerShell CORAC";
@@ -256,6 +256,7 @@
             this.button_Stop_PowerShellCORAC.TabIndex = 5;
             this.button_Stop_PowerShellCORAC.Text = "Stop";
             this.button_Stop_PowerShellCORAC.UseVisualStyleBackColor = true;
+            this.button_Stop_PowerShellCORAC.Click += new System.EventHandler(this.button_Stop_PowerShellCORAC_Click);
             // 
             // pictureBox_Powershell
             // 
@@ -268,7 +269,7 @@
             this.pictureBox_Powershell.InitialImage = null;
             this.pictureBox_Powershell.Location = new System.Drawing.Point(77, 55);
             this.pictureBox_Powershell.Name = "pictureBox_Powershell";
-            this.pictureBox_Powershell.Size = new System.Drawing.Size(122, 131);
+            this.pictureBox_Powershell.Size = new System.Drawing.Size(121, 131);
             this.pictureBox_Powershell.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Powershell.TabIndex = 3;
             this.pictureBox_Powershell.TabStop = false;
@@ -294,7 +295,7 @@
             this.Internet_Status_GroupBox.Controls.Add(this.picture_Internet_Status);
             this.Internet_Status_GroupBox.Location = new System.Drawing.Point(5, 5);
             this.Internet_Status_GroupBox.Name = "Internet_Status_GroupBox";
-            this.Internet_Status_GroupBox.Size = new System.Drawing.Size(247, 251);
+            this.Internet_Status_GroupBox.Size = new System.Drawing.Size(246, 251);
             this.Internet_Status_GroupBox.TabIndex = 7;
             this.Internet_Status_GroupBox.TabStop = false;
             this.Internet_Status_GroupBox.Text = "Internet";
@@ -305,7 +306,7 @@
             this.button_VerificarInternet.Enabled = false;
             this.button_VerificarInternet.Location = new System.Drawing.Point(66, 184);
             this.button_VerificarInternet.Name = "button_VerificarInternet";
-            this.button_VerificarInternet.Size = new System.Drawing.Size(82, 23);
+            this.button_VerificarInternet.Size = new System.Drawing.Size(81, 23);
             this.button_VerificarInternet.TabIndex = 2;
             this.button_VerificarInternet.Text = "Verificar";
             this.button_VerificarInternet.UseVisualStyleBackColor = true;
@@ -320,7 +321,7 @@
             this.picture_Internet_Status.InitialImage = null;
             this.picture_Internet_Status.Location = new System.Drawing.Point(49, 45);
             this.picture_Internet_Status.Name = "picture_Internet_Status";
-            this.picture_Internet_Status.Size = new System.Drawing.Size(126, 131);
+            this.picture_Internet_Status.Size = new System.Drawing.Size(125, 131);
             this.picture_Internet_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Internet_Status.TabIndex = 1;
             this.picture_Internet_Status.TabStop = false;
@@ -333,9 +334,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Atualizacao_Status_GoupBox.Controls.Add(this.picture_Atualizacoes_CORAC);
             this.Atualizacao_Status_GoupBox.Controls.Add(this.button_AtualizacoesCORAC);
-            this.Atualizacao_Status_GoupBox.Location = new System.Drawing.Point(260, 5);
+            this.Atualizacao_Status_GoupBox.Location = new System.Drawing.Point(259, 5);
             this.Atualizacao_Status_GoupBox.Name = "Atualizacao_Status_GoupBox";
-            this.Atualizacao_Status_GoupBox.Size = new System.Drawing.Size(247, 251);
+            this.Atualizacao_Status_GoupBox.Size = new System.Drawing.Size(246, 251);
             this.Atualizacao_Status_GoupBox.TabIndex = 8;
             this.Atualizacao_Status_GoupBox.TabStop = false;
             this.Atualizacao_Status_GoupBox.Text = "Atualizações";
@@ -351,7 +352,7 @@
             this.picture_Atualizacoes_CORAC.InitialImage = null;
             this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(67, 45);
             this.picture_Atualizacoes_CORAC.Name = "picture_Atualizacoes_CORAC";
-            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(122, 131);
+            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(121, 131);
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
@@ -376,7 +377,7 @@
             this.Servidor_WEB_Status_GroupBox.Controls.Add(this.button_Server_WEB_CORAC);
             this.Servidor_WEB_Status_GroupBox.Location = new System.Drawing.Point(5, 264);
             this.Servidor_WEB_Status_GroupBox.Name = "Servidor_WEB_Status_GroupBox";
-            this.Servidor_WEB_Status_GroupBox.Size = new System.Drawing.Size(247, 252);
+            this.Servidor_WEB_Status_GroupBox.Size = new System.Drawing.Size(246, 252);
             this.Servidor_WEB_Status_GroupBox.TabIndex = 10;
             this.Servidor_WEB_Status_GroupBox.TabStop = false;
             this.Servidor_WEB_Status_GroupBox.Text = "Servidor WEB CORAC";
@@ -390,7 +391,7 @@
             this.pictureBox_Servidor_CORAC.InitialImage = null;
             this.pictureBox_Servidor_CORAC.Location = new System.Drawing.Point(66, 55);
             this.pictureBox_Servidor_CORAC.Name = "pictureBox_Servidor_CORAC";
-            this.pictureBox_Servidor_CORAC.Size = new System.Drawing.Size(93, 131);
+            this.pictureBox_Servidor_CORAC.Size = new System.Drawing.Size(92, 131);
             this.pictureBox_Servidor_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Servidor_CORAC.TabIndex = 3;
             this.pictureBox_Servidor_CORAC.TabStop = false;
@@ -401,7 +402,7 @@
             this.button_Server_WEB_CORAC.Enabled = false;
             this.button_Server_WEB_CORAC.Location = new System.Drawing.Point(74, 192);
             this.button_Server_WEB_CORAC.Name = "button_Server_WEB_CORAC";
-            this.button_Server_WEB_CORAC.Size = new System.Drawing.Size(74, 23);
+            this.button_Server_WEB_CORAC.Size = new System.Drawing.Size(73, 23);
             this.button_Server_WEB_CORAC.TabIndex = 4;
             this.button_Server_WEB_CORAC.Text = "Verificar";
             this.button_Server_WEB_CORAC.UseVisualStyleBackColor = true;
@@ -412,7 +413,7 @@
             this.Registro_Status_GroupBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Registro_Status_GroupBox.Controls.Add(this.pictureBox_Registro_CORAC);
             this.Registro_Status_GroupBox.Controls.Add(this.button_RegistroMaquina);
-            this.Registro_Status_GroupBox.Location = new System.Drawing.Point(545, 14);
+            this.Registro_Status_GroupBox.Location = new System.Drawing.Point(544, 14);
             this.Registro_Status_GroupBox.Name = "Registro_Status_GroupBox";
             this.Registro_Status_GroupBox.Size = new System.Drawing.Size(300, 232);
             this.Registro_Status_GroupBox.TabIndex = 9;

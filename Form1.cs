@@ -29,6 +29,9 @@ namespace CORAC
          * Gerente de autenticação do servidor WEBPowershell
          */
         GerenciadorClientes GerenteClientes = new GerenciadorClientes();
+        Ambiente_PowerShell AbrirComando = null;
+        Servidor_HTTP ServidorWEB_Local = null;
+        Autenticador_WEB Autent_WEB = null;
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
         {
@@ -175,17 +178,16 @@ namespace CORAC
          */
         private async Task<bool> Verificar_Atualizacoes()
         {
-            Image CopiaImagem = picture_Atualizacoes_CORAC.Image;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
             Color Azul = Color.FromArgb(255, 0, 1, 255);
 
             try
             {
-                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
-
                 picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+                
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
 
@@ -196,20 +198,32 @@ namespace CORAC
                                         };
 
                 var content = new FormUrlEncodedContent(pairs);
-                URL.Timeout = TimeSpan.FromSeconds(3);
-                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+                URL.Timeout = TimeSpan.FromSeconds(30);
+                Task<HttpResponseMessage> Conteudo;
 
-
-                if (Conteudo.IsSuccessStatusCode)
+                try
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    Conteudo = URL.PostAsync(EndURI, content);
+                    await Task.WhenAll(Conteudo);
+                }
+                catch(Exception e)
+                {
+                    Conteudo = null;
+                }
+
+
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Conteudo.Result.IsSuccessStatusCode && Conteudo != null)
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Vermelho, Azul);
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
 
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Azul, Vermelho);
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
                     return false;
                 }
@@ -222,7 +236,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Azul, Vermelho);
 
                 picture_Atualizacoes_CORAC.Image = Internet_ON;
 
@@ -237,17 +251,15 @@ namespace CORAC
          */
         private async Task<bool> Verificar_Registro()
         {
-            Image CopiaImagem = pictureBox_Registro_CORAC.Image;
-
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
             Color Azul = Color.FromArgb(255, 0, 1, 255);
 
             try
             {
-                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
-
                 pictureBox_Registro_CORAC.Image = Properties.Resources.Wait;
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+                
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
                 Uri EndURI = new Uri("http://192.168.15.4/CORAC/REGISTRO");
 
@@ -261,20 +273,30 @@ namespace CORAC
                 
                 URL.Timeout = TimeSpan.FromSeconds(3);
 
-                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+                Task<HttpResponseMessage> Conteudo;
 
-                if (Conteudo.IsSuccessStatusCode)
+                try
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
-                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    Conteudo = URL.PostAsync(EndURI, content);
+                    await Task.WhenAll(Conteudo);
+                }
+                catch (Exception e)
+                {
+                    Conteudo = null;
+                }
+
+                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Conteudo.Result.IsSuccessStatusCode && Conteudo != null)
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Vermelho, Azul);
                     pictureBox_Registro_CORAC.Image = Internet_ON;
 
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
-                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
                     pictureBox_Registro_CORAC.Image = Internet_ON;
                     return false;
                 }
@@ -288,7 +310,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
 
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul , Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul , Vermelho);
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_Registro_CORAC.Image = Internet_ON;
 
@@ -303,17 +325,16 @@ namespace CORAC
          */
         private async Task<bool> Verificar_Servidor_CORAC()
         {
-            Image CopiaImagem = pictureBox_Servidor_CORAC.Image;
             pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
             Color Azul = Color.FromArgb(255, 0, 1, 255);
             try
             {
-                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
-
                 pictureBox_Servidor_CORAC.Image = Properties.Resources.Wait;
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+                
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
                 HttpClient URL = new HttpClient();
                 var pairs = new List<KeyValuePair<string, string>>
@@ -325,24 +346,34 @@ namespace CORAC
 
                 URL.Timeout = TimeSpan.FromSeconds(3);
 
-                HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+                Task<HttpResponseMessage> Conteudo;
+
+                try
+                {
+                    Conteudo = URL.PostAsync(EndURI, content);
+                    await Task.WhenAll(Conteudo);
+                }
+                catch (Exception e)
+                {
+                    Conteudo = null;
+                }
 
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                if (Conteudo.IsSuccessStatusCode)
+                if (Conteudo.Result.IsSuccessStatusCode)
                 {
-                    string Dados = await Conteudo.Content.ReadAsStringAsync();
+                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
                     Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
                     if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
                     {
-                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                        Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
                         return true;
                     }
                     else
                     {
 
-                        Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                        Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
                         return true;
                     }
@@ -352,8 +383,7 @@ namespace CORAC
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
-                    pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Azul, Vermelho);
                     pictureBox_Servidor_CORAC.Image = Internet_ON;
                     return false;
                 }
@@ -368,7 +398,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Azul, Vermelho);
                 pictureBox_Servidor_CORAC.Image = Internet_ON;
 
                 return true;
@@ -376,14 +406,14 @@ namespace CORAC
             }
         }
 
+
         /**
           * <summary>
-             Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
+             Para oo serviço PowerShell CORAC
           * </summary>
           */
-        private async Task<bool> Iniciar_Servidor_PowerShell()
+        private async Task<bool> Stop_Servidor_PowerShell()
         {
-            Image CopiaImagem = pictureBox_Powershell.Image;
             pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
@@ -392,14 +422,77 @@ namespace CORAC
             {
 
                 pictureBox_Powershell.Image = Properties.Resources.Wait;
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                //------------------STOP SERVIDOR POWERSHELL-----------------------------------------------------------------
+
+
+                AbrirComando.StopServidor();
+                AbrirComando = null;
+
+
+                //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
+
+
+                bool Server_HTTP = await Task.Run(ServidorWEB_Local.StopServidor);
+
+                //------------------------------------------------------------------------------------------------------
+
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Server_HTTP)
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
+                    pictureBox_Powershell.Image = Internet_ON;
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                    pictureBox_Powershell.Image = Internet_ON;
+                    return true;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+
+                pictureBox_Powershell.Image = Internet_ON;
+
+                return true;
+
+            }
+        }
+
+        /**
+          * <summary>
+            Inicia o serviço CORAC.
+          * </summary>
+          */
+        private async Task<bool> Iniciar_Servidor_PowerShell()
+        {
+            pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            try
+            {
+
+                pictureBox_Powershell.Image = Properties.Resources.Wait;
+                pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
 
                 //------------------SERVIDOR POWERSHELL-----------------------------------------------------------------
 
-                Ambiente_PowerShell AbrirComando = new Ambiente_PowerShell();
-                //AbrirComando.tipoSaida(TiposSaidas.TXT);
+                AbrirComando = new Ambiente_PowerShell();
                 AbrirComando.StartServidor();
 
-                Autenticador_WEB Autent_WEB = new Autenticador_WEB();
+                Autent_WEB = new Autenticador_WEB();
 
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
@@ -407,7 +500,7 @@ namespace CORAC
                 string EndString = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
                 int EndPorta =     Convert.ToInt16(ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC"));
 
-                Servidor_HTTP ServidorWEB_Local = new Servidor_HTTP();
+                ServidorWEB_Local = new Servidor_HTTP();
                 ServidorWEB_Local.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
                 ServidorWEB_Local.AddPrefixos(null, EndString, "Pacotes/", EndPorta);
@@ -424,13 +517,13 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
                     pictureBox_Powershell.Image = Internet_ON;
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                     pictureBox_Powershell.Image = Internet_ON;
                     return true;
                 }
@@ -443,7 +536,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                 pictureBox_Powershell.Image = Internet_ON;
 
                 return true;
@@ -478,6 +571,7 @@ namespace CORAC
                 button_RegistroMaquina.Enabled = true;
                 button_Server_WEB_CORAC.Enabled = true;
             }
+            button_VerificarInternet.Enabled = true;
 
             Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
             Powerhell_WEB_ID = Powerhell_WEB.Id;
@@ -954,6 +1048,7 @@ namespace CORAC
 
                     if (Conteudo.IsSuccessStatusCode)
                     {
+                        string Dados = await Conteudo.Content.ReadAsStringAsync();
                         pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
                     }
                     else
@@ -996,7 +1091,7 @@ namespace CORAC
 
                     HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
 
-                    pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pictureBox_Servidor_WEB.SizeMode = PictureBoxSizeMode.StretchImage;
 
                     if (Conteudo.IsSuccessStatusCode)
                     {
@@ -1178,6 +1273,29 @@ namespace CORAC
                 T.Enabled = true;
             }
 
+        }
+
+        private async void button_Stop_PowerShellCORAC_Click(object sender, EventArgs e)
+        {
+            Button T = (Button)sender;
+            T.Enabled = false;
+            try
+            {
+                bool ServerCORAC = await Task.Run(Stop_Servidor_PowerShell);
+                if (ServerCORAC)
+                {
+                    T.Enabled = false;
+                    button_Start_PowerShellCORAC.Enabled = true;
+                }
+                else
+                {
+                    T.Enabled = true;
+                }
+            }
+            catch (Exception E)
+            {
+                T.Enabled = true;
+            }
         }
     }
 
