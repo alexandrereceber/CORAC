@@ -11,6 +11,9 @@ using System.Management.Automation;
 using System.Security;
 using System.Security.Principal;
 using System.Net;
+using System.Net.Http;
+using CamadaDeDados.RESTFormat;
+using Newtonsoft.Json;
 
 namespace ServerClienteOnline.MetodosAutenticacao
 {
@@ -123,7 +126,7 @@ namespace ServerClienteOnline.MetodosAutenticacao
 
     class Autenticador_WEB : Tratador_Erros, IServidor, IAuthHTML
     {
-        private string _Servidor;
+        private Uri _Servidor;
 
         /**
          * <summary>
@@ -134,30 +137,76 @@ namespace ServerClienteOnline.MetodosAutenticacao
          */
         public void Endereco_Autenticacao(string Servidor)
         {
-            _Servidor =  Servidor;
+            _Servidor =  new Uri(Servidor);
         }
 
-        public bool CheckServidor()
+        public async Task<bool> CheckServidorOnline()
         {
             try
             {
-                WebRequest Status_Servidor =  WebRequest.Create(_Servidor);
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                var content = new FormUrlEncodedContent(pairs);
+
+                URL.Timeout = TimeSpan.FromSeconds(3);
+
+                Task<HttpResponseMessage> Conteudo;
+
+                Conteudo = URL.PostAsync(_Servidor, content);
+                await Task.WhenAll(Conteudo);
+
                 return true;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
                 return false;
             }
         }
-        public bool HTML_Autenticado(string Pacote_Auth)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Pacote_Auth HTML_AutenticarUsuario(Pacote_Auth Pacote_Auth)
+        public async Task<Pacote_Auth> HTML_AutenticarUsuario(Pacote_Auth Pacote_AuthWEB)
         {
-            throw new NotImplementedException();
+
+            try
+            {
+                HttpClient URL = new HttpClient();
+                List<KeyValuePair<string, string>> pairs = Pacote_AuthWEB.ListarAtributos();
+
+                var content = new FormUrlEncodedContent(pairs);
+
+                URL.Timeout = TimeSpan.FromSeconds(3);
+
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(_Servidor, content);
+                await Task.WhenAll(Conteudo);
+
+                if (Conteudo.Result.IsSuccessStatusCode)
+                {
+                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
+                    Pacote_AuthWEB = JsonConvert.DeserializeObject<Pacote_Auth>(Dados);
+
+                    return Pacote_AuthWEB;
+                }
+                else
+                {
+                    Pacote_AuthWEB.Autenticado = false;
+                    Pacote_AuthWEB.Error = true;
+                    return Pacote_AuthWEB;
+                }
+
+               
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, GetType().Name);
+                Pacote_AuthWEB.Error = true;
+                Pacote_AuthWEB.Autenticado = false;
+
+                return Pacote_AuthWEB;
+            }
         }
 
         public bool StartServidor()
@@ -171,6 +220,11 @@ namespace ServerClienteOnline.MetodosAutenticacao
         }
 
         public bool StopServidor()
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool HTML_Autenticado(string Pacote_Auth)
         {
             throw new NotImplementedException();
         }

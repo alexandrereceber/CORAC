@@ -17,6 +17,8 @@ using ServerClienteOnline.Server;
 using Power_Shell.AmbienteExecucao;
 using ServerClienteOnline.MetodosAutenticacao;
 using ServerClienteOnline.Gerenciador.ClientesConectados;
+using CamadaDeDados.RESTFormat;
+
 
 namespace CORAC
 {
@@ -199,22 +201,14 @@ namespace CORAC
 
                 var content = new FormUrlEncodedContent(pairs);
                 URL.Timeout = TimeSpan.FromSeconds(30);
-                Task<HttpResponseMessage> Conteudo;
-
-                try
-                {
-                    Conteudo = URL.PostAsync(EndURI, content);
-                    await Task.WhenAll(Conteudo);
-                }
-                catch(Exception e)
-                {
-                    Conteudo = null;
-                }
+                
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
 
 
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                if (Conteudo.Result.IsSuccessStatusCode && Conteudo != null)
+                if (Conteudo.Result.IsSuccessStatusCode)
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Vermelho, Azul);
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
@@ -272,22 +266,12 @@ namespace CORAC
                 var content = new FormUrlEncodedContent(pairs);
                 
                 URL.Timeout = TimeSpan.FromSeconds(3);
-
-                Task<HttpResponseMessage> Conteudo;
-
-                try
-                {
-                    Conteudo = URL.PostAsync(EndURI, content);
-                    await Task.WhenAll(Conteudo);
-                }
-                catch (Exception e)
-                {
-                    Conteudo = null;
-                }
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
 
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                if (Conteudo.Result.IsSuccessStatusCode && Conteudo != null)
+                if (Conteudo.Result.IsSuccessStatusCode)
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Vermelho, Azul);
                     pictureBox_Registro_CORAC.Image = Internet_ON;
@@ -346,17 +330,8 @@ namespace CORAC
 
                 URL.Timeout = TimeSpan.FromSeconds(3);
 
-                Task<HttpResponseMessage> Conteudo;
-
-                try
-                {
-                    Conteudo = URL.PostAsync(EndURI, content);
-                    await Task.WhenAll(Conteudo);
-                }
-                catch (Exception e)
-                {
-                    Conteudo = null;
-                }
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
 
                 pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
@@ -375,7 +350,7 @@ namespace CORAC
 
                         Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
-                        return true;
+                        return false;
                     }
 
 
@@ -401,7 +376,7 @@ namespace CORAC
                 Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Azul, Vermelho);
                 pictureBox_Servidor_CORAC.Image = Internet_ON;
 
-                return true;
+                return false;
 
             }
         }
@@ -431,7 +406,7 @@ namespace CORAC
                 AbrirComando = null;
 
 
-                //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
+                //-------------------SERVIDOR HTTP-------------------------------------------------------------------
 
 
                 bool Server_HTTP = await Task.Run(ServidorWEB_Local.StopServidor);
@@ -539,7 +514,7 @@ namespace CORAC
                 Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                 pictureBox_Powershell.Image = Internet_ON;
 
-                return true;
+                return false;
 
             }
         }
@@ -696,11 +671,11 @@ namespace CORAC
                 {
                     textBox_Path_Type_AutenticationLDAP.Enabled = false;
                 }
-                bool AutenticWEB = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("WEB_Type_Autentication"));
+                bool AutenticWEB = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("BD_Type_Autentication"));
                 if (AutenticWEB)
                 {
                     textBox_Path_Type_AutenticationLDAP.Enabled = false;
-                    radioButton_WEB_Type_Autentication.Checked = true;
+                    radioButton_BD_Type_Autentication.Checked = true;
                 }
                 else
                 {
@@ -902,7 +877,7 @@ namespace CORAC
             }
         }
 
-        private void radioButton_WEB_Type_Autentication_Click(object sender, EventArgs e)
+        private void radioButton_BD_Type_Autentication_Click(object sender, EventArgs e)
         {
             textBox_Path_Type_AutenticationLDAP.Clear();
             textBox_Path_Type_AutenticationLDAP.Enabled = false;
@@ -1029,10 +1004,17 @@ namespace CORAC
 
         private async void button_Verificar_Atualizacao_CORAC_Click(object sender, EventArgs e)
         {
+
             if (Text_Box_Path_Update_CORAC.Text.Length > 0)
             {
                 try
                 {
+                    if (!await Conexoes.VerificarConectividade())
+                    {
+                        MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        throw new Exception("Sem conectividade");
+                    }
+
                     pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Wait;
                     Uri EndURI = new Uri(Text_Box_Path_Update_CORAC.Text);
                     HttpClient URL = new HttpClient();
@@ -1043,12 +1025,23 @@ namespace CORAC
 
                     var content = new FormUrlEncodedContent(pairs);
 
-                    HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+                    URL.Timeout = TimeSpan.FromSeconds(30);
+                    Task<HttpResponseMessage> Conteudo;
 
-
-                    if (Conteudo.IsSuccessStatusCode)
+                    try
                     {
-                        string Dados = await Conteudo.Content.ReadAsStringAsync();
+                        Conteudo = URL.PostAsync(EndURI, content);
+                        await Task.WhenAll(Conteudo);
+                    }
+                    catch (Exception E)
+                    {
+                        Conteudo = null;
+                    }
+
+
+                    if (Conteudo != null && Conteudo.Result.IsSuccessStatusCode)
+                    {
+                        string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
                         pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
                     }
                     else
@@ -1078,6 +1071,11 @@ namespace CORAC
             {
                 try
                 {
+                    if (!await Conexoes.VerificarConectividade())
+                    {
+                        MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        throw new Exception("Sem conectividade");
+                    }
                     pictureBox_Servidor_WEB.Image = Properties.Resources.Wait;
                     Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
 
@@ -1089,13 +1087,16 @@ namespace CORAC
 
                     var content = new FormUrlEncodedContent(pairs);
 
-                    HttpResponseMessage Conteudo = URL.PostAsync(EndURI, content).Result;
+                    URL.Timeout = TimeSpan.FromSeconds(30);
+
+                    Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                    await Task.WhenAll(Conteudo);
 
                     pictureBox_Servidor_WEB.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    if (Conteudo.IsSuccessStatusCode)
+                    if (Conteudo.Result.IsSuccessStatusCode)
                     {
-                        string Dados = await Conteudo.Content.ReadAsStringAsync();
+                        string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
                         Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
                         if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
                         {
@@ -1296,6 +1297,64 @@ namespace CORAC
             {
                 T.Enabled = true;
             }
+        }
+
+        private async void button_Credenciais_Click(object sender, EventArgs e)
+        {
+            string MetodoAutenticacao = null;
+
+            if (textBox_Username.Text.Length > 0 && textBox_Password.Text.Length > 0)
+            {
+                try
+                {
+                    if (!await Conexoes.VerificarConectividade())
+                    {
+                        MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        throw new Exception("Sem conectividade");
+                    }
+
+                    pictureBox_Credenciais.Image = Properties.Resources.Wait;
+                    
+                    Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
+                    if (radioButton_BD_Type_Autentication.Checked)
+                    {
+                        MetodoAutenticacao = "WEB";
+
+                    }
+                    else
+                    {
+                        MetodoAutenticacao = "LDAP";
+
+                    }
+
+                    Autenticador_WEB Verificar_Usuario = new Autenticador_WEB();
+                    Verificar_Usuario.Endereco_Autenticacao(textBox_Path_ServerWEB_CORAC.Text);
+                    Pacote_Auth Username = new Pacote_Auth();
+                    Username.Usuario = textBox_Username.Text;
+                    Username.Senha = textBox_Password.Text;
+                    Username.Autenticacao = MetodoAutenticacao;
+                    Username.Dispositivo = "pc";
+                    Pacote_Auth Resultado =  await Verificar_Usuario.HTML_AutenticarUsuario(Username);
+
+                }
+                catch (Exception E)
+                {
+                    pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("O usuário ou senha não preenchidos!", "Credenciais", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            }
+
+
+        }
+
+        private void groupBox8_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 

@@ -182,6 +182,11 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("DominioCliente")]
         public string DominioCliente { get; set; } /*Usado pelo servidor*/
 
+        [JsonProperty("Autenticacao")]
+        public string Autenticacao { get; set; } /*Método de autenticação que será utilizado pelo servidor WEB ldap, ad*/
+
+        [JsonProperty("Dispositivo")]
+        public string Dispositivo { get; set; } /*Usado pelo servidor*/
 
         [JsonProperty("DominioServidor")]
         public string DominioServidor { get; set; } /*Usado pelo servidor*/
@@ -193,6 +198,21 @@ namespace ServerClienteOnline.Utilidades
         public string GetResultado()
         {
             return "";
+        }
+
+        public List<KeyValuePair<string,string>> ListarAtributos()
+        {
+            List<KeyValuePair<string, string>> Lista = new List<KeyValuePair<string, string>>();
+            System.Reflection.PropertyInfo[] Propriedades = GetType().GetProperties();
+            
+            foreach(System.Reflection.PropertyInfo i in Propriedades)
+            {
+                string Valor = Convert.ToString(i.GetValue(this, null));
+                Lista.Add(new KeyValuePair<string, string>(i.Name, Valor));
+            }
+
+            
+            return Lista;
         }
     }
 
@@ -356,7 +376,7 @@ namespace ServerClienteOnline.Utilidades
     {
         public string Path_Update_CORAC;
         public bool LDAP_Type_Autentication;
-        public bool WEB_Type_Autentication;
+        public bool BD_Type_Autentication;
         public string Path_Type_AutenticationLDAP;
         public string Username;
         public string Password;
