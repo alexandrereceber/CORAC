@@ -127,6 +127,8 @@ namespace ServerClienteOnline.MetodosAutenticacao
     class Autenticador_WEB : Tratador_Erros, IServidor, IAuthHTML
     {
         private Uri _Servidor;
+        private Pacote_Error Error = null;
+        private Pacote_Auth Pacote_Autenticacao = null;
 
         /**
          * <summary>
@@ -135,9 +137,11 @@ namespace ServerClienteOnline.MetodosAutenticacao
          * <para>void</para>
          * </summary>
          */
-        public void Endereco_Autenticacao(string Servidor)
+        public void Endereco_Autenticacao(Uri PathURI, string Pasta)
         {
-            _Servidor =  new Uri(Servidor);
+            string pth = PathURI.Scheme + "://" + PathURI.Host + ":" + PathURI.Port + Pasta;
+            _Servidor =  new Uri(pth);
+            
         }
 
         public async Task<bool> CheckServidorOnline()
@@ -168,7 +172,10 @@ namespace ServerClienteOnline.MetodosAutenticacao
             }
         }
 
-        public async Task<Pacote_Auth> HTML_AutenticarUsuario(Pacote_Auth Pacote_AuthWEB)
+        public Pacote_Error Get_Error_Servidor_WEB { get { return Error; } }
+        public Pacote_Auth GetAutenticacao { get { return Pacote_Autenticacao; } }
+
+        public async Task<bool> HTML_AutenticarUsuario(Pacote_Auth Pacote_AuthWEB)
         {
 
             try
@@ -186,15 +193,32 @@ namespace ServerClienteOnline.MetodosAutenticacao
                 if (Conteudo.Result.IsSuccessStatusCode)
                 {
                     string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
-                    Pacote_AuthWEB = JsonConvert.DeserializeObject<Pacote_Auth>(Dados);
+                    Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Dados);
+                    if(PB.Pacote != TipoPacote.Error)
+                    {
+                        Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo); ;
+                        Pacote_Autenticacao.Autenticado = true;
+                        Pacote_Autenticacao.Error = false;
 
-                    return Pacote_AuthWEB;
+
+                        return true;
+                    }
+                    else
+                    {
+                        Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
+                        return false;
+
+                    }
                 }
                 else
                 {
                     Pacote_AuthWEB.Autenticado = false;
                     Pacote_AuthWEB.Error = true;
-                    return Pacote_AuthWEB;
+                    Error = new Pacote_Error();
+                    Error.Error = true;
+                    Error.Mensagem = "A conexão com o URi não foi estabelecida com sucesso!";
+
+                    return false;
                 }
 
                
@@ -202,10 +226,8 @@ namespace ServerClienteOnline.MetodosAutenticacao
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);
-                Pacote_AuthWEB.Error = true;
-                Pacote_AuthWEB.Autenticado = false;
-
-                return Pacote_AuthWEB;
+                //Classe Tratador de erros tem métodos para tratar erro a esse nível
+                return false;
             }
         }
 

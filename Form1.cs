@@ -1307,18 +1307,19 @@ namespace CORAC
             {
                 try
                 {
+                    pictureBox_Credenciais.Image = Properties.Resources.Wait;
+                    
                     if (!await Conexoes.VerificarConectividade())
                     {
                         MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         throw new Exception("Sem conectividade");
                     }
 
-                    pictureBox_Credenciais.Image = Properties.Resources.Wait;
                     
                     Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
                     if (radioButton_BD_Type_Autentication.Checked)
                     {
-                        MetodoAutenticacao = "WEB";
+                        MetodoAutenticacao = "BD";
 
                     }
                     else
@@ -1328,14 +1329,23 @@ namespace CORAC
                     }
 
                     Autenticador_WEB Verificar_Usuario = new Autenticador_WEB();
-                    Verificar_Usuario.Endereco_Autenticacao(textBox_Path_ServerWEB_CORAC.Text);
+                    Verificar_Usuario.Endereco_Autenticacao(EndURI, "/CORAC/CheckedUser/");
                     Pacote_Auth Username = new Pacote_Auth();
                     Username.Usuario = textBox_Username.Text;
                     Username.Senha = textBox_Password.Text;
                     Username.Autenticacao = MetodoAutenticacao;
                     Username.Dispositivo = "pc";
-                    Pacote_Auth Resultado =  await Verificar_Usuario.HTML_AutenticarUsuario(Username);
+                    bool Resultado =  await Verificar_Usuario.HTML_AutenticarUsuario(Username);
+                    if (Resultado)
+                    {
+                        pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
 
+                    }
+                    else
+                    {
+                        pictureBox_Credenciais.Image = Properties.Resources.Acepty;
+
+                    }
                 }
                 catch (Exception E)
                 {

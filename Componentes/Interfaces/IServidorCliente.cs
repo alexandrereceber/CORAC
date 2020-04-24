@@ -33,7 +33,7 @@ namespace ServerClienteOnline.Interfaces
  */
     public interface IAuthHTML : IDisposable
     {
-        Task<Pacote_Auth> HTML_AutenticarUsuario(Pacote_Auth Pacote_Auth);
+        Task<bool> HTML_AutenticarUsuario(Pacote_Auth Pacote_Auth);
         bool HTML_Autenticado(string Pacote_Auth);
     }
     /**
