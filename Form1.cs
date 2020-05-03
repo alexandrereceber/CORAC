@@ -1303,7 +1303,7 @@ namespace CORAC
         {
             string MetodoAutenticacao = null;
 
-            if (textBox_Username.Text.Length > 0 && textBox_Password.Text.Length > 0)
+            if (textBox_Username.Text.Length > 0 && textBox_Password.Text.Length > 0 && (radioButton_BD_Type_Autentication.Checked || radioButton_LDAP_Type_Autentication.Checked))
             {
                 try
                 {
@@ -1335,15 +1335,16 @@ namespace CORAC
                     Username.Senha = textBox_Password.Text;
                     Username.Autenticacao = MetodoAutenticacao;
                     Username.Dispositivo = "pc";
+                    Verificar_Usuario.SetTratador_Erros(TipoSaidaErros.Arquivo);
                     bool Resultado =  await Verificar_Usuario.HTML_AutenticarUsuario(Username);
                     if (Resultado)
                     {
-                        pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
+                        pictureBox_Credenciais.Image = Properties.Resources.Acepty;
 
                     }
                     else
                     {
-                        pictureBox_Credenciais.Image = Properties.Resources.Acepty;
+                        pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
 
                     }
                 }
@@ -1355,7 +1356,7 @@ namespace CORAC
             }
             else
             {
-                MessageBox.Show("O usuário ou senha não preenchidos!", "Credenciais", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Método de autenticação, usuário ou senha não preenchidos!", "Credenciais", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             }
 
