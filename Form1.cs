@@ -159,6 +159,7 @@ namespace CORAC
                 Color Azul = Color.FromArgb(255, 0, 1, 255);
                 Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
                 picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
+                picture_Internet_Status.Tag = "O acesso à internet está OK.";
                 picture_Internet_Status.Image = Internet_ON;
                 return true;
             }
@@ -168,6 +169,7 @@ namespace CORAC
                 Color Azul = Color.FromArgb(255, 0, 1, 255);
                 Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
                 picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
+                picture_Internet_Status.Tag = "Falha ao acessa internet.";
                 picture_Internet_Status.Image = Internet_ON;
                 return false;
             }
@@ -213,6 +215,7 @@ namespace CORAC
                 if (Conteudo.Result.IsSuccessStatusCode)
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Vermelho, Azul);
+                    picture_Internet_Status.Tag = "";
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
 
                     return true;
@@ -220,6 +223,7 @@ namespace CORAC
                 else
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
+                    picture_Internet_Status.Tag = "O sistema de atualização não responde.";
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
                     return false;
                 }
@@ -422,6 +426,7 @@ namespace CORAC
                     if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
                     {
                         Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
+                        picture_Internet_Status.Tag = "O servidor CORAC e sua assinatura estão corretos.";
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
                         return true;
                     }
@@ -429,6 +434,7 @@ namespace CORAC
                     {
 
                         Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
+                        picture_Internet_Status.Tag = "O servidor CORAC está ativo, mas sua assinatura não corresponde a uma assinatura válida!";
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
                         return false;
                     }
@@ -727,7 +733,6 @@ namespace CORAC
 
         private void toolStripMenuItem1_MAN_Click(object sender, EventArgs e)
         {
-            //this.WindowState = FormWindowState.Minimized;
             this.Show();
         }
 
@@ -1449,6 +1454,32 @@ namespace CORAC
         }
 
         private void PictureBox_Registro_CORAC_MouseEnter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
+        }
+
+        private void Notificacao_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            this.Show();
+
+        }
+
+        private void PictureBox_Registro_CORAC_MouseLeave(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "";
+        }
+
+        private void Picture_Internet_Status_MouseEnter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
+        }
+
+        private void Picture_Atualizacoes_CORAC_MouseEnter(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void PictureBox_Servidor_CORAC_MouseEnter(object sender, EventArgs e)
         {
             Status_Informacao.Text = (string)(sender as PictureBox).Tag;
         }

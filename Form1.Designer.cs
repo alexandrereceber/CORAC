@@ -334,7 +334,7 @@
             this.picture_Internet_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Internet_Status.TabIndex = 1;
             this.picture_Internet_Status.TabStop = false;
-            this.picture_Internet_Status.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picture_Internet_Status_MouseMove);
+            this.picture_Internet_Status.MouseEnter += new System.EventHandler(this.Picture_Internet_Status_MouseEnter);
             // 
             // Atualizacao_Status_GoupBox
             // 
@@ -365,6 +365,7 @@
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
+            this.picture_Atualizacoes_CORAC.MouseEnter += new System.EventHandler(this.Picture_Atualizacoes_CORAC_MouseEnter);
             // 
             // button_AtualizacoesCORAC
             // 
@@ -406,6 +407,7 @@
             this.pictureBox_Servidor_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Servidor_CORAC.TabIndex = 3;
             this.pictureBox_Servidor_CORAC.TabStop = false;
+            this.pictureBox_Servidor_CORAC.MouseEnter += new System.EventHandler(this.PictureBox_Servidor_CORAC_MouseEnter);
             // 
             // button_Server_WEB_CORAC
             // 
@@ -448,6 +450,7 @@
             this.pictureBox_Registro_CORAC.TabStop = false;
             this.pictureBox_Registro_CORAC.Tag = "ll";
             this.pictureBox_Registro_CORAC.MouseEnter += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseEnter);
+            this.pictureBox_Registro_CORAC.MouseLeave += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseLeave);
             // 
             // button_RegistroMaquina
             // 
@@ -1079,6 +1082,7 @@
             this.Notificacao.Tag = "hh";
             this.Notificacao.Text = "CORAC";
             this.Notificacao.Visible = true;
+            this.Notificacao.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Notificacao_MouseDoubleClick);
             // 
             // Status_Informacao
             // 
