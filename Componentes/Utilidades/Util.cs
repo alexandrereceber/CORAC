@@ -388,4 +388,15 @@ namespace ServerClienteOnline.Utilidades
         public int Path_ServerPorta_AR;
 
     }
+
+    enum StatusRegistro
+    {
+        Habilitado = 0,
+        Desabilitado =1
+    }
+    class RegistroCORAC
+    {
+        public string Registro;
+        public StatusRegistro Status;
+    }
 }

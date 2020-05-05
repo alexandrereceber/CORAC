@@ -946,5 +946,14 @@ struct InforError
         {
             return PacoteTBL;
         }
+
+        public InforError GetInfoError()
+        {
+            return InfoError;
+        }
     }
 }
+
+/**
+ * 
+*/

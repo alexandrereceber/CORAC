@@ -8,6 +8,8 @@ using System.Net;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using ServerClienteOnline.Conectividade;
 using ServerClienteOnline.TratadorDeErros;
 using System.Drawing;
@@ -18,7 +20,7 @@ using Power_Shell.AmbienteExecucao;
 using ServerClienteOnline.MetodosAutenticacao;
 using ServerClienteOnline.Gerenciador.ClientesConectados;
 using CamadaDeDados.RESTFormat;
-
+using ServerClienteOnline.WMIs;
 
 namespace CORAC
 {
@@ -34,7 +36,7 @@ namespace CORAC
         Ambiente_PowerShell AbrirComando = null;
         Servidor_HTTP ServidorWEB_Local = null;
         Autenticador_WEB Autent_WEB = null;
-
+        RegistroCORAC Registro_Corac = new RegistroCORAC();
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
         {
             int count = 0;
@@ -247,44 +249,95 @@ namespace CORAC
         {
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
             Color Azul = Color.FromArgb(255, 0, 1, 255);
-
+            
             try
             {
+                string NomeEstacao = Dns.GetHostName();
+
                 pictureBox_Registro_CORAC.Image = Properties.Resources.Wait;
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
                 
                 if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
-                Uri EndURI = new Uri("http://192.168.15.4/CORAC/REGISTRO");
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+                string pth = EndURI.Scheme + "://" + EndURI.Host + ":" + EndURI.Port + "/CORAC/ControladorTabelas/";
+                Tabelas BuscarRegistro_CORAC = new Tabelas(pth);
 
-                HttpClient URL = new HttpClient();
-                var pairs = new List<KeyValuePair<string, string>>
-                                        {
-                                            new KeyValuePair<string, string>("login", "abc")
-                                        };
-
-                var content = new FormUrlEncodedContent(pairs);
-                
-                URL.Timeout = TimeSpan.FromSeconds(3);
-                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
-                await Task.WhenAll(Conteudo);
-
-                pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                if (Conteudo.Result.IsSuccessStatusCode)
+                List<KeyValuePair<int, string[]>> FiltrosB = new List<KeyValuePair<int, string[]>>();
+                FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "1", "like", NomeEstacao, "1" }));
+                BuscarRegistro_CORAC.setFiltros(TipoFiltro.Buscar, FiltrosB);
+                BuscarRegistro_CORAC.sendTabela = "e78169c2553f6f5abe6e35fe042b792a";
+                 await BuscarRegistro_CORAC.SelectTabelaJSON();
+                if (!BuscarRegistro_CORAC.getError)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Vermelho, Azul);
-                    pictureBox_Registro_CORAC.Image = Internet_ON;
+                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                    return true;
+                    JProperty Dados = BuscarRegistro_CORAC.getDados().ResultadoDados;
+                    if(Dados.Value.HasValues)
+                    {
+                        string Status = (string)Dados.Value[0][3];
+                        if (Status == "Ativado")
+                        {
+                            //Registro encontrado e equipamento ativado
+                            Registro_Corac.Status = StatusRegistro.Habilitado;
+                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Vermelho, Azul);
+                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado";
+                            pictureBox_Registro_CORAC.Image = Internet_ON;
+                            FiltrosB.Clear();
+                            return true;
+                        }
+                        else
+                        {
+                            //Registro encontrado e equipamento desativado.
+                            Registro_Corac.Status = StatusRegistro.Desabilitado;
+                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
+                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento desativado.";
+                            pictureBox_Registro_CORAC.Image = Internet_ON;
+                            FiltrosB.Clear();
+                            return false;
+                        }
+
+                    }
+                    else
+                    {
+                        int Chassi = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "ChassisTypes")[0];
+
+                        List<KeyValuePair<string, string>> IDados = new List<KeyValuePair<string, string>>();
+                        IDados.Add(new KeyValuePair<string, string>("Tipo", Convert.ToString(Chassi)));
+                        IDados.Add(new KeyValuePair<string, string>("Nome", NomeEstacao));
+
+                        BuscarRegistro_CORAC.sendTabela = "334644edbd3aecbe746b32f4f2e8e5fb";
+                        BuscarRegistro_CORAC.setDadosInserir(IDados);
+
+                        Boolean Adicionar = await BuscarRegistro_CORAC.InserirDadosTabela();
+                        if (Adicionar)
+                        {
+                            pictureBox_Registro_CORAC.Tag = "O agente autônomo foi adicionado com sucesso, favor entrar em contato com administrador para habilitação. Nome: " + NomeEstacao;
+
+                        }
+                        else
+                        {
+                            pictureBox_Registro_CORAC.Tag = "O agente autônomo não pode ser adicionado. Nome: " + NomeEstacao;
+
+                        }
+
+                        //error, registro não encontrado
+                        Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
+                        pictureBox_Registro_CORAC.Image = Internet_ON;
+                        return false;
+                    }
+
                 }
                 else
                 {
+                    //Mensagem de error no site
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
+                    pictureBox_Registro_CORAC.Tag = "O Site do CORAC devolveu um erro.";
                     pictureBox_Registro_CORAC.Image = Internet_ON;
+                    FiltrosB.Clear();
+
                     return false;
                 }
-
 
             }
             catch (Exception E)
@@ -295,6 +348,7 @@ namespace CORAC
 
 
                 Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul , Vermelho);
+                pictureBox_Registro_CORAC.Tag = "Error reportado pelo tratador de erros.";
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_Registro_CORAC.Image = Internet_ON;
 
@@ -1366,6 +1420,11 @@ namespace CORAC
         private void groupBox8_Enter(object sender, EventArgs e)
         {
 
+        }
+
+        private void PictureBox_Registro_CORAC_MouseEnter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
         }
     }
 
