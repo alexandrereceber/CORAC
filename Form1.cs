@@ -386,88 +386,6 @@ namespace CORAC
             }
         }
 
-        /**
-         * <summary>
-            Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
-         * </summary>
-         */
-        private async Task<bool> Verificar_Servidor_CORAC()
-        {
-            pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
-
-            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
-            Color Azul = Color.FromArgb(255, 0, 1, 255);
-            try
-            {
-                pictureBox_Servidor_CORAC.Image = Properties.Resources.Wait;
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
-                
-                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
-
-                HttpClient URL = new HttpClient();
-                var pairs = new List<KeyValuePair<string, string>>
-                                        {
-                                            new KeyValuePair<string, string>("login", "abc")
-                                        };
-
-                var content = new FormUrlEncodedContent(pairs);
-
-                URL.Timeout = TimeSpan.FromSeconds(3);
-
-                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
-                await Task.WhenAll(Conteudo);
-
-                pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-
-                if (Conteudo.Result.IsSuccessStatusCode)
-                {
-                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
-                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
-                    if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
-                    {
-                        
-                        Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
-                        picture_Internet_Status.Tag = "O servidor CORAC e sua assinatura estão corretos.";
-                        pictureBox_Servidor_CORAC.Image = Internet_ON;
-                        return true;
-                    }
-                    else
-                    {
-
-                        Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
-                        picture_Internet_Status.Tag = "O servidor CORAC está ativo, mas sua assinatura não corresponde a uma assinatura válida!";
-                        pictureBox_Servidor_CORAC.Image = Internet_ON;
-                        return false;
-                    }
-
-
-
-                }
-                else
-                {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Azul, Vermelho);
-                    pictureBox_Servidor_CORAC.Image = Internet_ON;
-                    return false;
-                }
-
-
-
-            }
-            catch (Exception E)
-            {
-                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
-                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
-                Gerar_Arquivo.TratadorErros(E, GetType().Name);
-
-                pictureBox_Servidor_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Azul, Vermelho);
-                pictureBox_Servidor_CORAC.Image = Internet_ON;
-
-                return false;
-
-            }
-        }
-
 
         /**
           * <summary>
@@ -607,31 +525,26 @@ namespace CORAC
         }
         private async Task<bool> Loaders()
         {
-            Task Atualizar, Registro, ServidorCORAC, Powerhell_WEB;
-            int Atualizar_ID = 0, Registro_ID = 0, ServidorCORAC_ID = 0, Powerhell_WEB_ID = 0;
+            Task Atualizar, Registro,  Powerhell_WEB;
+            int Atualizar_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0;
             List<Task> Servicos = new List<Task>();
 
             if (await Verirficar_Conectividade())
             {
-                Atualizar = Task.Run(Verificar_Atualizacoes);
-                Atualizar_ID = Atualizar.Id;
+                //Atualizar = Task.Run(Verificar_Atualizacoes);
+                //Atualizar_ID = Atualizar.Id;
 
                 Registro = Task.Run(Verificar_Registro);
                 Registro_ID = Registro.Id;
 
-                ServidorCORAC = Task.Run(Verificar_Servidor_CORAC);
-                ServidorCORAC_ID = ServidorCORAC.Id;
-
-                Servicos.Add(Atualizar);
-                Servicos.Add(Registro);
-                Servicos.Add(ServidorCORAC);
+                //Servicos.Add(Atualizar);
+                //Servicos.Add(Registro);
 
             }
             else
             {
                 button_AtualizacoesCORAC.Enabled = true;
                 button_RegistroMaquina.Enabled = true;
-                button_Server_WEB_CORAC.Enabled = true;
             }
             button_VerificarInternet.Enabled = true;
 
@@ -653,13 +566,7 @@ namespace CORAC
                     Servicos.Remove(Tarefa);
                     button_RegistroMaquina.Enabled = true;
                 }
-                else if (Tarefa.Id == ServidorCORAC_ID)
-                {
-
-                    Servicos.Remove(Tarefa);
-                    button_Server_WEB_CORAC.Enabled = true;
-
-                }
+                
                 else if (Tarefa.Id == Powerhell_WEB_ID)
                 {
 
@@ -745,7 +652,6 @@ namespace CORAC
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
 
-                Text_Box_Path_Update_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC");
                 
                 bool AutenticLDAP = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
                 if (AutenticLDAP)
@@ -772,10 +678,6 @@ namespace CORAC
                 textBox_Username.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Username");
                 textBox_Password.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Password");
                 textBox_Path_ServerWEB_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
-                textBox_Path_ServerIP_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
-                textBox_Path_ServerPorta_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC");
-                textBox_Path_ServerIP_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_AR");
-                textBox_Path_ServerPorta_AR.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_AR");
             }
             catch(Exception E)
             {
@@ -784,21 +686,6 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
             }
 
-
-        }
-
-        private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Comp_Notication_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
 
         }
 
@@ -818,10 +705,6 @@ namespace CORAC
             Application.Exit();
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void SalvaConfiguracoes_Click(object sender, EventArgs e)
         {
@@ -864,11 +747,6 @@ namespace CORAC
             }
         }
 
-        private void textBox_Path_ServerPorta_CORAC_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void textBox_Path_Type_AutenticationLDAP_Leave(object sender, EventArgs e)
         {
             TextBox T = sender as TextBox;
@@ -909,26 +787,6 @@ namespace CORAC
             }
         }
 
-
-        private void textBox_Path_ServerPorta_CORAC_Leave(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox_Path_ServerIP_AR_Leave(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox_Path_ServerPorta_AR_Leave(object sender, EventArgs e)
-        {
-            TextBox T = sender as TextBox;
-
-            if (T.Modified)
-            {
-                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
-            }
-        }
-
         private void radioButton_LDAP_Type_Autentication_Click(object sender, EventArgs e)
         {
             RadioButton T = sender as RadioButton;
@@ -942,67 +800,7 @@ namespace CORAC
             }
         }
 
-        private void radioButton_BD_Type_Autentication_Click(object sender, EventArgs e)
-        {
-            textBox_Path_Type_AutenticationLDAP.Clear();
-            textBox_Path_Type_AutenticationLDAP.Enabled = false;
-            Status_Informacao.Text = "Autenticação WEB. Utiliza o endereço do servidor CORAC WEB.";
 
-        }
-
-        private void textBox_Path_ServerIP_CORAC_Enter(object sender, EventArgs e)
-        {
-
-
-        }
-
-        private void textBox_Path_ServerPorta_CORAC_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox_Path_ServerIP_AR_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox_Path_ServerPorta_AR_Enter(object sender, EventArgs e)
-        {
-            Status_Informacao.Text = "Porta do servidor local de acesso remoto.";
-
-        }
-
-        private void textBox_Path_ServerPorta_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void textBox_Path_ServerPorta_CORAC_TextChanged_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox_Path_ServerPorta_AR_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            TextBox T = sender as TextBox;
-
-            decimal Porta;
-            if (decimal.TryParse(T.Text, out Porta))
-            {
-                if (!(Porta > 1000 && Porta < 65535))
-                {
-                    T.Clear();
-                    MessageBox.Show("O valor da porta deve estar entre 1000 e 65535.","Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    e.Cancel = true;
-                }
-            }
-            else
-            {
-                T.Clear();
-                MessageBox.Show("O valor digitado não representa um número de porta válida!", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                e.Cancel = true;
-            }
-        }
 
         private void radioButton_LDAP_Type_Autentication_Click_1(object sender, EventArgs e)
         {
@@ -1014,26 +812,6 @@ namespace CORAC
                 ArmazenarAlteracoesCampos((string)T.Tag, Convert.ToString(T.Checked));
                 ArmazenarAlteracoesCampos("LDAP_Type_Autentication", "True");
             }
-        }
-
-        private void Text_Box_Path_Update_CORAC_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void Text_Box_Path_Update_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-
-        }
-
-        private void button_Verificar_Atualizacao_CORAC_Click(object sender, EventArgs e)
-        {
-
         }
 
         private async void button_Servidor_WEB_Click(object sender, EventArgs e)
@@ -1116,16 +894,6 @@ namespace CORAC
             }
         }
 
-        private void picture_Internet_Status_MouseClick(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void picture_Internet_Status_MouseMove(object sender, MouseEventArgs e)
-        {
-           
-        }
-
         private async void button_VerificarInternet_Click(object sender, EventArgs e)
         {
             Button B = (Button)sender;
@@ -1167,19 +935,6 @@ namespace CORAC
             }
         }
 
-        private async void button_Server_WEB_CORAC_Click(object sender, EventArgs e)
-        {
-            Button B = (Button)sender;
-            B.Enabled = false;
-            try
-            {
-                await Verificar_Servidor_CORAC();
-            }
-            finally
-            {
-                B.Enabled = true;
-            }
-        }
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -1367,7 +1122,11 @@ namespace CORAC
 
         private void PictureBox_Servidor_CORAC_MouseEnter(object sender, EventArgs e)
         {
-            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
+        }
+
+        private void button_Server_WEB_CORAC_Click(object sender, EventArgs e)
+        {
+
         }
     }
 

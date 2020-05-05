@@ -198,5 +198,8 @@
   <ItemGroup>
     <None Include="Resources\verified.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Confguracoes.fw.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
