@@ -212,14 +212,14 @@ namespace CORAC
 
                 if (Conteudo.Result.IsSuccessStatusCode)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Vermelho, Azul);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Vermelho, Azul);
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
 
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Azul, Vermelho);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
                     picture_Atualizacoes_CORAC.Image = Internet_ON;
                     return false;
                 }
@@ -232,7 +232,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_126px, Azul, Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
 
                 picture_Atualizacoes_CORAC.Image = Internet_ON;
 
@@ -270,7 +270,6 @@ namespace CORAC
                  await BuscarRegistro_CORAC.SelectTabelaJSON();
                 if (!BuscarRegistro_CORAC.getError)
                 {
-                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
 
                     JProperty Dados = BuscarRegistro_CORAC.getDados().ResultadoDados;
                     if(Dados.Value.HasValues)
@@ -278,10 +277,36 @@ namespace CORAC
                         string Status = (string)Dados.Value[0][3];
                         if (Status == "Ativado")
                         {
-                            //Registro encontrado e equipamento ativado
+                            /**
+                             * Informando que a máquina está ligada
+                             */
+                            string getChave = Dados.Value[0][0].Value<string>();
+                            List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                            KDados.Add(new KeyValuePair<string, string>("0", getChave));
+                            BuscarRegistro_CORAC.setKeyDadosAtualizar(KDados);
+
+                            List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                            ADados.Add(new KeyValuePair<string, string>("Status", "Ligada"));
+
+                            BuscarRegistro_CORAC.sendTabela = "334644edbd3aecbe746b32f4f2e8e5fb";
+                            BuscarRegistro_CORAC.setDadosAtualizar(ADados);
+                            String Estado = "";
+                            Boolean Rst = await BuscarRegistro_CORAC.AtualizarDadosTabela();
+                            if (Rst)
+                            {
+                                Estado = "Mudança de status feita com sucesso!";
+                            }
+                            else
+                            {
+                                Estado = "Mudança de status não foi realizada com sucesso!";
+                            }
+                            /*
+                             * Registro encontrado e equipamento ativado
+                             */
                             Registro_Corac.Status = StatusRegistro.Habilitado;
-                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Vermelho, Azul);
-                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado";
+                            pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
+                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado. " + Estado;
                             pictureBox_Registro_CORAC.Image = Internet_ON;
                             FiltrosB.Clear();
                             return true;
@@ -290,8 +315,9 @@ namespace CORAC
                         {
                             //Registro encontrado e equipamento desativado.
                             Registro_Corac.Status = StatusRegistro.Desabilitado;
-                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
-                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento desativado.";
+                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
+                            pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento desativado. Favor requisitar habilitação junto ao administrador da sua unidade.";
                             pictureBox_Registro_CORAC.Image = Internet_ON;
                             FiltrosB.Clear();
                             return false;
@@ -322,7 +348,7 @@ namespace CORAC
                         }
 
                         //error, registro não encontrado
-                        Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
+                        Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
                         pictureBox_Registro_CORAC.Image = Internet_ON;
                         return false;
                     }
@@ -331,7 +357,7 @@ namespace CORAC
                 else
                 {
                     //Mensagem de error no site
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul, Vermelho);
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
                     pictureBox_Registro_CORAC.Tag = "O Site do CORAC devolveu um erro.";
                     pictureBox_Registro_CORAC.Image = Internet_ON;
                     FiltrosB.Clear();
@@ -347,7 +373,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
 
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_128px, Azul , Vermelho);
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul , Vermelho);
                 pictureBox_Registro_CORAC.Tag = "Error reportado pelo tratador de erros.";
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_Registro_CORAC.Image = Internet_ON;

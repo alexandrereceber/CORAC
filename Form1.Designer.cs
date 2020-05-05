@@ -357,11 +357,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picture_Atualizacoes_CORAC.Cursor = System.Windows.Forms.Cursors.Default;
             this.picture_Atualizacoes_CORAC.ErrorImage = null;
-            this.picture_Atualizacoes_CORAC.Image = global::CORAC.Properties.Resources.Update_System_126px;
+            this.picture_Atualizacoes_CORAC.Image = global::CORAC.Properties.Resources.Update_System_256px;
             this.picture_Atualizacoes_CORAC.InitialImage = null;
-            this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(77, 45);
+            this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(72, 45);
             this.picture_Atualizacoes_CORAC.Name = "picture_Atualizacoes_CORAC";
-            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(120, 131);
+            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(129, 131);
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
