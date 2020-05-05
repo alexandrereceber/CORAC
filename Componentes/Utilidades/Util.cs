@@ -374,18 +374,12 @@ namespace ServerClienteOnline.Utilidades
 
     struct CamposCORAC
     {
-        public string Path_Update_CORAC;
         public bool LDAP_Type_Autentication;
         public bool BD_Type_Autentication;
         public string Path_Type_AutenticationLDAP;
         public string Username;
         public string Password;
         public string Path_ServerWEB_CORAC;
-        public string Path_Server_CORAC;
-        public string Path_ServerIP_CORAC;
-        public int Path_ServerPorta_CORAC;
-        public string Path_ServerIP_AR;
-        public int Path_ServerPorta_AR;
 
     }
 

@@ -195,7 +195,7 @@ namespace CORAC
                 
                 if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
 
                 HttpClient URL = new HttpClient();
                 var pairs = new List<KeyValuePair<string, string>>
@@ -263,7 +263,7 @@ namespace CORAC
                 
                 if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
 
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_Update_CORAC"));
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
                 string pth = EndURI.Scheme + "://" + EndURI.Host + ":" + EndURI.Port + "/CORAC/ControladorTabelas/";
                 Tabelas BuscarRegistro_CORAC = new Tabelas(pth);
 
@@ -425,6 +425,7 @@ namespace CORAC
                     Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
                     if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
                     {
+                        
                         Bitmap Internet_ON = Change_Color(Properties.Resources.Banco_Dados_256px, Vermelho, Azul);
                         picture_Internet_Status.Tag = "O servidor CORAC e sua assinatura estão corretos.";
                         pictureBox_Servidor_CORAC.Image = Internet_ON;
@@ -908,35 +909,14 @@ namespace CORAC
             }
         }
 
-        private void textBox_Path_ServerIP_CORAC_Leave(object sender, EventArgs e)
-        {
-            TextBox T = sender as TextBox;
-
-            if (T.Modified)
-            {
-                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
-            }
-        }
 
         private void textBox_Path_ServerPorta_CORAC_Leave(object sender, EventArgs e)
         {
 
-            TextBox T = sender as TextBox;
-
-            if (T.Modified)
-            {
-                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
-            }
         }
 
         private void textBox_Path_ServerIP_AR_Leave(object sender, EventArgs e)
         {
-            TextBox T = sender as TextBox;
-
-            if (T.Modified)
-            {
-                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
-            }
         }
 
         private void textBox_Path_ServerPorta_AR_Leave(object sender, EventArgs e)
@@ -972,20 +952,17 @@ namespace CORAC
 
         private void textBox_Path_ServerIP_CORAC_Enter(object sender, EventArgs e)
         {
-            textBox_Path_Type_AutenticationLDAP.Enabled = true;
-            Status_Informacao.Text = "Autenticação LDAP.";
+
 
         }
 
         private void textBox_Path_ServerPorta_CORAC_Enter(object sender, EventArgs e)
         {
-            Status_Informacao.Text = "Porta do servidor local CORAC.";
 
         }
 
         private void textBox_Path_ServerIP_AR_Enter(object sender, EventArgs e)
         {
-            Status_Informacao.Text = "Endereço do servidor local de acesso remoto.";
 
         }
 
@@ -995,31 +972,9 @@ namespace CORAC
 
         }
 
-        private void radioButton_LDAP_Type_Autentication_Leave(object sender, EventArgs e)
-        {
-
-        }
-
         private void textBox_Path_ServerPorta_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            TextBox T = sender as TextBox;
 
-            decimal Porta;
-            if (decimal.TryParse(T.Text, out Porta))
-            {
-                if (!(Porta > 1000 && Porta < 65535))
-                {
-                    T.Clear();
-                    MessageBox.Show("O valor da porta deve estar entre 1000 e 65535", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    e.Cancel = true;
-                }
-            }
-            else
-            {
-                T.Clear();
-                MessageBox.Show("O valor digitado não representa um número de porta válida!", "Porta inválida!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                e.Cancel = true;
-            }
         }
 
         private void textBox_Path_ServerPorta_CORAC_TextChanged_1(object sender, EventArgs e)
@@ -1073,81 +1028,12 @@ namespace CORAC
 
         private void Text_Box_Path_Update_CORAC_Validating(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            TextBox T = (TextBox)sender;
-            if (T.Modified)
-            {
-                Regex CampoCORACAtualiza = new Regex("^http[s]?://");
-                if (!CampoCORACAtualiza.IsMatch(T.Text))
-                {
-                    e.Cancel = true;
-                    MessageBox.Show("O campo precisa iniciar com http(s)://", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
-                }
-
-            }
         }
 
-        private async void button_Verificar_Atualizacao_CORAC_Click(object sender, EventArgs e)
+        private void button_Verificar_Atualizacao_CORAC_Click(object sender, EventArgs e)
         {
 
-            if (Text_Box_Path_Update_CORAC.Text.Length > 0)
-            {
-                try
-                {
-                    if (!await Conexoes.VerificarConectividade())
-                    {
-                        MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        throw new Exception("Sem conectividade");
-                    }
-
-                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Wait;
-                    Uri EndURI = new Uri(Text_Box_Path_Update_CORAC.Text);
-                    HttpClient URL = new HttpClient();
-                    var pairs = new List<KeyValuePair<string, string>>
-                                        {
-                                            new KeyValuePair<string, string>("login", "abc")
-                                        };
-
-                    var content = new FormUrlEncodedContent(pairs);
-
-                    URL.Timeout = TimeSpan.FromSeconds(30);
-                    Task<HttpResponseMessage> Conteudo;
-
-                    try
-                    {
-                        Conteudo = URL.PostAsync(EndURI, content);
-                        await Task.WhenAll(Conteudo);
-                    }
-                    catch (Exception E)
-                    {
-                        Conteudo = null;
-                    }
-
-
-                    if (Conteudo != null && Conteudo.Result.IsSuccessStatusCode)
-                    {
-                        string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
-                        pictureBox_Atualizacao_CORAC.Image = Properties.Resources.Acepty;
-                    }
-                    else
-                    {
-                        pictureBox_Atualizacao_CORAC.Image = Properties.Resources.No_Acepty;
-
-                    }
-
-
-                }
-                catch (Exception E)
-                {
-                    pictureBox_Atualizacao_CORAC.Image = Properties.Resources.No_Acepty;
-
-                }
-            }
-            else
-            {
-                MessageBox.Show("Endereço inválido!", "Endereço WEB", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
         }
 
         private async void button_Servidor_WEB_Click(object sender, EventArgs e)
