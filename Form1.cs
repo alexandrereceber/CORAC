@@ -286,6 +286,7 @@ namespace CORAC
                              */
                             string getChave = Dados.Value[0][0].Value<string>();
                             List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                            
                             KDados.Add(new KeyValuePair<string, string>("0", getChave));
                             BuscarRegistro_CORAC.setKeyDadosAtualizar(KDados);
 
@@ -308,6 +309,8 @@ namespace CORAC
                              * Registro encontrado e equipamento ativado
                              */
                             Registro_Corac.Status = StatusRegistro.Habilitado;
+                            Registro_Corac.Chave_BD = getChave;
+
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                             Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
                             pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado. " + Estado;
@@ -457,6 +460,11 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_PowerShell()
         {
+            if (!(Registro_Corac.Status == StatusRegistro.Habilitado))
+            {
+                throw new Exception("Agente autônomo não está habilitado a funcionar nesta estação. Contate o administrador.");
+            }
+
             pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
@@ -477,10 +485,11 @@ namespace CORAC
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 
-                string EndString = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerIP_CORAC");
-                int EndPorta =     Convert.ToInt16(ChavesCORAC.Obter_ConteudoCampo("Path_ServerPorta_CORAC"));
+                string EndString = Conexoes.EnderecoHttpListen();
+                int EndPorta = Conexoes.PortaPowershell();
 
                 ServidorWEB_Local = new Servidor_HTTP();
+                
                 ServidorWEB_Local.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
                 ServidorWEB_Local.AddPrefixos(null, EndString, "Pacotes/", EndPorta);
@@ -498,14 +507,16 @@ namespace CORAC
                 if (Server_HTTP)
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                    pictureBox_Powershell.Tag = "Serviço de powershell instanciado corretamente.";
                     pictureBox_Powershell.Image = Internet_ON;
                     return true;
                 }
                 else
                 {
                     Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
+                    pictureBox_Powershell.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
                     pictureBox_Powershell.Image = Internet_ON;
-                    return true;
+                    return false;
                 }
 
             }
@@ -516,6 +527,7 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox_Powershell.Tag = E.Message;
                 Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                 pictureBox_Powershell.Image = Internet_ON;
 
@@ -523,22 +535,24 @@ namespace CORAC
 
             }
         }
+
+
         private async Task<bool> Loaders()
         {
             Task Atualizar, Registro,  Powerhell_WEB;
-            int Atualizar_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0;
+            int Atualizar_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0, SPower = 0;
             List<Task> Servicos = new List<Task>();
 
             if (await Verirficar_Conectividade())
             {
-                //Atualizar = Task.Run(Verificar_Atualizacoes);
-                //Atualizar_ID = Atualizar.Id;
+                Atualizar = Task.Run(Verificar_Atualizacoes);
+                Atualizar_ID = Atualizar.Id;
 
                 Registro = Task.Run(Verificar_Registro);
                 Registro_ID = Registro.Id;
 
-                //Servicos.Add(Atualizar);
-                //Servicos.Add(Registro);
+                Servicos.Add(Atualizar);
+                Servicos.Add(Registro);
 
             }
             else
@@ -562,9 +576,14 @@ namespace CORAC
                     button_AtualizacoesCORAC.Enabled = true;
 
                 }else if(Tarefa.Id == Registro_ID){
-
                     Servicos.Remove(Tarefa);
                     button_RegistroMaquina.Enabled = true;
+
+                    if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                    {
+
+                    }
+
                 }
                 
                 else if (Tarefa.Id == Powerhell_WEB_ID)
@@ -574,11 +593,13 @@ namespace CORAC
                     Task<bool> Result = (Task<bool>)Tarefa;
                     if (Result.Result)
                     {
+                        SPower = 1;
                         button_Start_PowerShellCORAC.Enabled = false;
                         button_Stop_PowerShellCORAC.Enabled = true;
                     }
                     else
                     {
+                        SPower = 0;
                         button_Start_PowerShellCORAC.Enabled = true;
                         button_Stop_PowerShellCORAC.Enabled = false;
                     }
@@ -586,7 +607,20 @@ namespace CORAC
                 }
             }
 
+            if (Registro_Corac.Status == StatusRegistro.Habilitado)
+            {
+                List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
 
+                List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                ADados.Add(new KeyValuePair<string, string>("SPowershell", Convert.ToString(SPower)));
+                ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
+
+                await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+            }
+
+           
             return true;
 
         }
@@ -651,35 +685,10 @@ namespace CORAC
                 Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
-
                 
-                bool AutenticLDAP = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("LDAP_Type_Autentication"));
-                if (AutenticLDAP)
-                {
-                    textBox_Path_Type_AutenticationLDAP.Enabled = true;
-                    radioButton_LDAP_Type_Autentication.Checked = true;
-                }
-                else
-                {
-                    textBox_Path_Type_AutenticationLDAP.Enabled = false;
-                }
-                bool AutenticWEB = Convert.ToBoolean(ChavesCORAC.Obter_ConteudoCampo("BD_Type_Autentication"));
-                if (AutenticWEB)
-                {
-                    textBox_Path_Type_AutenticationLDAP.Enabled = false;
-                    radioButton_BD_Type_Autentication.Checked = true;
-                }
-                else
-                {
-
-                }
-
-                textBox_Path_Type_AutenticationLDAP.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_Type_AutenticationLDAP");
-                textBox_Username.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Username");
-                textBox_Password.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Password");
                 textBox_Path_ServerWEB_CORAC.Text = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
             }
-            catch(Exception E)
+            catch (Exception E)
             {
                 Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
                 Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
@@ -696,7 +705,24 @@ namespace CORAC
                 e.Cancel = true;
                 this.Hide();
             }
-            else Notificacao.Visible = false;
+            else
+            {
+                if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                {
+                    List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                    KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                    List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                    ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
+                    ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                    ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
+
+                    AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                }
+
+                Notificacao.Visible = false;
+
+            }
 
         }
 
@@ -787,32 +813,6 @@ namespace CORAC
             }
         }
 
-        private void radioButton_LDAP_Type_Autentication_Click(object sender, EventArgs e)
-        {
-            RadioButton T = sender as RadioButton;
-
-            if (T.Checked)
-            {
-                textBox_Path_Type_AutenticationLDAP.Enabled = false;
-                textBox_Path_Type_AutenticationLDAP.Clear();
-                ArmazenarAlteracoesCampos((string)T.Tag, Convert.ToString(T.Checked));
-                ArmazenarAlteracoesCampos("LDAP_Type_Autentication", "False");
-            }
-        }
-
-
-
-        private void radioButton_LDAP_Type_Autentication_Click_1(object sender, EventArgs e)
-        {
-            RadioButton T = sender as RadioButton;
-
-            if (T.Checked)
-            {
-                textBox_Path_Type_AutenticationLDAP.Enabled = true;
-                ArmazenarAlteracoesCampos((string)T.Tag, Convert.ToString(T.Checked));
-                ArmazenarAlteracoesCampos("LDAP_Type_Autentication", "True");
-            }
-        }
 
         private async void button_Servidor_WEB_Click(object sender, EventArgs e)
         {
@@ -982,11 +982,25 @@ namespace CORAC
         {
             Button T = (Button)sender;
             T.Enabled = false;
+
             try
             {
                 bool ServerCORAC = await Task.Run(Iniciar_Servidor_PowerShell);
                 if (ServerCORAC)
                 {
+                    if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                    {
+                        List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                        KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                        List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                        ADados.Add(new KeyValuePair<string, string>("SPowershell", "1"));
+                        ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                        ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
+
+                        await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                    }
+
                     T.Enabled = false;
                     button_Stop_PowerShellCORAC.Enabled = true;
                 }
@@ -1012,7 +1026,18 @@ namespace CORAC
                 if (ServerCORAC)
                 {
                     T.Enabled = false;
+                    if(Registro_Corac.Status == StatusRegistro.Habilitado)
+                    {
+                        List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                        KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                        List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                        ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
+                        await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                    }
+
                     button_Start_PowerShellCORAC.Enabled = true;
+
                 }
                 else
                 {
@@ -1025,69 +1050,6 @@ namespace CORAC
             }
         }
 
-        private async void button_Credenciais_Click(object sender, EventArgs e)
-        {
-            string MetodoAutenticacao = null;
-
-            if (textBox_Username.Text.Length > 0 && textBox_Password.Text.Length > 0 && (radioButton_BD_Type_Autentication.Checked || radioButton_LDAP_Type_Autentication.Checked))
-            {
-                try
-                {
-                    pictureBox_Credenciais.Image = Properties.Resources.Wait;
-                    
-                    if (!await Conexoes.VerificarConectividade())
-                    {
-                        MessageBox.Show("Não há conectividade.", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        throw new Exception("Sem conectividade");
-                    }
-
-                    
-                    Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
-                    if (radioButton_BD_Type_Autentication.Checked)
-                    {
-                        MetodoAutenticacao = "BD";
-
-                    }
-                    else
-                    {
-                        MetodoAutenticacao = "LDAP";
-
-                    }
-
-                    Autenticador_WEB Verificar_Usuario = new Autenticador_WEB();
-                    Verificar_Usuario.Endereco_Autenticacao(EndURI, "/CORAC/CheckedUser/");
-                    Pacote_Auth Username = new Pacote_Auth();
-                    Username.Usuario = textBox_Username.Text;
-                    Username.Senha = textBox_Password.Text;
-                    Username.Autenticacao = MetodoAutenticacao;
-                    Username.Dispositivo = "pc";
-                    Verificar_Usuario.SetTratador_Erros(TipoSaidaErros.Arquivo);
-                    bool Resultado =  await Verificar_Usuario.HTML_AutenticarUsuario(Username);
-                    if (Resultado)
-                    {
-                        pictureBox_Credenciais.Image = Properties.Resources.Acepty;
-
-                    }
-                    else
-                    {
-                        pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
-
-                    }
-                }
-                catch (Exception E)
-                {
-                    pictureBox_Credenciais.Image = Properties.Resources.No_Acepty;
-
-                }
-            }
-            else
-            {
-                MessageBox.Show("Método de autenticação, usuário ou senha não preenchidos!", "Credenciais", MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            }
-
-
-        }
 
         private void groupBox8_Enter(object sender, EventArgs e)
         {
@@ -1120,13 +1082,31 @@ namespace CORAC
             
         }
 
-        private void PictureBox_Servidor_CORAC_MouseEnter(object sender, EventArgs e)
+
+        private async Task<bool> AtualizarTabelas_CORAC(string Tabela, List<KeyValuePair<string, string>> KDados, List<KeyValuePair<string, string>> ADados)
         {
+            Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+            string pth = EndURI.Scheme + "://" + EndURI.Host + ":" + EndURI.Port + "/CORAC/ControladorTabelas/";
+            Tabelas BuscarRegistro_CORAC = new Tabelas(pth);
+
+            //List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+
+            //KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+            BuscarRegistro_CORAC.setKeyDadosAtualizar(KDados);
+
+            //List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+            //ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
+
+
+            BuscarRegistro_CORAC.sendTabela = Tabela; /*"334644edbd3aecbe746b32f4f2e8e5fb"*/;
+            BuscarRegistro_CORAC.setDadosAtualizar(ADados);
+
+            return await BuscarRegistro_CORAC.AtualizarDadosTabela();
         }
 
-        private void button_Server_WEB_CORAC_Click(object sender, EventArgs e)
+        private void pictureBox_Powershell_MouseEnter(object sender, EventArgs e)
         {
-
+            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
         }
     }
 

@@ -32,6 +32,10 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Conteudo")]
         public string Conteudo { get; set; }
 
+        [JsonProperty("Remetente")]
+        public Remetente Remetente = Remetente.Cplusplus;
+
+
     }
     [Serializable]
     public class Pacote_Inicializacao : ITipoPacote
@@ -388,9 +392,17 @@ namespace ServerClienteOnline.Utilidades
         Habilitado = 0,
         Desabilitado =1
     }
+
+    public enum Remetente
+    {
+        PHP = 0,
+        Cplusplus = 1
+    }
+
     class RegistroCORAC
     {
         public string Registro;
         public StatusRegistro Status;
+        public string Chave_BD = null;
     }
 }

@@ -83,10 +83,21 @@ namespace ServerClienteOnline.Conectividade
                   foreach( UnicastIPAddressInformation UniInform in Int.GetIPProperties().UnicastAddresses)
                 {
                     IPIdentificados.Add(new ListaConexoesHost { Interface = Int.Name, Link = Int.Speed, Status = Int.OperationalStatus, Tipo = Int.NetworkInterfaceType, IP = UniInform.Address.ToString() });
+                  
                 }
             }
             return IPIdentificados;
             
+        }
+
+        public static string EnderecoHttpListen()
+        {
+            return "*";
+        }
+
+        public static int PortaPowershell()
+        {
+            return 1199;
         }
     }
 }

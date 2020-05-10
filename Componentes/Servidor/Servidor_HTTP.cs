@@ -211,10 +211,11 @@ namespace ServerClienteOnline.Server
         {
             try
             {
-                string Pct = JsonConvert.SerializeObject(Conteudo);
+                string SubPct = JsonConvert.SerializeObject(Conteudo);
+
                 Pacote_Base PctBase = new Pacote_Base();
                 PctBase.Pacote = Conteudo.GetTipoPacote();
-                PctBase.Conteudo = Pct;
+                PctBase.Conteudo = SubPct;
 
                 string SerializarPacote = JsonConvert.SerializeObject(PctBase);
                 return SerializarPacote;
@@ -316,8 +317,6 @@ namespace ServerClienteOnline.Server
 
                 string __Conteudo = _Conteudo.ReadLine();
                 /*-----------------------Processamento----------------------------*/
-
-
 
                     dynamic QTP = DeserializarPacote(__Conteudo);
                     switch (Base.Pacote)
