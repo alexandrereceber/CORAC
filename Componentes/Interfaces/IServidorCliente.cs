@@ -34,14 +34,8 @@ namespace ServerClienteOnline.Interfaces
     public interface IAuthHTML : IDisposable
     {
         Task<bool> HTML_AutenticarUsuario(Pacote_Auth Pacote_Auth);
-        bool HTML_Autenticado(string Pacote_Auth);
-    }
-    /**
-     * <summary>Interface para gerenciamento de clientes HTML conectados.</summary>
-     */
-    public interface IGCliente : IDisposable
-    {
-        bool ConectarCliente(EndPoint Client, Pacote_Auth Autenticacao);
+        bool HTML_Autenticado(string Chave_Autenticar);
+        Pacote_Auth GetAutenticacao { get;}
     }
 
     /**
@@ -49,7 +43,8 @@ namespace ServerClienteOnline.Interfaces
  */
     public interface IGClienteHTML : IDisposable
     {
-        bool ConectarCliente(EndPoint Client, bool Autenticacao);
+        bool ConectarCliente(EndPoint Client, Pacote_Auth Autenticacao);
+        bool _OAuth(string Chave);
     }
     /**
      * <summary>Interface para tratamento de pacotes.</summary>

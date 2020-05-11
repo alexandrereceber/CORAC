@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using CamadaDeDados.RESTFormat;
 using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace ServerClienteOnline.MetodosAutenticacao
 {
@@ -139,7 +140,7 @@ namespace ServerClienteOnline.MetodosAutenticacao
          */
         public void Endereco_Autenticacao(Uri PathURI, string Pasta)
         {
-            string pth = PathURI.Scheme + "://" + PathURI.Host + ":" + PathURI.Port + Pasta;
+            string pth = PathURI.Scheme + "://" + PathURI.Host + ":" + PathURI.Port + "/" + Pasta;
             _Servidor =  new Uri(pth);
             
         }
@@ -185,7 +186,7 @@ namespace ServerClienteOnline.MetodosAutenticacao
 
                 var content = new FormUrlEncodedContent(pairs);
 
-                URL.Timeout = TimeSpan.FromSeconds(3);
+                URL.Timeout = TimeSpan.FromSeconds(60);
 
                 Task<HttpResponseMessage> Conteudo = URL.PostAsync(_Servidor, content);
                 await Task.WhenAll(Conteudo);
@@ -246,9 +247,61 @@ namespace ServerClienteOnline.MetodosAutenticacao
             throw new NotImplementedException();
         }
 
-        public bool HTML_Autenticado(string Pacote_Auth)
+        public bool HTML_Autenticado(string Chave_Autenticar)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("enviarChaves", Chave_Autenticar)
+                                        };
+
+
+                var content = new FormUrlEncodedContent(pairs);
+                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, sdch");
+                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4");
+                URL.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
+                URL.DefaultRequestHeaders.Connection.Add("keep-alive");
+                //URL.DefaultRequestHeaders.TryAddWithoutValidation("Set-Cookie", "PHPSESSID=1cf6d495446f02eb87f364a89c0bfd81");
+
+                //content.Headers.con
+                URL.Timeout = TimeSpan.FromSeconds(5);
+                Task<HttpResponseMessage> Conteudo;
+
+                Conteudo = URL.PostAsync(_Servidor, content);
+                System.Net.Http.Headers.HttpRequestHeaders k = URL.DefaultRequestHeaders;
+
+                Conteudo.Wait();
+                Task<string> Resultado = Conteudo.Result.Content.ReadAsStringAsync();
+                Resultado.Wait();
+
+                string Rst = Resultado.Result;
+                 Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Resultado.Result);
+                if (PB.Pacote != TipoPacote.Error)
+                {
+                    Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo); ;
+                    Pacote_Autenticacao.Autenticado = true;
+                    Pacote_Autenticacao.Error = false;
+
+
+                    return true;
+                }
+                else
+                {
+                    Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
+                    return false;
+
+                }
+
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, GetType().Name);
+                return false;
+            }
         }
     }
 }

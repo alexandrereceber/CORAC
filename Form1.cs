@@ -481,7 +481,8 @@ namespace CORAC
                 AbrirComando.StartServidor();
 
                 Autent_WEB = new Autenticador_WEB();
-
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLogin/");
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 

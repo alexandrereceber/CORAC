@@ -30,13 +30,20 @@ namespace ServerClienteOnline.Utilidades
         public TipoPacote Pacote = TipoPacote.Base;
 
         [JsonProperty("Conteudo")]
-        public string Conteudo { get; set; }
+        public string Conteudo = "SubPacote";
 
         [JsonProperty("Remetente")]
         public Remetente Remetente = Remetente.Cplusplus;
 
 
     }
+
+    public class Pacote_Chave
+    {
+        [JsonProperty("enviarChaves")]
+        public string enviarChaves { set; get; }
+    }
+
     [Serializable]
     public class Pacote_Inicializacao : ITipoPacote
     {
@@ -101,16 +108,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Mensagem")]
         public string Mensagem { get; set; }
 
-        [JsonProperty("Tracer")]
-        public string Tracer { get; set; }
-
         public TipoPacote GetTipoPacote()
         {
             return Pacote;
-        }
-        public string GetTracer()
-        {
-            return Tracer;
         }
 
         public string GetResultado()
@@ -313,6 +313,40 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_Login : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Login;
+
+        [JsonProperty("Active")]
+        public string Origem { get; set; }
+
+        [JsonProperty("Username")]
+        public string Username { get; set; }
+
+        [JsonProperty("Password")]
+        public string Password { get; set; }
+
+        [JsonProperty("Tusuario")]
+        public string Tusuario { get; set; }
+
+        [JsonProperty("Tempo")]
+        public string Tempo { get; set; }
+
+        [JsonProperty("ID")]
+        public string ID { get; set; }
+
+
+    public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return "";
+        }
+    }
     public enum TipoSaidaErros {
                                     ShowWindow = 0,
                                     EventWindow = 1,
@@ -340,7 +374,8 @@ namespace ServerClienteOnline.Utilidades
                                     FileSystem = 5,
                                     Auth = 6,
                                     Inicializacao = 7,
-                                    Error = 8
+                                    Error = 8,
+                                    Login = 9
 
     };
 

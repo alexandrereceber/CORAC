@@ -35,7 +35,7 @@ namespace ServerClienteOnline.Server
 
         private IRuntime _CMDs;
         private IAuth _Auth;
-        private IGCliente _GerenciadorCliente;
+        private IGClienteHTML _GerenciadorCliente;
         private IAcesso_Remoto _AcessoRemoto;
 
         private bool Active = false;
@@ -177,7 +177,7 @@ namespace ServerClienteOnline.Server
           * Propriedade que atribui uma classe que executará comandos e retornará uma reposta.
           * Return: IGCliente
           */
-        public IGCliente Gerenciador_Cliente
+        public IGClienteHTML Gerenciador_Cliente
         {
             set { _GerenciadorCliente = value; }
         }
@@ -428,7 +428,6 @@ namespace ServerClienteOnline.Server
                                     P_Error = new Pacote_Error();
                                     P_Error.Error = Excecao;
                                     P_Error.Mensagem = DadosExcecao.Message;
-                                    P_Error.Tracer = DadosExcecao.StackTrace;
 
                                     Executar = SerializarPacote(P_Error);
                                     Excecao = false;
@@ -507,7 +506,6 @@ namespace ServerClienteOnline.Server
                                     P_Error = new Pacote_Error();
                                     P_Error.Error = true;
                                     P_Error.Mensagem = "Esse tipo de pacote não existe.";
-                                    P_Error.Tracer = "";
                                     BarramentoEscrita.WriteLine(SerializarPacote(P_Error));
                                     BarramentoEscrita.Flush();
                                 break;

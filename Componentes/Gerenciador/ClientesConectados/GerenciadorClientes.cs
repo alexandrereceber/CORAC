@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
 using ServerClienteOnline.TratadorDeErros;
+using Newtonsoft.Json;
 
 namespace ServerClienteOnline.Gerenciador.ClientesConectados
 {
-    class GerenciadorClientes : Tratador_Erros, IGCliente, IGClienteHTML, IServidor
+    class GerenciadorClientes : Tratador_Erros, IGClienteHTML, IServidor
     {
 
 
@@ -31,17 +32,24 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
         {
             try
             {
-                foreach (var i in ListaClientes_Conectados)
+                if(ListaClientes_Conectados != null)
                 {
-                    IPEndPoint IPOrigem = (IPEndPoint)Client;
-                    IPEndPoint IPDestino = (IPEndPoint)i.Value;
-
-                    if (IPOrigem.Address.Equals(IPDestino.Address))
+                    foreach (var i in ListaClientes_Conectados)
                     {
-                        return false;
+                        IPEndPoint IPOrigem = (IPEndPoint)Client;
+                        IPEndPoint IPDestino = (IPEndPoint)i.Value;
+                        Pacote_Auth User = i.Key;
+                        if (IPOrigem.Address.Equals(IPDestino.Address))
+                        {
+                            if(Autenticacao.Senha == User.Senha) return false;
+                        }
                     }
                 }
-                ListaClientes_Conectados.Add(new KeyValuePair<Pacote_Auth, EndPoint>(Autenticacao, Client));
+                else
+                {
+                    ListaClientes_Conectados = new List<KeyValuePair<Pacote_Auth, EndPoint>>();
+                    ListaClientes_Conectados.Add(new KeyValuePair<Pacote_Auth, EndPoint>(Autenticacao, Client));
+                }
 
                 return true;
             }
@@ -50,6 +58,24 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
                 TratadorErros(e, this.GetType().Name);
                 return false;
             }
+        }
+
+        public bool _OAuth(string Chave)
+        {
+            byte[] BaseByte = Convert.FromBase64String(Chave);
+            string StringLogin = ASCIIEncoding.UTF8.GetString(BaseByte);
+
+            Pacote_Login Pct = JsonConvert.DeserializeObject<Pacote_Login>(StringLogin);
+
+            if (ListaClientes_Conectados.Count > 0)
+                foreach (var i in ListaClientes_Conectados)
+                {
+
+                }
+            
+            else return false;
+
+            return true;
         }
 
         /**
@@ -119,7 +145,6 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
 
         public bool StartServidor()
         {
-            ListaClientes_Conectados = new List<KeyValuePair<Pacote_Auth, EndPoint>>();
             return true;
         }
 
