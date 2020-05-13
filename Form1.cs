@@ -311,6 +311,16 @@ namespace CORAC
                             Registro_Corac.Status = StatusRegistro.Habilitado;
                             Registro_Corac.Chave_BD = getChave;
 
+                            if (!(ServidorWEB_Local == null))
+                            {
+                                if(ServidorWEB_Local.StatusServidor())
+                                    button_Start_PowerShellCORAC.Enabled = true;
+                            }
+                            else
+                            {
+                                button_Start_PowerShellCORAC.Enabled = true;
+                            }
+
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                             Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
                             pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado. " + Estado;
@@ -322,6 +332,7 @@ namespace CORAC
                         {
                             //Registro encontrado e equipamento desativado.
                             Registro_Corac.Status = StatusRegistro.Desabilitado;
+
                             Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                             pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento desativado. Favor requisitar habilitação junto ao administrador da sua unidade.";
@@ -460,17 +471,18 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_PowerShell()
         {
-            if (!(Registro_Corac.Status == StatusRegistro.Habilitado))
-            {
-                throw new Exception("Agente autônomo não está habilitado a funcionar nesta estação. Contate o administrador.");
-            }
-
             pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
             Color Azul = Color.FromArgb(255, 0, 1, 255);
+            
             try
             {
+                if (!(Registro_Corac.Status == StatusRegistro.Habilitado))
+                {
+                    throw new Exception("Agente autônomo não está habilitado a funcionar nesta estação. Contate o administrador.");
+                }
+
 
                 pictureBox_Powershell.Image = Properties.Resources.Wait;
                 pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
@@ -563,10 +575,7 @@ namespace CORAC
             }
             button_VerificarInternet.Enabled = true;
 
-            Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
-            Powerhell_WEB_ID = Powerhell_WEB.Id;
 
-            Servicos.Add(Powerhell_WEB);
 
             while (Servicos.Count > 0)
             {
@@ -582,8 +591,16 @@ namespace CORAC
 
                     if (Registro_Corac.Status == StatusRegistro.Habilitado)
                     {
+                        Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
+                        Powerhell_WEB_ID = Powerhell_WEB.Id;
 
+                        Servicos.Add(Powerhell_WEB);
                     }
+                    else
+                    {
+                        pictureBox_Powershell.Tag = "Favor verificar o registro da máquina!";
+                    }
+
 
                 }
                 

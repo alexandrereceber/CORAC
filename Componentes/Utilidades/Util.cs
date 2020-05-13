@@ -23,7 +23,7 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("TipoCriptografia")]
         public string TipoCriptografia { get; set; }
     }
-
+    [Serializable]
     public class Pacote_Base
     {
         [JsonProperty("Pacote")]
@@ -108,6 +108,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Mensagem")]
         public string Mensagem { get; set; }
 
+        [JsonProperty("Numero")]
+        public int Numero { get; set; }
+
         public TipoPacote GetTipoPacote()
         {
             return Pacote;
@@ -152,6 +155,9 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("Usuario")]
         public string Usuario { get; set; }
+
+        [JsonProperty("Habilitado")]
+        public bool Habilitado { get; set; }
 
         [JsonProperty("Dominio")]
         public string Dominio { get; set; }
@@ -413,9 +419,6 @@ namespace ServerClienteOnline.Utilidades
 
     struct CamposCORAC
     {
-        public bool LDAP_Type_Autentication;
-        public bool BD_Type_Autentication;
-        public string Path_Type_AutenticationLDAP;
         public string Username;
         public string Password;
         public string Path_ServerWEB_CORAC;

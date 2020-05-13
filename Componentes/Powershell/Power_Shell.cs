@@ -11,13 +11,41 @@ using ServerClienteOnline.Interfaces;
 using Microsoft.PowerShell;
 using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.TratadorDeErros;
+using ServerClienteOnline.WMIs;
 using System.IO;
+using Newtonsoft.Json;
 
 /**
  * CORAC - Controle Operacional Remoto de Acesso Centralizado
  **/
 namespace Power_Shell.AmbienteExecucao
 {
+    class InformacoesGerais
+    {
+        public string Usuario { get; }
+        public string PlacaMae { get; }
+        public string NumeroSerie { get; }
+        public string Versao { get; }
+        public string SO { get; }
+        public string SOCaption { get; }
+        public string Processador { get; }
+        public int Memoria { get; }
+        public InformacoesGerais()
+        {
+            Usuario = ((string)Get_WMI.Obter_Atributo("Win32_ComputerSystem", "Username")).Replace("\\","-");
+            PlacaMae = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Manufacturer");
+            NumeroSerie = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "SerialNumber");
+            Versao = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Version");
+            SOCaption = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "Caption");
+            SO = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "OSArchitecture");
+            Memoria = (int)Get_WMI.Obter_Atributo("Win32_OperatingSystem", "TotalVisibleMemorySize");
+            Processador = Get_WMI.Obter_Atributo("Win32_Processor", "Name");
+
+        }
+
+
+    }
+
     public struct Erros
     {
         public bool error;
@@ -186,7 +214,7 @@ namespace Power_Shell.AmbienteExecucao
                 {
                     Result += (i.BaseObject.ToString()).Replace("\r", "").Replace("\n", "");
                 }
-                Result = "[" + Result + "]";
+                //Result = "[" + Result + "]";
                 return true;
             }
             catch (Exception ex)
@@ -364,7 +392,7 @@ namespace Power_Shell.AmbienteExecucao
                 return null;
             }
         }
-
+       
         /**
           * <summary>
           * <para>Data Criação: 31/03/2020</para>
@@ -414,12 +442,47 @@ namespace Power_Shell.AmbienteExecucao
                 Linha = "";
             }
             Result = "[" + _JSON + "]";
-            return false;
+            return true;
         }
         public bool get_childrem(string[] Parametros)
         {
+            int i = 1;
+            string TCampos = null;
+
+            string Excluidos = "StartTime";
+
+            if (Parametros.Contains<string>("-campos"))
+            {
+                for (i = 1; i <= Parametros.Length; i++)
+                {
+                    if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
+                }
+            }
             Collection<PSObject> Saida = ExecutarScript_Personalizados("Get-ChildItem");
-            return false;
+            if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
+
+            switch (TSaida)
+            {
+                case TiposSaidas.HTML:
+                    break;
+
+                case TiposSaidas.CVS:
+                    break;
+
+                case TiposSaidas.JSON:
+                    return Transfor_JSON(ref Saida, TCampos, Excluidos);
+
+                case TiposSaidas.XML:
+                    break;
+
+                case TiposSaidas.TXT:
+                    break;
+
+                default:
+                    break;
+            }
+
+            return true; ;
         }
 
         public bool get_process(string[] Parametros)
@@ -467,6 +530,52 @@ namespace Power_Shell.AmbienteExecucao
             return true; ;
         }
 
+        public bool get_InfoGeral(string[] Parametros)
+        {
+            int i = 1;
+            string TCampos = null;
+
+            string Excluidos = "StartTime";
+
+            if (Parametros.Contains<string>("-campos"))
+            {
+                for (i = 1; i <= Parametros.Length; i++)
+                {
+                    if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
+                }
+            }
+            PSObject Saida = new PSObject(new InformacoesGerais());
+            
+            Collection<PSObject> Saidas = new Collection<PSObject>();
+            Saidas.Add(Saida);
+            
+            
+            if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
+
+            switch (TSaida)
+            {
+                case TiposSaidas.HTML:
+                    break;
+
+                case TiposSaidas.CVS:
+                    break;
+
+                case TiposSaidas.JSON:
+                    return Transfor_JSON(ref Saidas, TCampos, Excluidos);
+
+
+                case TiposSaidas.XML:
+                    break;
+
+                case TiposSaidas.TXT:
+                    break;
+
+                default:
+                    break;
+            }
+
+            return true; ;
+        }
         /**
           * <summary>
           * <para>Data Criação: 31/03/2020</para>
@@ -500,6 +609,14 @@ namespace Power_Shell.AmbienteExecucao
                                 return true;
                             else
                                 return false;
+
+                        case "get_InfoGeral":
+                            if (get_InfoGeral(Partes_Comando))
+                                return true;
+                            else
+                                return false;
+
+
                         default:
 
                             break;
@@ -516,6 +633,7 @@ namespace Power_Shell.AmbienteExecucao
 
         public bool Route(Pacote_Comando PCT)
         {
+            //Informa à saída o tipo de formato requisitado json, html, xml entre outros.
             TSaida = PCT.Formato;
             if (Get_ComandosPersonalizados(PCT)) return true;
 
@@ -531,7 +649,7 @@ namespace Power_Shell.AmbienteExecucao
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Servidor.Stop();
         }
 
         public bool StopServidor()

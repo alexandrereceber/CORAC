@@ -282,12 +282,21 @@ namespace ServerClienteOnline.MetodosAutenticacao
                  Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Resultado.Result);
                 if (PB.Pacote != TipoPacote.Error)
                 {
-                    Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo); ;
-                    Pacote_Autenticacao.Autenticado = true;
-                    Pacote_Autenticacao.Error = false;
+                    Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo);
+                    if (Pacote_Autenticacao.Habilitado)
+                    {
+                        Pacote_Autenticacao.Autenticado = true;
+                        Pacote_Autenticacao.Error = false;
+                        return true;
+                    }
+                    else
+                    {
+                        Pacote_Autenticacao.Autenticado = false;
+                        Pacote_Autenticacao.Error = true;
+                        return false;
+                    }
 
 
-                    return true;
                 }
                 else
                 {

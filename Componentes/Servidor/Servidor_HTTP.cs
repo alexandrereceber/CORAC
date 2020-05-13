@@ -218,7 +218,7 @@ namespace ServerClienteOnline.Server
                 PctBase.Conteudo = SubPct;
 
                 string SerializarPacote = JsonConvert.SerializeObject(PctBase);
-                return SerializarPacote;
+                return SerializarPacote + "     ";
 
             }
             catch (Exception e)
@@ -328,7 +328,7 @@ namespace ServerClienteOnline.Server
 
                         bool _Autenticado = (bool)_Auth.HTML_Autenticado(CMM.Chave);
 
-                        if (!_Autenticado) throw new Exception("Usuário não autenticado.");
+                        if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
 
                         _GerenciadorCliente?.ConectarCliente(Conexao.Request.RemoteEndPoint, _Auth.GetAutenticacao);
 
@@ -336,13 +336,7 @@ namespace ServerClienteOnline.Server
 
                         if (Excecao)
                         {
-                            P_Error = new Pacote_Error();
-                            P_Error.Error = Excecao;
-                            P_Error.Mensagem = DadosExcecao.Message;
-
-                            Executar = SerializarPacote(P_Error);
-                            Excecao = false;
-                            DadosExcecao = null;
+                            throw new Exception("Ocorreram erros ao executar o comando!");
                         }
 
                         Pacote_Comando PCT = new Pacote_Comando();
@@ -350,7 +344,6 @@ namespace ServerClienteOnline.Server
                         string DadosPacote = SerializarPacote(PCT);
                         //Obtém o Barramento de escrita com a cliente
                         ObterResposta.ContentLength64 = DadosPacote.Length;
-                        ObterResposta.ContentType = "application/json";
                         ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
                         ObterResposta.Close();
 
@@ -361,7 +354,6 @@ namespace ServerClienteOnline.Server
                             DadosPacote = SerializarPacote(RPY);
                             //Obtém o Barramento de escrita com a cliente
                             ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.ContentType = "application/json";
                             ObterResposta.OutputStream.Write(ASCIIEncoding.Unicode.GetBytes(DadosPacote), 0, DadosPacote.Length);
                             ObterResposta.Close();
                             break;
@@ -371,10 +363,10 @@ namespace ServerClienteOnline.Server
                             P_Error = new Pacote_Error();
                             P_Error.Error = true;
                             P_Error.Mensagem = "Esse tipo de pacote não existe.";
+                            P_Error.Numero = DadosExcecao.HResult;
 
-                            DadosPacote = SerializarPacote(P_Error);
+                        DadosPacote = SerializarPacote(P_Error);
                             ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.ContentType = "application/json";
                             ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
                             ObterResposta.Close();
                             break;
@@ -388,11 +380,10 @@ namespace ServerClienteOnline.Server
                 P_Error = new Pacote_Error();
                 P_Error.Error = Excecao;
                 P_Error.Mensagem = DadosExcecao.Message;
-                //P_Error.Tracer = DadosExcecao.StackTrace;
+                P_Error.Numero = DadosExcecao.HResult;
 
                 string Erros = SerializarPacote(P_Error);
                 ObterResposta.ContentLength64 = Erros.Length;
-                ObterResposta.ContentType = "application/json";
                 ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(Erros), 0, Erros.Length);
                 ObterResposta.Close();
 

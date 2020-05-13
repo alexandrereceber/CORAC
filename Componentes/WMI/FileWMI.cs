@@ -9,6 +9,10 @@ namespace ServerClienteOnline.WMIs
 {
     class Get_WMI
     {
+        /**
+         * Função com retorno em dynamic, pois poderá retornar string, integer, array e outros.
+         * Ex.: É o retorno em array da propriedade chassi. A conversão deve ser feita na variável que receberá o retorno;
+         */
         public static dynamic Obter_Atributo(string Classe_WMI, string Nome)
         {
             dynamic Result = null;
