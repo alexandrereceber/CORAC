@@ -60,6 +60,7 @@
     <Compile Include="Componentes\Cliente\Cliente_StreamClose.cs" />
     <Compile Include="Componentes\Cliente\Cliente_StreamOpen.cs" />
     <Compile Include="Componentes\Conectividade\Connectivity.cs" />
+    <Compile Include="Componentes\Servidor\Servidor_WEBSOCKET.cs" />
     <Compile Include="Componentes\WMI\FileWMI.cs" />
     <Compile Include="Componentes\Gerenciador\ClientesConectados\GerenciadorClientes.cs" />
     <Compile Include="Componentes\Interfaces\IServidorCliente.cs" />
