@@ -47,8 +47,9 @@
             this.pictureBox_Powershell = new System.Windows.Forms.PictureBox();
             this.button_Start_PowerShellCORAC = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.pictureBox10 = new System.Windows.Forms.PictureBox();
             this.button_Start_AR_CORAC = new System.Windows.Forms.Button();
+            this.pictureBox_AcessoRemoto = new System.Windows.Forms.PictureBox();
+            this.button_Stop_AR_CORAC = new System.Windows.Forms.Button();
             this.Tab_Config = new System.Windows.Forms.TabPage();
             this.SalvaConfiguracoes = new System.Windows.Forms.Button();
             this.tableLayoutPanel_Principal = new System.Windows.Forms.TableLayoutPanel();
@@ -83,7 +84,7 @@
             this.groupBox7.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Powershell)).BeginInit();
             this.groupBox8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_AcessoRemoto)).BeginInit();
             this.Tab_Config.SuspendLayout();
             this.tableLayoutPanel_Principal.SuspendLayout();
             this.groupBox4.SuspendLayout();
@@ -332,8 +333,9 @@
             this.groupBox8.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox8.Controls.Add(this.pictureBox10);
             this.groupBox8.Controls.Add(this.button_Start_AR_CORAC);
+            this.groupBox8.Controls.Add(this.pictureBox_AcessoRemoto);
+            this.groupBox8.Controls.Add(this.button_Stop_AR_CORAC);
             this.groupBox8.Location = new System.Drawing.Point(298, 264);
             this.groupBox8.Name = "groupBox8";
             this.groupBox8.Size = new System.Drawing.Size(285, 252);
@@ -342,33 +344,47 @@
             this.groupBox8.Text = "Acesso Remoto";
             this.groupBox8.Enter += new System.EventHandler(this.groupBox8_Enter);
             // 
-            // pictureBox10
-            // 
-            this.pictureBox10.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pictureBox10.Cursor = System.Windows.Forms.Cursors.Default;
-            this.pictureBox10.ErrorImage = null;
-            this.pictureBox10.Image = global::CORAC.Properties.Resources.Status_AcessoRemoto_128px;
-            this.pictureBox10.InitialImage = null;
-            this.pictureBox10.Location = new System.Drawing.Point(77, 55);
-            this.pictureBox10.Name = "pictureBox10";
-            this.pictureBox10.Size = new System.Drawing.Size(141, 131);
-            this.pictureBox10.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox10.TabIndex = 3;
-            this.pictureBox10.TabStop = false;
-            // 
             // button_Start_AR_CORAC
             // 
             this.button_Start_AR_CORAC.Enabled = false;
             this.button_Start_AR_CORAC.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
             this.button_Start_AR_CORAC.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_Start_AR_CORAC.Location = new System.Drawing.Point(87, 192);
+            this.button_Start_AR_CORAC.Location = new System.Drawing.Point(72, 192);
             this.button_Start_AR_CORAC.Name = "button_Start_AR_CORAC";
-            this.button_Start_AR_CORAC.Size = new System.Drawing.Size(119, 23);
-            this.button_Start_AR_CORAC.TabIndex = 4;
+            this.button_Start_AR_CORAC.Size = new System.Drawing.Size(76, 23);
+            this.button_Start_AR_CORAC.TabIndex = 5;
             this.button_Start_AR_CORAC.Text = "Start";
             this.button_Start_AR_CORAC.UseVisualStyleBackColor = true;
+            this.button_Start_AR_CORAC.Click += new System.EventHandler(this.button_Start_AR_CORAC_Click);
+            // 
+            // pictureBox_AcessoRemoto
+            // 
+            this.pictureBox_AcessoRemoto.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox_AcessoRemoto.Cursor = System.Windows.Forms.Cursors.Default;
+            this.pictureBox_AcessoRemoto.ErrorImage = null;
+            this.pictureBox_AcessoRemoto.Image = global::CORAC.Properties.Resources.Status_AcessoRemoto_128px;
+            this.pictureBox_AcessoRemoto.InitialImage = null;
+            this.pictureBox_AcessoRemoto.Location = new System.Drawing.Point(72, 55);
+            this.pictureBox_AcessoRemoto.Name = "pictureBox_AcessoRemoto";
+            this.pictureBox_AcessoRemoto.Size = new System.Drawing.Size(153, 131);
+            this.pictureBox_AcessoRemoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox_AcessoRemoto.TabIndex = 3;
+            this.pictureBox_AcessoRemoto.TabStop = false;
+            // 
+            // button_Stop_AR_CORAC
+            // 
+            this.button_Stop_AR_CORAC.Enabled = false;
+            this.button_Stop_AR_CORAC.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
+            this.button_Stop_AR_CORAC.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button_Stop_AR_CORAC.Location = new System.Drawing.Point(153, 192);
+            this.button_Stop_AR_CORAC.Name = "button_Stop_AR_CORAC";
+            this.button_Stop_AR_CORAC.Size = new System.Drawing.Size(72, 23);
+            this.button_Stop_AR_CORAC.TabIndex = 4;
+            this.button_Stop_AR_CORAC.Text = "Stop";
+            this.button_Stop_AR_CORAC.UseVisualStyleBackColor = true;
+            this.button_Stop_AR_CORAC.Click += new System.EventHandler(this.button_Stop_AR_CORAC_Click);
             // 
             // Tab_Config
             // 
@@ -633,7 +649,7 @@
             this.groupBox7.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Powershell)).EndInit();
             this.groupBox8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox10)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_AcessoRemoto)).EndInit();
             this.Tab_Config.ResumeLayout(false);
             this.tableLayoutPanel_Principal.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
@@ -683,8 +699,8 @@
         private System.Windows.Forms.PictureBox pictureBox_Powershell;
         private System.Windows.Forms.Button button_Start_PowerShellCORAC;
         private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.PictureBox pictureBox10;
-        private System.Windows.Forms.Button button_Start_AR_CORAC;
+        private System.Windows.Forms.PictureBox pictureBox_AcessoRemoto;
+        private System.Windows.Forms.Button button_Stop_AR_CORAC;
         private System.Windows.Forms.Button SalvaConfiguracoes;
         private System.Windows.Forms.TabPage Tab_Log;
         private System.Windows.Forms.GroupBox groupBox_LogSystem;
@@ -694,6 +710,7 @@
         private System.Windows.Forms.ListBox listBox_FILE_LOG;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button_Stop_PowerShellCORAC;
+        private System.Windows.Forms.Button button_Start_AR_CORAC;
     }
 }
 

@@ -121,6 +121,76 @@ namespace ServerClienteOnline.Utilidades
             return Mensagem;
         }
     }
+
+    /**
+    * Pacote referente ao acesso remoto à máquina do agente autônomo.
+    */
+    public class Pacote_AcessoRemoto : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Comando;
+
+        [JsonProperty("Tipo")]
+        public TiposRequisicaoAR Tipo { get; set; } //Poder do tipo liberação
+
+        [JsonProperty("Resposta")]
+        public string Resposta { get; set; }
+
+        [JsonProperty("Formato")]
+        public TiposSaidas Formato = TiposSaidas.JSON;
+
+        [JsonProperty("Chave")]
+        public string Chave = "";
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Resposta;
+        }
+
+        public string GetChave()
+        {
+            return Chave;
+        }
+    }
+
+    public class Pacote_AcessoRemoto_Resposta : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Comando;
+
+        [JsonProperty("Tipo")]
+        public TiposRequisicaoAR Tipo = TiposRequisicaoAR.Resposta; //Poder do tipo liberação
+
+        [JsonProperty("Resposta")]
+        public string Resposta { get; set; }
+
+        [JsonProperty("ChaveAR")]
+        public string ChaveAR { get; set; }
+
+        [JsonProperty("Formato")]
+        public TiposSaidas Formato = TiposSaidas.JSON;
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetChave()
+        {
+            return "";
+        }
+        public string GetResultado()
+        {
+            return Resposta;
+        }
+
+    }
+
     public class Pacote_PingReplay : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -139,7 +209,7 @@ namespace ServerClienteOnline.Utilidades
 
         public void ObterTempo()
         {
-             TempoFim = DateTime.Now;
+            TempoFim = DateTime.Now;
         }
 
         public string GetResultado()
@@ -171,6 +241,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Token")]
         public string Token { get; set; }
 
+        [JsonProperty("ChaveAR")]
+        public string ChaveAR { get; set; }
+
         [JsonProperty("TempoSessao")]
         public string TempoSessao { get; set; }
 
@@ -200,6 +273,10 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("DominioServidor")]
         public string DominioServidor { get; set; } /*Usado pelo servidor*/
+
+        [JsonProperty("Servico")]
+        public TipoServico Servico { get; set; } /*Qual serviço requisitou a autenticação: Powershell, Acesso Remoto, Chat*/
+
         public TipoPacote GetTipoPacote()
         {
             return Pacote;
@@ -210,18 +287,18 @@ namespace ServerClienteOnline.Utilidades
             return "";
         }
 
-        public List<KeyValuePair<string,string>> ListarAtributos()
+        public List<KeyValuePair<string, string>> ListarAtributos()
         {
             List<KeyValuePair<string, string>> Lista = new List<KeyValuePair<string, string>>();
             System.Reflection.PropertyInfo[] Propriedades = GetType().GetProperties();
-            
-            foreach(System.Reflection.PropertyInfo i in Propriedades)
+
+            foreach (System.Reflection.PropertyInfo i in Propriedades)
             {
                 string Valor = Convert.ToString(i.GetValue(this, null));
                 Lista.Add(new KeyValuePair<string, string>(i.Name, Valor));
             }
 
-            
+
             return Lista;
         }
     }
@@ -343,7 +420,7 @@ namespace ServerClienteOnline.Utilidades
         public string ID { get; set; }
 
 
-    public TipoPacote GetTipoPacote()
+        public TipoPacote GetTipoPacote()
         {
             return Pacote;
         }
@@ -353,6 +430,18 @@ namespace ServerClienteOnline.Utilidades
             return "";
         }
     }
+
+    public enum TiposRequisicaoAR{
+        Pedido_Acesso = 0,
+        Resposta = 1
+    }
+    public enum TipoServico
+    {
+        Powershell = 0,
+        AcessoRemoto = 1,
+        Chat = 2
+    }
+
     public enum TipoSaidaErros {
                                     ShowWindow = 0,
                                     EventWindow = 1,
@@ -381,7 +470,9 @@ namespace ServerClienteOnline.Utilidades
                                     Auth = 6,
                                     Inicializacao = 7,
                                     Error = 8,
-                                    Login = 9
+                                    Login = 9,
+                                    AcessoRemoto = 10,
+                                    AcessoRemoto_Resposta = 11
 
     };
 

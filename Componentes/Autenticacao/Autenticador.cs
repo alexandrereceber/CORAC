@@ -130,6 +130,7 @@ namespace ServerClienteOnline.MetodosAutenticacao
         private Uri _Servidor;
         private Pacote_Error Error = null;
         private Pacote_Auth Pacote_Autenticacao = null;
+        bool status = false;
 
         /**
          * <summary>
@@ -149,20 +150,22 @@ namespace ServerClienteOnline.MetodosAutenticacao
         {
             try
             {
-                HttpClient URL = new HttpClient();
-                var pairs = new List<KeyValuePair<string, string>>
+                using (HttpClient URL = new HttpClient())
+                {
+                    var pairs = new List<KeyValuePair<string, string>>
                                         {
                                             new KeyValuePair<string, string>("login", "abc")
                                         };
 
-                var content = new FormUrlEncodedContent(pairs);
+                    var content = new FormUrlEncodedContent(pairs);
 
-                URL.Timeout = TimeSpan.FromSeconds(3);
+                    URL.Timeout = TimeSpan.FromSeconds(3);
 
-                Task<HttpResponseMessage> Conteudo;
+                    Task<HttpResponseMessage> Conteudo;
 
-                Conteudo = URL.PostAsync(_Servidor, content);
-                await Task.WhenAll(Conteudo);
+                    Conteudo = URL.PostAsync(_Servidor, content);
+                    await Task.WhenAll(Conteudo);
+                }
 
                 return true;
             }
@@ -181,46 +184,49 @@ namespace ServerClienteOnline.MetodosAutenticacao
 
             try
             {
-                HttpClient URL = new HttpClient();
-                List<KeyValuePair<string, string>> pairs = Pacote_AuthWEB.ListarAtributos();
-
-                var content = new FormUrlEncodedContent(pairs);
-
-                URL.Timeout = TimeSpan.FromSeconds(60);
-
-                Task<HttpResponseMessage> Conteudo = URL.PostAsync(_Servidor, content);
-                await Task.WhenAll(Conteudo);
-
-                if (Conteudo.Result.IsSuccessStatusCode)
+                using (HttpClient URL = new HttpClient())
                 {
-                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
-                    Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Dados);
-                    if(PB.Pacote != TipoPacote.Error)
+                    List<KeyValuePair<string, string>> pairs = Pacote_AuthWEB.ListarAtributos();
+
+                    var content = new FormUrlEncodedContent(pairs);
+
+                    URL.Timeout = TimeSpan.FromSeconds(60);
+
+                    Task<HttpResponseMessage> Conteudo = URL.PostAsync(_Servidor, content);
+                    await Task.WhenAll(Conteudo);
+
+                    if (Conteudo.Result.IsSuccessStatusCode)
                     {
-                        Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo); ;
-                        Pacote_Autenticacao.Autenticado = true;
-                        Pacote_Autenticacao.Error = false;
+                        string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
+                        Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Dados);
+                        if (PB.Pacote != TipoPacote.Error)
+                        {
+                            Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo); ;
+                            Pacote_Autenticacao.Autenticado = true;
+                            Pacote_Autenticacao.Error = false;
 
 
-                        return true;
+                            return true;
+                        }
+                        else
+                        {
+                            Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
+                            return false;
+
+                        }
                     }
                     else
                     {
-                        Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
-                        return false;
+                        Pacote_AuthWEB.Autenticado = false;
+                        Pacote_AuthWEB.Error = true;
+                        Error = new Pacote_Error();
+                        Error.Error = true;
+                        Error.Mensagem = "A conexão com o URi não foi estabelecida com sucesso!";
 
+                        return false;
                     }
                 }
-                else
-                {
-                    Pacote_AuthWEB.Autenticado = false;
-                    Pacote_AuthWEB.Error = true;
-                    Error = new Pacote_Error();
-                    Error.Error = true;
-                    Error.Mensagem = "A conexão com o URi não foi estabelecida com sucesso!";
-
-                    return false;
-                }
+                    
 
                
             }
@@ -251,61 +257,63 @@ namespace ServerClienteOnline.MetodosAutenticacao
         {
             try
             {
-
-                HttpClient URL = new HttpClient();
-                var pairs = new List<KeyValuePair<string, string>>
+                using (HttpClient URL = new HttpClient())
+                {
+                    var pairs = new List<KeyValuePair<string, string>>
                                         {
                                             new KeyValuePair<string, string>("enviarChaves", Chave_Autenticar)
                                         };
 
 
-                var content = new FormUrlEncodedContent(pairs);
-                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, sdch");
-                URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4");
-                URL.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
-                URL.DefaultRequestHeaders.Connection.Add("keep-alive");
-                //URL.DefaultRequestHeaders.TryAddWithoutValidation("Set-Cookie", "PHPSESSID=1cf6d495446f02eb87f364a89c0bfd81");
+                    var content = new FormUrlEncodedContent(pairs);
+                    URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                    URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, sdch");
+                    URL.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Language", "en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4");
+                    URL.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.118 Safari/537.36");
+                    URL.DefaultRequestHeaders.Connection.Add("keep-alive");
+                    //URL.DefaultRequestHeaders.TryAddWithoutValidation("Set-Cookie", "PHPSESSID=1cf6d495446f02eb87f364a89c0bfd81");
 
-                //content.Headers.con
-                URL.Timeout = TimeSpan.FromSeconds(5);
-                Task<HttpResponseMessage> Conteudo;
+                    //content.Headers.con
+                    URL.Timeout = TimeSpan.FromSeconds(5);
+                    Task<HttpResponseMessage> Conteudo;
 
-                Conteudo = URL.PostAsync(_Servidor, content);
-                System.Net.Http.Headers.HttpRequestHeaders k = URL.DefaultRequestHeaders;
+                    Conteudo = URL.PostAsync(_Servidor, content);
+                    System.Net.Http.Headers.HttpRequestHeaders k = URL.DefaultRequestHeaders;
 
-                Conteudo.Wait();
-                Task<string> Resultado = Conteudo.Result.Content.ReadAsStringAsync();
-                Resultado.Wait();
+                    Conteudo.Wait();
+                    Task<string> Resultado = Conteudo.Result.Content.ReadAsStringAsync();
+                    Resultado.Wait();
 
-                string Rst = Resultado.Result;
-                 Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Resultado.Result);
-                if (PB.Pacote != TipoPacote.Error)
-                {
-                    Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo);
-                    if (Pacote_Autenticacao.Habilitado)
+                    string Rst = Resultado.Result;
+                    Pacote_Base PB = JsonConvert.DeserializeObject<Pacote_Base>(Resultado.Result);
+                    if (PB.Pacote != TipoPacote.Error)
                     {
-                        Pacote_Autenticacao.Autenticado = true;
-                        Pacote_Autenticacao.Error = false;
-                        return true;
+                        Pacote_Autenticacao = JsonConvert.DeserializeObject<Pacote_Auth>(PB.Conteudo);
+                        if (Pacote_Autenticacao.Habilitado)
+                        {
+                            Pacote_Autenticacao.Autenticado = true;
+                            Pacote_Autenticacao.Error = false;
+                            return true;
+                        }
+                        else
+                        {
+                            Pacote_Autenticacao.Autenticado = false;
+                            Pacote_Autenticacao.Error = true;
+                            return false;
+                        }
+
+
                     }
                     else
                     {
-                        Pacote_Autenticacao.Autenticado = false;
-                        Pacote_Autenticacao.Error = true;
+                        Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
                         return false;
+
                     }
 
-
                 }
-                else
-                {
-                    Error = JsonConvert.DeserializeObject<Pacote_Error>(PB.Conteudo);
-                    return false;
-
-                }
-
             }
+                    
             catch (Exception e)
             {
                 TratadorErros(e, GetType().Name);

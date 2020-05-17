@@ -330,6 +330,9 @@ namespace ServerClienteOnline.Server
 
                         if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
 
+                        //Qualifica o tipo de serviço que requisitou a autenticação;
+                        _Auth.GetAutenticacao.Servico = TipoServico.AcessoRemoto;
+
                         _GerenciadorCliente?.ConectarCliente(Conexao.Request.RemoteEndPoint, _Auth.GetAutenticacao);
 
                         string Executar = _ResponderRequisicao(CMM);

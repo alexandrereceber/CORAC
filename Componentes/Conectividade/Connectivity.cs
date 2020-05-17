@@ -90,12 +90,22 @@ namespace ServerClienteOnline.Conectividade
             
         }
 
-        public static string EnderecoHttpListen()
+        public static string EnderecoHttpListen_Powershell()
         {
             return "*";
         }
 
-        public static int PortaPowershell()
+        public static int Porta_Powershell()
+        {
+            return 1199;
+        }
+
+        public static string EnderecoHttpListen_AcessoRemoto()
+        {
+            return "*";
+        }
+
+        public static int Porta_AcessoRemoto()
         {
             return 1199;
         }

@@ -35,6 +35,8 @@ namespace CORAC
         GerenciadorClientes GerenteClientes = new GerenciadorClientes();
         Ambiente_PowerShell AbrirComando = null;
         Servidor_HTTP ServidorWEB_Local = null;
+        Servidor_WEBSOCKET ServidorWEB_Socket = null;
+
         Autenticador_WEB Autent_WEB = null;
         RegistroCORAC Registro_Corac = new RegistroCORAC();
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
@@ -400,6 +402,62 @@ namespace CORAC
             }
         }
 
+        /**
+  * <summary>
+     Para oo serviço Acesso Remoto CORAC
+  * </summary>
+  */
+        private async Task<bool> Stop_Servidor_AcessoRemoto()
+        {
+            pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            try
+            {
+
+                pictureBox_AcessoRemoto.Image = Properties.Resources.Wait;
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                //-------------------SERVIDOR HTTP-------------------------------------------------------------------
+
+
+                bool Server_HTTP = await Task.Run(ServidorWEB_Socket.StopServidor);
+
+                //------------------------------------------------------------------------------------------------------
+
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Server_HTTP)
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    return true;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+
+                pictureBox_AcessoRemoto.Image = Internet_ON;
+
+                return true;
+
+            }
+        }
+
 
         /**
           * <summary>
@@ -498,8 +556,8 @@ namespace CORAC
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 
-                string EndString = Conexoes.EnderecoHttpListen();
-                int EndPorta = Conexoes.PortaPowershell();
+                string EndString = Conexoes.EnderecoHttpListen_Powershell();
+                int EndPorta = Conexoes.Porta_Powershell();
 
                 ServidorWEB_Local = new Servidor_HTTP();
                 
@@ -550,10 +608,92 @@ namespace CORAC
         }
 
 
+        /**
+          * <summary>
+            Inicia o serviço de acesso remoto.
+          * </summary>
+          */
+        private async Task<bool> Iniciar_Servidor_AcessoRemoto()
+        {
+            pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
+
+            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            Color Azul = Color.FromArgb(255, 0, 1, 255);
+
+            try
+            {
+                if (!(Registro_Corac.Status == StatusRegistro.Habilitado))
+                {
+                    throw new Exception("Agente autônomo não está habilitado a funcionar nesta estação. Contate o administrador.");
+                }
+
+
+                pictureBox_AcessoRemoto.Image = Properties.Resources.Wait;
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                //------------------Serviço de Autenticação-----------------------------------------------------------------
+
+                Autent_WEB = new Autenticador_WEB();
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLogin/");
+
+
+                //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
+
+                string EndString = Conexoes.EnderecoHttpListen_AcessoRemoto();
+                int EndPorta = Conexoes.Porta_AcessoRemoto();
+
+                ServidorWEB_Socket = new Servidor_WEBSOCKET();
+
+                ServidorWEB_Socket.SetTratador_Erros(TipoSaidaErros.Arquivo);
+
+                ServidorWEB_Socket.AddPrefixos(null, EndString, "AcessoRemoto/", EndPorta);
+
+                ServidorWEB_Socket.Autenticador = Autent_WEB;
+                ServidorWEB_Socket.Gerenciador_Cliente = GerenteClientes;
+
+                bool Server_HTTP = await Task.Run(ServidorWEB_Socket.StartServidor);
+
+                //------------------------------------------------------------------------------------------------------
+
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Server_HTTP)
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                    pictureBox_AcessoRemoto.Tag = "Serviço de powershell instanciado corretamente.";
+                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    return true;
+                }
+                else
+                {
+                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
+                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    return false;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
+                pictureBox_AcessoRemoto.Tag = E.Message;
+                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                pictureBox_AcessoRemoto.Image = Internet_ON;
+
+                return false;
+
+            }
+        }
+
         private async Task<bool> Loaders()
         {
-            Task Atualizar, Registro,  Powerhell_WEB;
-            int Atualizar_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0, SPower = 0;
+            Task Atualizar, Registro,  Powerhell_WEB, Acesso_Remoto;
+            int Atualizar_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0, Acesso_Remoto_ID = 0, SPower = 0, SAR = 0;
             List<Task> Servicos = new List<Task>();
 
             if (await Verirficar_Conectividade())
@@ -573,6 +713,7 @@ namespace CORAC
                 button_AtualizacoesCORAC.Enabled = true;
                 button_RegistroMaquina.Enabled = true;
             }
+
             button_VerificarInternet.Enabled = true;
 
 
@@ -591,9 +732,17 @@ namespace CORAC
 
                     if (Registro_Corac.Status == StatusRegistro.Habilitado)
                     {
+                        //-------------------------Serviço de PowerShell-----------------------------
                         Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
                         Powerhell_WEB_ID = Powerhell_WEB.Id;
+                        //-------------------------FIM-----------------------------------------------
 
+                        //-------------------------Serviço de ACESSO REMOTO--------------------------
+                        Acesso_Remoto = Task.Run(Iniciar_Servidor_AcessoRemoto);
+                        Acesso_Remoto_ID = Acesso_Remoto.Id;
+                        //-------------------------FIM-----------------------------------------------
+                        
+                        Servicos.Add(Acesso_Remoto);
                         Servicos.Add(Powerhell_WEB);
                     }
                     else
@@ -603,7 +752,6 @@ namespace CORAC
 
 
                 }
-                
                 else if (Tarefa.Id == Powerhell_WEB_ID)
                 {
 
@@ -623,6 +771,25 @@ namespace CORAC
                     }
 
                 }
+                else if (Tarefa.Id == Acesso_Remoto_ID)
+                {
+
+                    Servicos.Remove(Tarefa);
+                    Task<bool> Result = (Task<bool>)Tarefa;
+                    if (Result.Result)
+                    {
+                        SAR = 1; //Indica que o serviço foi carregado com sucesso!
+                        button_Start_AR_CORAC.Enabled = false;
+                        button_Stop_AR_CORAC.Enabled = true;
+                    }
+                    else
+                    {
+                        SAR = 0;
+                        button_Start_AR_CORAC.Enabled = true;
+                        button_Stop_AR_CORAC.Enabled = false;
+                    }
+
+                }
             }
 
             if (Registro_Corac.Status == StatusRegistro.Habilitado)
@@ -632,7 +799,7 @@ namespace CORAC
 
                 List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
                 ADados.Add(new KeyValuePair<string, string>("SPowershell", Convert.ToString(SPower)));
-                ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", Convert.ToString(SAR)));
                 ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
 
                 await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
@@ -650,7 +817,7 @@ namespace CORAC
             InitializeComponent();
 
             Loaders();
-
+            Application.ApplicationExit += SairSistema;
         }
 
 
@@ -725,21 +892,7 @@ namespace CORAC
             }
             else
             {
-                if (Registro_Corac.Status == StatusRegistro.Habilitado)
-                {
-                    List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
-                    KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
-
-                    List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
-                    ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
-                    ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
-                    ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
-
-                    AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
-                }
-
                 Notificacao.Visible = false;
-
             }
 
         }
@@ -747,9 +900,21 @@ namespace CORAC
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
+            
         }
 
+        private async void SairSistema(object sender, EventArgs e)
+        {
+                List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
 
+                List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
+                ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
+
+                await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+        }
         private void SalvaConfiguracoes_Click(object sender, EventArgs e)
         {
             try
@@ -1013,8 +1178,6 @@ namespace CORAC
 
                         List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
                         ADados.Add(new KeyValuePair<string, string>("SPowershell", "1"));
-                        ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
-                        ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
 
                         await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
                     }
@@ -1125,6 +1288,76 @@ namespace CORAC
         private void pictureBox_Powershell_MouseEnter(object sender, EventArgs e)
         {
             Status_Informacao.Text = (string)(sender as PictureBox).Tag;
+        }
+
+        private async void button_Start_AR_CORAC_Click(object sender, EventArgs e)
+        {
+            Button T = (Button)sender;
+            T.Enabled = false;
+
+            try
+            {
+                bool ServerCORAC = await Task.Run(Iniciar_Servidor_AcessoRemoto);
+                if (ServerCORAC)
+                {
+                    if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                    {
+                        List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                        KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                        List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                        ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "1"));
+
+                        await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                    }
+
+                    T.Enabled = false;
+                    button_Stop_AR_CORAC.Enabled = true;
+                }
+                else
+                {
+                    T.Enabled = true;
+                    button_Stop_AR_CORAC.Enabled = false;
+                }
+            }
+            catch (Exception E)
+            {
+                T.Enabled = true;
+            }
+        }
+
+        private async void button_Stop_AR_CORAC_Click(object sender, EventArgs e)
+        {
+            Button T = (Button)sender;
+            T.Enabled = false;
+            try
+            {
+                bool ServerCORAC = await Task.Run(Stop_Servidor_AcessoRemoto);
+                if (ServerCORAC)
+                {
+                    T.Enabled = false;
+                    if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                    {
+                        List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                        KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                        List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                        ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
+                        await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                    }
+
+                    button_Start_AR_CORAC.Enabled = true;
+
+                }
+                else
+                {
+                    T.Enabled = true;
+                }
+            }
+            catch (Exception E)
+            {
+                T.Enabled = true;
+            }
         }
     }
 
