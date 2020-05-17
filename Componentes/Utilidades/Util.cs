@@ -144,6 +144,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Chave_AR")]
         public string Chave_AR { get; set; }
 
+        [JsonProperty("Error")]
+        public bool Error { get; set; }
+
         public TipoPacote GetTipoPacote()
         {
             return Pacote;

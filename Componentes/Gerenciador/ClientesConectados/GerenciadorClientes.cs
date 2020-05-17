@@ -60,6 +60,39 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
             }
         }
 
+        /**
+  * Data: 27/02/2019
+  * Adiciona em uma lista os clientes que se concectaram ao servidor.
+  * Return: ParametrosInicializacao
+  */
+        public bool Validar_Chave_AR(string Chave)
+        {
+            try
+            {
+                if (ListaClientes_Conectados != null)
+                {
+                    foreach (var i in ListaClientes_Conectados)
+                    {
+                        if (i.Key.ChaveAR == Chave)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+                return false;
+            }
+        }
+
         public bool _OAuth(string Chave)
         {
             byte[] BaseByte = Convert.FromBase64String(Chave);

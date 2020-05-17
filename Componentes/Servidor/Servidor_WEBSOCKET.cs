@@ -33,18 +33,48 @@ namespace ServerClienteOnline.Server
                 HttpListenerWebSocketContext WebSocket_CORAC = await IAC.AcceptWebSocketAsync(null);
 
                 Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
-                ArraySegment<byte> Pacote_Config_Inicial = new ArraySegment<byte>(new byte[Buffer_Server]);
-            
-                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes("pacote inicia"));
 
+                Pacote_AcessoRemoto_Config_INIT Pacote_Inicial = new Pacote_AcessoRemoto_Config_INIT();
+                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_Inicial)));
                 await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                
+                try
+                {
+                    ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+                    WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
+                    string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
+                    
+                    Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+                    Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
 
-                ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
-                WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
-                string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
-                Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
-                Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
-                var t = 0;
+                    if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
+                    {
+
+                    }
+                    else
+                    {
+                        Pacote_Error PERR = new Pacote_Error();
+                        PERR.Error = true;
+                        PERR.Mensagem = "Erro de autenticação!";
+
+                        DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
+                        await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                        Obter_Contexto_WEBSOCKET.Abort();
+                    }
+                }
+                catch(Exception e)
+                {
+                    Pacote_Error PERR = new Pacote_Error();
+                    PERR.Error = true;
+                    PERR.Mensagem = e.Message;
+                    PERR.Numero = e.HResult;
+
+                    DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
+                    await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                    Obter_Contexto_WEBSOCKET.Abort();
+                }
+
+
                 
             }
             catch (Exception e)
@@ -53,7 +83,6 @@ namespace ServerClienteOnline.Server
             }
 
         }
-
 
         public int SetBuffer { set { Buffer_Server = value; } }
         /**

@@ -45,6 +45,7 @@ namespace ServerClienteOnline.Interfaces
     {
         bool ConectarCliente(EndPoint Client, Pacote_Auth Autenticacao);
         bool _OAuth(string Chave);
+        bool Validar_Chave_AR(string Chave);
     }
     /**
      * <summary>Interface para tratamento de pacotes.</summary>
