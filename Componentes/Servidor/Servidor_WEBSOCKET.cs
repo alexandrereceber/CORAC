@@ -19,13 +19,53 @@ using System.Drawing.Imaging;
 
 namespace ServerClienteOnline.Server
 {
-    class AcessoRemoto
+    class AcessoRemoto_WEBSOCKET: Tratador_Erros
     {
-
-        public async void Iniciar_AcessoRemoto(object ObjAC)
+        private IGClienteHTML _GerenciadorCliente;
+        private IAuthHTML _Auth;
+        private int Buffer_Server { get; set; }
+        public async void Iniciar_Begin_AcessoRemoto(object ObjAC)
         {
-            var gg = 0;
+            WebSocket Obter_Contexto_WEBSOCKET;
+            try
+            {
+                HttpListenerContext IAC = (HttpListenerContext)ObjAC;
+                HttpListenerWebSocketContext WebSocket_CORAC = await IAC.AcceptWebSocketAsync(null);
+
+                Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
+                ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+                WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
+
+                
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+            }
+
         }
+
+
+        public int SetBuffer { set { Buffer_Server = value; } }
+        /**
+      * Data: 17/05/2020
+      * Propriedade que atribuirá um componente para verificar credenciais.
+      * Return: IGCliente
+      */
+        public IGClienteHTML Gerenciador_Cliente
+        {
+            set { _GerenciadorCliente = value; }
+        }
+        /**
+          * Data: 17/05/2020
+          * Propriedade que atribuirá uma classe para autenticação de máquinas.
+          * Return: IAuth
+          */
+        public IAuthHTML Autenticador
+        {
+            set { _Auth = value; }
+        }
+
     }
 
     class Servidor_WEBSOCKET : Tratador_Erros, IDisposable, IServidor
@@ -39,9 +79,8 @@ namespace ServerClienteOnline.Server
         private IAuthHTML _Auth;
         private IGClienteHTML _GerenciadorCliente;
 
-        AcessoRemoto ControleAC = new AcessoRemoto();
+        AcessoRemoto_WEBSOCKET ControleAC = new AcessoRemoto_WEBSOCKET();
 
-        Pacote_Base Base;
         public Servidor_WEBSOCKET()
         {
             try
@@ -149,7 +188,7 @@ namespace ServerClienteOnline.Server
 
                 HttpListener Server = (HttpListener)s.AsyncState;
                 HttpListenerContext Aceitar = Server.EndGetContext(s);
-
+                
                 HttpListenerRequest ObterConteudo = Aceitar.Request;
                 StreamReader _Conteudo = new StreamReader(ObterConteudo.InputStream);
 
@@ -158,129 +197,145 @@ namespace ServerClienteOnline.Server
                 /**
                  * Coloca o servidor para receber outras conexões.
                  */
-                Server.BeginGetContext(IniciarConversa, Server);
-
-                try
+                Servidor.BeginGetContext(IniciarConversa, Server);
+                Uri URi = Aceitar.Request.Url;
+                switch (URi.LocalPath)
                 {
+                    case "/CORAC/AcessoRemoto/":
 
+                        AcessoRemoto = new Thread(ControleAC.Iniciar_Begin_AcessoRemoto);
+                        AcessoRemoto.Name = "AcessoRemoto";
+                        AcessoRemoto.Start(Aceitar);
+                        break;
 
-                    string __Conteudo = _Conteudo.ReadLine();
-                    /*-----------------------Processamento----------------------------*/
+                    case "/AA_AcessoRemoto_SYN/":
+                        try
+                        {
+                            string __Conteudo = _Conteudo.ReadLine();
+                            /*-----------------------Processamento----------------------------*/
 
-                    dynamic QTP = DeserializarPacote(__Conteudo);
-                    switch (Base.Pacote)
-                    {
-                        case TipoPacote.AcessoRemoto:
-                            Pacote_AcessoRemoto CMM = (Pacote_AcessoRemoto)QTP; //Transforma string em um objeto da classe Pacote_Auth
-
-                            //_GerenciadorCliente?._OAuth(CMM.Chave);
-
-                            bool _Autenticado = (bool)_Auth.HTML_Autenticado(CMM.Chave);
-
-                            if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
-                            
-                            //Qualifica o tipo de serviço que requisitou a autenticação;
-                            _Auth.GetAutenticacao.Servico =TipoServico.AcessoRemoto;
-                            /**
-                             * Lembrar de realizar uma alteração no pacote de autenticação que indique que método está requisitando-a
-                             */
-                            _GerenciadorCliente?.ConectarCliente(Aceitar.Request.RemoteEndPoint, _Auth.GetAutenticacao);
-
-                            /*
-                             * Requisita liberação de acesso à visualização da tela.
-                             */
-                            DialogResult Resposta = MessageBox.Show("O atendente: " + _Auth.GetAutenticacao.Usuario + "\nestá realizando um pedido de acesso remoto a essa máquina. \n\nLiberar acesso?", "Pedido de acesso remoto.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                            
-                            string DadosPacote = null;
-
-                            if (Resposta == DialogResult.Yes)
+                            Converter_JSON_String.DeserializarPacote(__Conteudo, out Pacote_Base Base, out object QTP);
+                            switch (Base.Pacote)
                             {
-                                Pacote_AcessoRemoto PCT = new Pacote_AcessoRemoto();
-                                Pacote_AcessoRemoto_Resposta PCR = new Pacote_AcessoRemoto_Resposta();
-                                PCR.ChaveAR = _Auth.GetAutenticacao.ChaveAR;
+                                case TipoPacote.AcessoRemoto_SYN:
+                                    Pacote_AcessoRemoto_Config PAR = (Pacote_AcessoRemoto_Config)QTP; //Transforma string em um objeto da classe Pacote_Auth
 
-                                PCR.Resposta = "OK_2001";
+                                    //_GerenciadorCliente?._OAuth(CMM.Chave);
 
-                                PCT.Resposta = SerializarPacote(PCR);
+                                    bool _Autenticado = (bool)_Auth.HTML_Autenticado(PAR.Chave);
 
-                                DadosPacote = SerializarPacote(PCT);
-                                //Obtém o Barramento de escrita com a cliente
-                                ObterResposta.ContentLength64 = DadosPacote.Length;
-                                ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                                ObterResposta.Close();
+                                    if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
+
+                                    //Qualifica o tipo de serviço que requisitou a autenticação;
+                                    _Auth.GetAutenticacao.Servico = TipoServico.AcessoRemoto;
+                                    /**
+                                     * Lembrar de realizar uma alteração no pacote de autenticação que indique que método está requisitando-a
+                                     */
+                                    _GerenciadorCliente?.ConectarCliente(Aceitar.Request.RemoteEndPoint, _Auth.GetAutenticacao);
+
+                                    /*
+                                     * Requisita liberação de acesso à visualização da tela.
+                                     */
+                                    DialogResult Resposta = MessageBox.Show("O atendente: " + _Auth.GetAutenticacao.Usuario + "\nestá realizando um pedido de acesso remoto a essa máquina. \n\nLiberar acesso?", "Pedido de acesso remoto.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                                    string DadosPacote = null;
+                                    Pacote_AcessoRemoto_Resposta PCR = new Pacote_AcessoRemoto_Resposta();
+
+                                    if (Resposta == DialogResult.Yes)
+                                    {
+
+                                        //------Pacote que vai para o remetente-----------
+                                        PCR.ChaveAR = _Auth.GetAutenticacao.ChaveAR;
+                                        PCR.Resposta = "OK_2001";
+
+                                        //------Pacote base que chega no servidor WEB
+                                        PAR.Resposta = Converter_JSON_String.SerializarPacote(PCR);
+
+                                        DadosPacote = Converter_JSON_String.SerializarPacote(PAR);
+                                        //Obtém o Barramento de escrita com a cliente
+                                        ObterResposta.ContentLength64 = DadosPacote.Length;
+                                        ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                        ObterResposta.Close();
+
+                                        //Atribui as classes de controle e autenticação para o WEBSOCKET
+                                        ControleAC.SetBuffer = 1204 * 1024;
+                                        ControleAC.Autenticador = _Auth;
+                                        ControleAC.Gerenciador_Cliente = _GerenciadorCliente;
+
+
+                                    }
+                                    else
+                                    {
+
+                                        PCR.Resposta = "NO_2001";
+                                        PAR.Resposta = Converter_JSON_String.SerializarPacote(PCR);
+                                        DadosPacote = Converter_JSON_String.SerializarPacote(PAR);
+                                        //Obtém o Barramento de escrita com a cliente
+                                        ObterResposta.ContentLength64 = DadosPacote.Length;
+                                        ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                        ObterResposta.Close();
+                                    }
+
+
+                                    break;
+
+                                case TipoPacote.Echo:
+                                    Pacote_PingReplay RPY = new Pacote_PingReplay();
+                                    DadosPacote = Converter_JSON_String.SerializarPacote(RPY);
+                                    //Obtém o Barramento de escrita com a cliente
+                                    ObterResposta.ContentLength64 = DadosPacote.Length;
+                                    ObterResposta.OutputStream.Write(ASCIIEncoding.Unicode.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                    ObterResposta.Close();
+                                    break;
+
+                                case TipoPacote.AcessoRemoto: //Acesso remoto via WEBSOCKET
+
+                                    break;
+
+                                default:
+                                    P_Error = new Pacote_Error();
+                                    P_Error.Error = true;
+                                    P_Error.Mensagem = "Esse tipo de pacote não é permitido.";
+                                    P_Error.Numero = DadosExcecao.HResult;
+
+                                    DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
+                                    ObterResposta.ContentLength64 = DadosPacote.Length;
+                                    ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                    ObterResposta.Close();
+                                    break;
                             }
-                            else
-                            {
-                                Pacote_AcessoRemoto PCT = new Pacote_AcessoRemoto();
-                                Pacote_AcessoRemoto_Resposta PCR = new Pacote_AcessoRemoto_Resposta();
-                                PCR.Resposta = "NO_2001";
 
-                                PCT.Resposta = SerializarPacote(PCR);
-                                DadosPacote = SerializarPacote(PCT);
-                                //Obtém o Barramento de escrita com a cliente
-                                ObterResposta.ContentLength64 = DadosPacote.Length;
-                                ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                                ObterResposta.Close();
-                            }
+                            _Conteudo.Close();
+                            //Server.Close();
 
 
-                            break;
+                        }
+                        catch (Exception e)
+                        {
+                            TratadorErros(e, this.GetType().Name);
 
-                        case TipoPacote.Echo:
-                            Pacote_PingReplay RPY = new Pacote_PingReplay();
-                            DadosPacote = SerializarPacote(RPY);
-                            //Obtém o Barramento de escrita com a cliente
-                            ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.OutputStream.Write(ASCIIEncoding.Unicode.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                            ObterResposta.Close();
-                            break;
-
-
-                        default:
                             P_Error = new Pacote_Error();
-                            P_Error.Error = true;
-                            P_Error.Mensagem = "Esse tipo de pacote não é permitido.";
+                            P_Error.Error = Excecao;
+                            P_Error.Mensagem = DadosExcecao.Message;
                             P_Error.Numero = DadosExcecao.HResult;
 
-                            DadosPacote = SerializarPacote(P_Error);
-                            ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                            string Erros = Converter_JSON_String.SerializarPacote(P_Error);
+                            ObterResposta.ContentLength64 = Erros.Length;
+                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(Erros), 0, Erros.Length);
                             ObterResposta.Close();
-                            break;
-                    }
 
+                            Excecao = false;
+                            DadosExcecao = null;
+                        }
+                        break;
+
+                    default:
+
+                        break;
                 }
-                catch (Exception e)
-                {
-                    TratadorErros(e, this.GetType().Name);
+                
 
-                    P_Error = new Pacote_Error();
-                    P_Error.Error = Excecao;
-                    P_Error.Mensagem = DadosExcecao.Message;
-                    P_Error.Numero = DadosExcecao.HResult;
 
-                    string Erros = SerializarPacote(P_Error);
-                    ObterResposta.ContentLength64 = Erros.Length;
-                    ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(Erros), 0, Erros.Length);
-                    ObterResposta.Close();
-
-                    Excecao = false;
-                    DadosExcecao = null;
-                }
-
-                //Uri URi = Aceitar.Request.Url;
-                //switch (URi.LocalPath)
-                //{
-                //    case "/AcessoRemoto/":
-                //        //Thread AC = new Thread(ControleAC.Iniciar_AcessoRemoto);
-                //        //AC.Name = "AcessoRemoto";
-                //        //AC.Start(Aceitar);
-                //        break;
-
-                //    default:
-
-                //        break;
-                //}
 
                 /**
                  * Coloca o servidor em listen novamente;
@@ -290,7 +345,19 @@ namespace ServerClienteOnline.Server
 
 
                 //WebSocket Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
+                //Uri URi = Aceitar.Request.Url;
+                //switch (URi.LocalPath)
+                //{
+                //    case "/AcessoRemoto/":
+                //        Thread AC = new Thread(ControleAC.Iniciar_Begin_AcessoRemoto);
+                //        AC.Name = "AcessoRemoto";
+                //        AC.Start(Aceitar);
+                //        break;
 
+                //    default:
+
+                //        break;
+                //}
 
                 //ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[5]);
                 // WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
@@ -340,92 +407,6 @@ namespace ServerClienteOnline.Server
         public IAuthHTML Autenticador
         {
             set { _Auth = value; }
-        }
-
-        /**
-       * Data: 22/03/2019
-       * Transforma o pacote em string.
-       * Return: string
-       */
-        public string SerializarPacote(ITipoPacote Conteudo)
-        {
-            try
-            {
-                string SubPct = JsonConvert.SerializeObject(Conteudo);
-
-                Pacote_Base PctBase = new Pacote_Base();
-                PctBase.Pacote = Conteudo.GetTipoPacote();
-                PctBase.Conteudo = SubPct;
-
-                string SerializarPacote = JsonConvert.SerializeObject(PctBase);
-                return SerializarPacote + "     ";
-
-            }
-            catch (Exception e)
-            {
-                TratadorErros(e, this.GetType().Name); ;
-                return null;
-            }
-
-        }
-
-        /**
-           * Data: 02/04/2019
-           * Transforma uma string em pacote para acesso.
-           * Return: string
-           */
-        private dynamic DeserializarPacote(string Pacote)
-        {
-            try
-            {
-
-                Base = JsonConvert.DeserializeObject<Pacote_Base>(Pacote);
-                switch (Base.Pacote)
-                {
-                    case TipoPacote.Auth:
-                        Pacote_Auth Auth = JsonConvert.DeserializeObject<Pacote_Auth>(Base.Conteudo);
-                        return Auth;
-
-                    case TipoPacote.Comando:
-                        Pacote_Comando Exec = JsonConvert.DeserializeObject<Pacote_Comando>(Base.Conteudo);
-                        return Exec;
-
-                    case TipoPacote.File:
-                        Pacote_File File = JsonConvert.DeserializeObject<Pacote_File>(Base.Conteudo);
-                        return File;
-
-                    case TipoPacote.FileSystem:
-                        Pacote_SystemFile FileSystem = JsonConvert.DeserializeObject<Pacote_SystemFile>(Base.Conteudo);
-                        return FileSystem;
-
-                    case TipoPacote.Echo:
-                        Pacote_PingEcho Ping = JsonConvert.DeserializeObject<Pacote_PingEcho>(Base.Conteudo);
-                        return Ping;
-
-                    case TipoPacote.Replay:
-                        Pacote_PingReplay Replay = JsonConvert.DeserializeObject<Pacote_PingReplay>(Base.Conteudo);
-                        return Replay;
-
-                    case TipoPacote.Inicializacao:
-                        Pacote_Inicializacao Inicializacao = JsonConvert.DeserializeObject<Pacote_Inicializacao>(Base.Conteudo);
-                        return Inicializacao;
-
-                    case TipoPacote.AcessoRemoto:
-                        Pacote_AcessoRemoto AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto>(Base.Conteudo);
-                        return AcessoRemoto;
-
-                    default:
-                        throw new Exception("Tentativa de envio de pacote não reconhecida pelo sistema.");
-
-                }
-            }
-            catch (Exception e)
-            {
-                TratadorErros(e, this.GetType().Name); ;
-                return false;
-            }
-
-
         }
 
 

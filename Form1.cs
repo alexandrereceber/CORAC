@@ -647,7 +647,8 @@ namespace CORAC
 
                 ServidorWEB_Socket.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
-                ServidorWEB_Socket.AddPrefixos(null, EndString, "AcessoRemoto/", EndPorta);
+                ServidorWEB_Socket.AddPrefixos(null, EndString, "CORAC/AcessoRemoto/", EndPorta);
+                ServidorWEB_Socket.AddPrefixos(null, EndString, "AA_AcessoRemoto_SYN/", EndPorta);
 
                 ServidorWEB_Socket.Autenticador = Autent_WEB;
                 ServidorWEB_Socket.Gerenciador_Cliente = GerenteClientes;

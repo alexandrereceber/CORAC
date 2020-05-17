@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using ServerClienteOnline.Interfaces;
 using System.IO;
+using System.Drawing.Text;
+using System.Windows.Forms;
 
 namespace ServerClienteOnline.Utilidades
 {
@@ -125,10 +127,10 @@ namespace ServerClienteOnline.Utilidades
     /**
     * Pacote referente ao acesso remoto à máquina do agente autônomo.
     */
-    public class Pacote_AcessoRemoto : ITipoPacote
+    public class Pacote_AcessoRemoto_Config : ITipoPacote
     {
         [JsonProperty("Pacote")]
-        public TipoPacote Pacote = TipoPacote.Comando;
+        public TipoPacote Pacote = TipoPacote.AcessoRemoto_SYN;
 
         [JsonProperty("Tipo")]
         public TiposRequisicaoAR Tipo { get; set; } //Poder do tipo liberação
@@ -141,6 +143,9 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("Chave")]
         public string Chave = "";
+
+        [JsonProperty("Mecanismo")]
+        public TipoMecanismo Mecanismo { set; get; }
 
         public TipoPacote GetTipoPacote()
         {
@@ -160,20 +165,83 @@ namespace ServerClienteOnline.Utilidades
 
     public class Pacote_AcessoRemoto_Resposta : ITipoPacote
     {
+        public class Display
+        {
+            [JsonProperty("DeviceName")]
+            public string DeviceName { get; set; }
+
+            [JsonProperty("Primary")]
+            public bool Primary { get; set; }
+
+            [JsonProperty("X")]
+            public int X { get; set; }
+
+            [JsonProperty("Y")]
+            public int Y { get; set; }
+
+            [JsonProperty("Width")]
+            public int Width { get; set; }
+
+            [JsonProperty("Height")]
+            public int Height { get; set; }
+
+            [JsonProperty("Top")]
+            public int Top { get; set; }
+
+            [JsonProperty("Right")]
+            public int Right { get; set; }
+
+            [JsonProperty("Left")]
+            public int Left { get; set; }
+        }
+
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.Comando;
 
         [JsonProperty("Tipo")]
-        public TiposRequisicaoAR Tipo = TiposRequisicaoAR.Resposta; //Poder do tipo liberação
+        public TiposRequisicaoAR Tipo = TiposRequisicaoAR.Resposta;
 
         [JsonProperty("Resposta")]
         public string Resposta { get; set; }
 
-        [JsonProperty("ChaveAR")]
+        [JsonProperty("ChaveAR")] //Chave gerada para uma sessão.
         public string ChaveAR { get; set; }
 
         [JsonProperty("Formato")]
         public TiposSaidas Formato = TiposSaidas.JSON;
+
+        [JsonProperty("Configuracoes")]
+        public List<Display> Configuracoes = null;
+
+        public Pacote_AcessoRemoto_Resposta()
+        {
+            foreach (Screen s in Screen.AllScreens)
+            {
+                Configuracoes = GetConfig_Video();
+            }
+        }
+
+        public List<Display> GetConfig_Video()
+        {
+            List<Display> Config = new List<Display>();
+
+            foreach (Screen s in Screen.AllScreens)
+            {
+                Display Dsp = new Display();
+                Dsp.DeviceName = s.DeviceName.Replace("\\", "").Replace(".", "");
+                Dsp.Width = s.Bounds.Width;
+                Dsp.Height = s.Bounds.Height;
+                Dsp.Right = s.Bounds.Left;
+                Dsp.Left = s.Bounds.Left;
+                Dsp.Top = s.Bounds.Top;
+                Dsp.X = s.Bounds.X;
+                Dsp.Y = s.Bounds.Y;
+
+                Config.Add(Dsp);
+            }
+
+            return Config;
+        }
 
         public TipoPacote GetTipoPacote()
         {
@@ -336,6 +404,7 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+
     public class Pacote_File : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -431,7 +500,8 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
-    public enum TiposRequisicaoAR{
+    public enum TiposRequisicaoAR
+    {
         Pedido_Acesso = 0,
         Resposta = 1
     }
@@ -442,14 +512,20 @@ namespace ServerClienteOnline.Utilidades
         Chat = 2
     }
 
-    public enum TipoSaidaErros {
-                                    ShowWindow = 0,
-                                    EventWindow = 1,
-                                    Console = 2,
-                                    Arquivo = 3,
-                                    Componente = 4,
-                                    ComponenteAndFile = 5
-                                };
+    public enum TipoMecanismo
+    {
+        Navegador = 0,
+        Desktop = 1
+    }
+    public enum TipoSaidaErros
+    {
+        ShowWindow = 0,
+        EventWindow = 1,
+        Console = 2,
+        Arquivo = 3,
+        Componente = 4,
+        ComponenteAndFile = 5
+    };
     public enum TipoChave
     {
         LocalMachine = 0,
@@ -460,19 +536,21 @@ namespace ServerClienteOnline.Utilidades
      * Formato do pacote será transmitido entre os serviços de Cliente/Serviço.
      * </summary>
      */
-    public enum TipoPacote     {
-                                    Base = 0,
-                                    Echo = 1,
-                                    Replay = 2,
-                                    Comando = 3,
-                                    File = 4,
-                                    FileSystem = 5,
-                                    Auth = 6,
-                                    Inicializacao = 7,
-                                    Error = 8,
-                                    Login = 9,
-                                    AcessoRemoto = 10,
-                                    AcessoRemoto_Resposta = 11
+    public enum TipoPacote
+    {
+        Base = 0,
+        Echo = 1,
+        Replay = 2,
+        Comando = 3,
+        File = 4,
+        FileSystem = 5,
+        Auth = 6,
+        Inicializacao = 7,
+        Error = 8,
+        Login = 9,
+        AcessoRemoto = 10,
+        AcessoRemoto_Resposta = 11,
+        AcessoRemoto_SYN = 12
 
     };
 
@@ -487,13 +565,14 @@ namespace ServerClienteOnline.Utilidades
      * <para>Livre - Não realização autenticação, ficando o servidor respondendo à qualquer requisiçaõ.</para>
      * * </summary>
      */
-    public enum Autenticacao   { 
-                                    LDAP = 0,
-                                    LocalHost = 1,
-                                    BancoDados = 2,
-                                    Google = 3,
-                                    Livre = 4
-                                };
+    public enum Autenticacao
+    {
+        LDAP = 0,
+        LocalHost = 1,
+        BancoDados = 2,
+        Google = 3,
+        Livre = 4
+    };
 
     public struct TError
     {
@@ -504,8 +583,8 @@ namespace ServerClienteOnline.Utilidades
 
     public enum __Autenticacao
     {
-        Cliente     = 0x00000A,
-        Servidor    = 0xFFFFFF
+        Cliente = 0x00000A,
+        Servidor = 0xFFFFFF
     }
 
     struct CamposCORAC
@@ -519,7 +598,7 @@ namespace ServerClienteOnline.Utilidades
     enum StatusRegistro
     {
         Habilitado = 0,
-        Desabilitado =1
+        Desabilitado = 1
     }
 
     public enum Remetente
@@ -533,5 +612,81 @@ namespace ServerClienteOnline.Utilidades
         public string Registro;
         public StatusRegistro Status;
         public string Chave_BD = null;
+    }
+
+    class Converter_JSON_String
+    {
+        public static string SerializarPacote(ITipoPacote Conteudo)
+        {
+            string SubPct = JsonConvert.SerializeObject(Conteudo);
+
+            Pacote_Base PctBase = new Pacote_Base();
+            PctBase.Pacote = Conteudo.GetTipoPacote();
+            PctBase.Conteudo = SubPct;
+
+            string SerializarPacote = JsonConvert.SerializeObject(PctBase);
+            return SerializarPacote + "     ";
+
+        }
+
+        /**
+           * Data: 02/04/2019
+           * Transforma uma string em pacote para acesso.
+           * Return: string
+           */
+        public static void DeserializarPacote(string Pacote, out Pacote_Base out_Base, out object Saida)
+        {
+            Pacote_Base Base = JsonConvert.DeserializeObject<Pacote_Base>(Pacote);
+
+            switch (Base.Pacote)
+            {
+                case TipoPacote.Auth:
+                    Pacote_Auth Auth = JsonConvert.DeserializeObject<Pacote_Auth>(Base.Conteudo);
+                    Saida = Auth;
+                    break;
+
+                case TipoPacote.Comando:
+                    Pacote_Comando Exec = JsonConvert.DeserializeObject<Pacote_Comando>(Base.Conteudo);
+                    Saida = Exec;
+                    break;
+
+                case TipoPacote.File:
+                    Pacote_File File = JsonConvert.DeserializeObject<Pacote_File>(Base.Conteudo);
+                    Saida = File;
+                    break;
+
+                case TipoPacote.FileSystem:
+                    Pacote_SystemFile FileSystem = JsonConvert.DeserializeObject<Pacote_SystemFile>(Base.Conteudo);
+                    Saida = FileSystem;
+                    break;
+
+                case TipoPacote.Echo:
+                    Pacote_PingEcho Ping = JsonConvert.DeserializeObject<Pacote_PingEcho>(Base.Conteudo);
+                    Saida = Ping;
+                    break;
+
+                case TipoPacote.Replay:
+                    Pacote_PingReplay Replay = JsonConvert.DeserializeObject<Pacote_PingReplay>(Base.Conteudo);
+                    Saida = Replay;
+                    break;
+
+                case TipoPacote.Inicializacao:
+                    Pacote_Inicializacao Inicializacao = JsonConvert.DeserializeObject<Pacote_Inicializacao>(Base.Conteudo);
+                    Saida = Inicializacao;
+                    break;
+
+                case TipoPacote.AcessoRemoto_SYN:
+                    Pacote_AcessoRemoto_Config AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config>(Base.Conteudo);
+                    Saida = AcessoRemoto;
+                    break;
+
+                default:
+                   throw new Exception("Tentativa de envio de pacote não reconhecida pelo sistema.");
+                    
+
+            }
+
+            out_Base = Base;
+        }
     }
 }

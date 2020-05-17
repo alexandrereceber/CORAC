@@ -202,88 +202,6 @@ namespace ServerClienteOnline.Server
             set { _Auth = value; }
         }
 
-        /**
-       * Data: 22/03/2019
-       * Transforma o pacote em string.
-       * Return: string
-       */
-        public string SerializarPacote(ITipoPacote Conteudo)
-        {
-            try
-            {
-                string SubPct = JsonConvert.SerializeObject(Conteudo);
-
-                Pacote_Base PctBase = new Pacote_Base();
-                PctBase.Pacote = Conteudo.GetTipoPacote();
-                PctBase.Conteudo = SubPct;
-
-                string SerializarPacote = JsonConvert.SerializeObject(PctBase);
-                return SerializarPacote + "     ";
-
-            }
-            catch (Exception e)
-            {
-                TratadorErros(e, this.GetType().Name); ;
-                return null;
-            }
-
-        }
-
-        /**
-           * Data: 02/04/2019
-           * Transforma uma string em pacote para acesso.
-           * Return: string
-           */
-        private dynamic DeserializarPacote(string Pacote)
-        {
-            try
-            {
-
-                Base = JsonConvert.DeserializeObject<Pacote_Base>(Pacote);
-                switch (Base.Pacote)
-                {
-                    case TipoPacote.Auth:
-                        Pacote_Auth Auth = JsonConvert.DeserializeObject<Pacote_Auth>(Base.Conteudo);
-                        return Auth;
-
-                    case TipoPacote.Comando:
-                        Pacote_Comando Exec = JsonConvert.DeserializeObject<Pacote_Comando>(Base.Conteudo);
-                        return Exec;
-
-                    case TipoPacote.File:
-                        Pacote_File File = JsonConvert.DeserializeObject<Pacote_File>(Base.Conteudo);
-                        return File;
-
-                    case TipoPacote.FileSystem:
-                        Pacote_SystemFile FileSystem = JsonConvert.DeserializeObject<Pacote_SystemFile>(Base.Conteudo);
-                        return FileSystem;
-
-                    case TipoPacote.Echo:
-                        Pacote_PingEcho Ping = JsonConvert.DeserializeObject<Pacote_PingEcho>(Base.Conteudo);
-                        return Ping;
-
-                    case TipoPacote.Replay:
-                        Pacote_PingReplay Replay = JsonConvert.DeserializeObject<Pacote_PingReplay>(Base.Conteudo);
-                        return Replay;
-
-                    case TipoPacote.Inicializacao:
-                        Pacote_Inicializacao Inicializacao = JsonConvert.DeserializeObject<Pacote_Inicializacao>(Base.Conteudo);
-                        return Inicializacao;
-
-
-                    default:
-                        throw new Exception("Tentativa de envio de pacote não reconhecida pelo sistema.");
-
-                }
-            }
-            catch (Exception e)
-            {
-                TratadorErros(e, this.GetType().Name); ;
-                return false;
-            }
-
-
-        }
 
         private void Resposta_Padrao(object Dados)
         {
@@ -318,8 +236,9 @@ namespace ServerClienteOnline.Server
                 string __Conteudo = _Conteudo.ReadLine();
                 /*-----------------------Processamento----------------------------*/
 
-                    dynamic QTP = DeserializarPacote(__Conteudo);
-                    switch (Base.Pacote)
+                Converter_JSON_String.DeserializarPacote(__Conteudo, out Pacote_Base Base, out object QTP);
+
+                switch (Base.Pacote)
                     {
                         case TipoPacote.Comando:
                         Pacote_Comando CMM = (Pacote_Comando)QTP; //Transforma string em um objeto da classe Pacote_Auth
@@ -344,7 +263,7 @@ namespace ServerClienteOnline.Server
 
                         Pacote_Comando PCT = new Pacote_Comando();
                         PCT.Resposta = Executar;
-                        string DadosPacote = SerializarPacote(PCT);
+                        string DadosPacote = Converter_JSON_String.SerializarPacote(PCT);
                         //Obtém o Barramento de escrita com a cliente
                         ObterResposta.ContentLength64 = DadosPacote.Length;
                         ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
@@ -354,7 +273,7 @@ namespace ServerClienteOnline.Server
 
                     case TipoPacote.Echo:
                             Pacote_PingReplay RPY = new Pacote_PingReplay();
-                            DadosPacote = SerializarPacote(RPY);
+                            DadosPacote = Converter_JSON_String.SerializarPacote(RPY);
                             //Obtém o Barramento de escrita com a cliente
                             ObterResposta.ContentLength64 = DadosPacote.Length;
                             ObterResposta.OutputStream.Write(ASCIIEncoding.Unicode.GetBytes(DadosPacote), 0, DadosPacote.Length);
@@ -368,7 +287,7 @@ namespace ServerClienteOnline.Server
                             P_Error.Mensagem = "Esse tipo de pacote não existe.";
                             P_Error.Numero = DadosExcecao.HResult;
 
-                        DadosPacote = SerializarPacote(P_Error);
+                        DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
                             ObterResposta.ContentLength64 = DadosPacote.Length;
                             ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
                             ObterResposta.Close();
@@ -385,7 +304,7 @@ namespace ServerClienteOnline.Server
                 P_Error.Mensagem = DadosExcecao.Message;
                 P_Error.Numero = DadosExcecao.HResult;
 
-                string Erros = SerializarPacote(P_Error);
+                string Erros = Converter_JSON_String.SerializarPacote(P_Error);
                 ObterResposta.ContentLength64 = Erros.Length;
                 ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(Erros), 0, Erros.Length);
                 ObterResposta.Close();
