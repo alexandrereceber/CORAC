@@ -124,10 +124,41 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_AcessoRemoto_Config_INIT : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.AcessoRemoto_Config_INIT;
+
+        [JsonProperty("Conteudo")]
+        public string Conteudo { get; set; }
+
+        [JsonProperty("DeviceName")]
+        public string DeviceName { get; set; }
+
+        [JsonProperty("Width")]
+        public int Width { get; set; }
+
+        [JsonProperty("Height")]
+        public int Height { get; set; }
+
+        [JsonProperty("Chave_AR")]
+        public string Chave_AR { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Conteudo;
+        }
+    }
+
     /**
     * Pacote referente ao acesso remoto à máquina do agente autônomo.
     */
-    public class Pacote_AcessoRemoto_Config : ITipoPacote
+    public class Pacote_AcessoRemoto_SYN : ITipoPacote
     {
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.AcessoRemoto_SYN;
@@ -550,7 +581,8 @@ namespace ServerClienteOnline.Utilidades
         Login = 9,
         AcessoRemoto = 10,
         AcessoRemoto_Resposta = 11,
-        AcessoRemoto_SYN = 12
+        AcessoRemoto_SYN = 12,
+        AcessoRemoto_Config_INIT = 13
 
     };
 
@@ -604,7 +636,8 @@ namespace ServerClienteOnline.Utilidades
     public enum Remetente
     {
         PHP = 0,
-        Cplusplus = 1
+        Cplusplus = 1,
+        Javascript = 2
     }
 
     class RegistroCORAC
@@ -676,8 +709,13 @@ namespace ServerClienteOnline.Utilidades
                     break;
 
                 case TipoPacote.AcessoRemoto_SYN:
-                    Pacote_AcessoRemoto_Config AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config>(Base.Conteudo);
+                    Pacote_AcessoRemoto_SYN AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_SYN>(Base.Conteudo);
                     Saida = AcessoRemoto;
+                    break;
+
+                case TipoPacote.AcessoRemoto_Config_INIT:
+                    Pacote_AcessoRemoto_Config_INIT Configuracao_Inicial = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config_INIT>(Base.Conteudo);
+                    Saida = Configuracao_Inicial;
                     break;
 
                 default:

@@ -33,9 +33,18 @@ namespace ServerClienteOnline.Server
                 HttpListenerWebSocketContext WebSocket_CORAC = await IAC.AcceptWebSocketAsync(null);
 
                 Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
+                ArraySegment<byte> Pacote_Config_Inicial = new ArraySegment<byte>(new byte[Buffer_Server]);
+            
+                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes("pacote inicia"));
+
+                await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+
                 ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
                 WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
-
+                string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
+                Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+                Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
+                var t = 0;
                 
             }
             catch (Exception e)
@@ -218,7 +227,7 @@ namespace ServerClienteOnline.Server
                             switch (Base.Pacote)
                             {
                                 case TipoPacote.AcessoRemoto_SYN:
-                                    Pacote_AcessoRemoto_Config PAR = (Pacote_AcessoRemoto_Config)QTP; //Transforma string em um objeto da classe Pacote_Auth
+                                    Pacote_AcessoRemoto_SYN PAR = (Pacote_AcessoRemoto_SYN)QTP; //Transforma string em um objeto da classe Pacote_Auth
 
                                     //_GerenciadorCliente?._OAuth(CMM.Chave);
 
