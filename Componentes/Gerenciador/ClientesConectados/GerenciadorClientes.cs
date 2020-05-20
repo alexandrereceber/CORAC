@@ -41,7 +41,10 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
                         Pacote_Auth User = i.Key;
                         if (IPOrigem.Address.Equals(IPDestino.Address))
                         {
-                            if(Autenticacao.Senha == User.Senha) return false;
+                            if(Autenticacao.Senha == User.Senha)
+                            {
+                                User.ChaveAR = User.ChaveAR;
+                            }
                         }
                     }
                 }

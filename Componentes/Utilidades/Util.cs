@@ -8,6 +8,7 @@ using ServerClienteOnline.Interfaces;
 using System.IO;
 using System.Drawing.Text;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace ServerClienteOnline.Utilidades
 {
@@ -157,6 +158,62 @@ namespace ServerClienteOnline.Utilidades
             return Conteudo;
         }
     }
+    
+    public class Pacote_FrameTelas : ITipoPacote
+    {
+        Tela[] FrameTelas;
+        public Pacote_FrameTelas()
+        {
+            FrameTelas = new Tela[Screen.AllScreens.Length];
+            int Count = 0;
+            foreach (Screen i in Screen.AllScreens)
+            {
+                FrameTelas[Count].Primary = i.Primary;
+                FrameTelas[Count].BitMap = new Bitmap(i.Bounds.Width, i.Bounds.Height);
+                FrameTelas[Count].T = new Size { Width = i.Bounds.Width, Height = i.Bounds.Height };
+
+                Count++;
+            }
+        }
+        public class Tela
+        {
+            [JsonProperty("Monitor")]
+            public string Monitor { get; set; }
+
+            [JsonProperty("Primary")]
+            public bool Primary { get; set; }
+
+            public Bitmap BitMap = null;
+            public Size T = new Size { };
+
+        }
+
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.FrameTelas;
+
+        [JsonProperty("Error")]
+        public bool Error { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Telas")]
+        public Tela Telas { get; set; }
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Mensagem;
+        }
+
+        public void GerarTelas()
+        {
+
+        }
+    }
 
     /**
     * Pacote referente ao acesso remoto à máquina do agente autônomo.
@@ -263,6 +320,7 @@ namespace ServerClienteOnline.Utilidades
             {
                 Display Dsp = new Display();
                 Dsp.DeviceName = s.DeviceName.Replace("\\", "").Replace(".", "");
+                Dsp.Primary = s.Primary;
                 Dsp.Width = s.Bounds.Width;
                 Dsp.Height = s.Bounds.Height;
                 Dsp.Right = s.Bounds.Left;
@@ -585,7 +643,8 @@ namespace ServerClienteOnline.Utilidades
         AcessoRemoto = 10,
         AcessoRemoto_Resposta = 11,
         AcessoRemoto_SYN = 12,
-        AcessoRemoto_Config_INIT = 13
+        AcessoRemoto_Config_INIT = 13,
+        FrameTelas = 14
 
     };
 
@@ -728,6 +787,11 @@ namespace ServerClienteOnline.Utilidades
             }
 
             out_Base = Base;
+        }
+
+        internal static string SerializarPacote(Pacote_Base pct)
+        {
+            throw new NotImplementedException();
         }
     }
 }

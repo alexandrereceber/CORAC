@@ -525,9 +525,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1, 472);
+            this.button1.Location = new System.Drawing.Point(0, 472);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(119, 28);
+            this.button1.Size = new System.Drawing.Size(139, 28);
             this.button1.TabIndex = 3;
             this.button1.Text = "Atualizar";
             this.button1.UseVisualStyleBackColor = true;
@@ -588,10 +588,9 @@
             // 
             // Notificacao
             // 
-            this.Notificacao.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Error;
             this.Notificacao.ContextMenuStrip = this.context_CORAC_ICONE_MAN;
             this.Notificacao.Icon = ((System.Drawing.Icon)(resources.GetObject("Notificacao.Icon")));
-            this.Notificacao.Tag = "hh";
+            this.Notificacao.Tag = "Controle Operacional Remoto de Acesso Centralizado";
             this.Notificacao.Text = "CORAC";
             this.Notificacao.Visible = true;
             this.Notificacao.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Notificacao_MouseDoubleClick);

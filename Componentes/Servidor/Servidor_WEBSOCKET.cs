@@ -16,6 +16,7 @@ using System.Net.WebSockets;
 using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Security.Cryptography;
 
 namespace ServerClienteOnline.Server
 {
@@ -24,32 +25,82 @@ namespace ServerClienteOnline.Server
         private IGClienteHTML _GerenciadorCliente;
         private IAuthHTML _Auth;
         private int Buffer_Server { get; set; }
+
+        List<int> Lista_Conexoes_WEBSOCKET = new List<int>();
+
+        private bool Gerente_WEBSOCKET(int IP)
+        {
+            
+            if(Lista_Conexoes_WEBSOCKET.Count > 0)
+            {
+                if (Lista_Conexoes_WEBSOCKET.IndexOf(IP) >= 0) return true; //Continuar conexão.
+
+                return false; //Já existe uma conexão com esse ip, favor desconectar e tentat novamente
+            }
+            else
+            {
+                Lista_Conexoes_WEBSOCKET.Add(IP);
+
+                return false; //Continuar conexão.
+            }
+        }
+
+        private bool Desconectar_SOCKET(int IP)
+        {
+           return Lista_Conexoes_WEBSOCKET.Remove(IP);
+        }
         public async void Iniciar_Begin_AcessoRemoto(object ObjAC)
         {
-            WebSocket Obter_Contexto_WEBSOCKET;
+
             try
             {
-                HttpListenerContext IAC = (HttpListenerContext)ObjAC;
+                WebSocket Obter_Contexto_WEBSOCKET;
+                HttpListenerContext IAC;
+
+                /**
+                 * Lembrar de criar um gerente de conecções websocket para evitar conflitos.
+                 */
+                IAC = (HttpListenerContext)ObjAC;
+
+                int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
+                if (Gerente_WEBSOCKET(IP))
+                {
+                    throw new Exception("Já existem outras conexões vindas desse dispositivo, favor desconectá-los e tentar novamente.");
+                }
+
                 HttpListenerWebSocketContext WebSocket_CORAC = await IAC.AcceptWebSocketAsync(null);
-
                 Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
-
+                
                 Pacote_AcessoRemoto_Config_INIT Pacote_Inicial = new Pacote_AcessoRemoto_Config_INIT();
                 ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_Inicial)));
+                /**
+                 * aguarda resposta do navegador antes de continuar.
+                 */
                 await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
                 
                 try
                 {
                     ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
                     WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
+
+                    WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
+                    if (p == WebSocketCloseStatus.EndpointUnavailable)
+                    {
+                        if (Gerente_WEBSOCKET(IP))
+                        {
+                            throw new Exception("Ocorreu uma desconexão abrupta!");
+                        }
+                    }
+
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
                     
                     Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
                     Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
 
+                    
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
-
+                        ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
                     }
                     else
                     {
@@ -72,6 +123,7 @@ namespace ServerClienteOnline.Server
                     DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
                     await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
                     Obter_Contexto_WEBSOCKET.Abort();
+                    var d = this;
                 }
 
 
@@ -80,6 +132,82 @@ namespace ServerClienteOnline.Server
             catch (Exception e)
             {
                 TratadorErros(e, this.GetType().Name);
+            }
+
+        }
+
+        /**
+         * <summary>
+         * Recebe os pacotes da conexão SOCKEWEB.
+         * </summary>
+         */
+        private async void ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
+        {
+            try
+            {
+                ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+                while (Sck.State == WebSocketState.Open)
+                {
+                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, new CancellationToken());
+                    WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
+                    if (p == WebSocketCloseStatus.EndpointUnavailable)
+                    {
+                        int IP = Server.Request.RemoteEndPoint.Address.GetHashCode();
+                        if (Desconectar_SOCKET(IP))
+                        {
+                            throw new Exception("Ocorreu uma desconexão abrupta!");
+                        }
+                    }
+                    string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
+
+                    Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+
+                    switch (Base.Pacote)
+                    {
+                        case TipoPacote.Comando:
+
+                            break;
+
+                        default:
+                            Pacote_Error PERR = new Pacote_Error();
+                            PERR.Error = true;
+                            PERR.Mensagem = "Pacote inexistente";
+                            PERR.Numero = 42000;
+
+                            ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
+                            await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                            break;
+                    }
+
+                }
+            }
+            catch(Exception e)
+            {
+                TSaida_Error = TipoSaidaErros.Arquivo;
+                TratadorErros(e, this.GetType().Name);
+
+            }
+
+        }
+
+        /**
+         * <summary>
+         *  Envia os pacotes para o cliente da conexção WEBSOCKET.
+         * </summary>
+         */
+        private async Task<bool> enviarPacotes(WebSocket Sck, ITipoPacote Pacote)
+        {
+            try
+            {
+                if (Sck.State != WebSocketState.Open) return false;
+                ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
+                await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
+                return true;
+            }
+            catch(Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+                return false;
             }
 
         }
@@ -102,6 +230,23 @@ namespace ServerClienteOnline.Server
         public IAuthHTML Autenticador
         {
             set { _Auth = value; }
+        }
+
+        private async void enviarFrame()
+        {
+            try
+            {
+                //Pacote_FrameTela[] Telas = new Pacote_FrameTela[Screen.AllScreens.Length];
+                bool C = true;
+                while (C)
+                {
+
+                }
+            }catch(Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+            }
+
         }
 
     }
@@ -225,6 +370,7 @@ namespace ServerClienteOnline.Server
             {
 
                 HttpListener Server = (HttpListener)s.AsyncState;
+                
                 HttpListenerContext Aceitar = Server.EndGetContext(s);
                 
                 HttpListenerRequest ObterConteudo = Aceitar.Request;

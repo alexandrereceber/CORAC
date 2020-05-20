@@ -615,6 +615,10 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_AcessoRemoto()
         {
+            Notificacao.BalloonTipIcon = ToolTipIcon.Info;
+            Notificacao.BalloonTipTitle = "teste";
+            Notificacao.BalloonTipText = "ola";
+
             pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
 
             Color Vermelho = Color.FromArgb(255, 255, 0, 0);
@@ -913,8 +917,14 @@ namespace CORAC
                 ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
                 ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
                 ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
-
+            try
+            {
                 await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+            }
+            finally
+            {
+
+            }
         }
         private void SalvaConfiguracoes_Click(object sender, EventArgs e)
         {
@@ -1301,6 +1311,7 @@ namespace CORAC
                 bool ServerCORAC = await Task.Run(Iniciar_Servidor_AcessoRemoto);
                 if (ServerCORAC)
                 {
+
                     if (Registro_Corac.Status == StatusRegistro.Habilitado)
                     {
                         List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
