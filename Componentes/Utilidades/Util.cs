@@ -9,6 +9,8 @@ using System.IO;
 using System.Drawing.Text;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Collections;
+using System.Drawing.Imaging;
 
 namespace ServerClienteOnline.Utilidades
 {
@@ -158,35 +160,109 @@ namespace ServerClienteOnline.Utilidades
             return Conteudo;
         }
     }
-    
-    public class Pacote_FrameTelas : ITipoPacote
-    {
-        Tela[] FrameTelas;
-        public Pacote_FrameTelas()
-        {
-            FrameTelas = new Tela[Screen.AllScreens.Length];
-            int Count = 0;
-            foreach (Screen i in Screen.AllScreens)
-            {
-                FrameTelas[Count].Primary = i.Primary;
-                FrameTelas[Count].BitMap = new Bitmap(i.Bounds.Width, i.Bounds.Height);
-                FrameTelas[Count].T = new Size { Width = i.Bounds.Width, Height = i.Bounds.Height };
 
-                Count++;
+    /**
+     * Pacote vem do cliente, informando qual tela deseja visualizar
+     */
+    public class ConfigImagem_Monitor : ITipoPacote
+
+    {
+        public ConfigImagem_Monitor()
+        {
+            
+        }
+
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.FrameTelas;
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Primary")]       /*Informa o nome do display que deseja visualizar*/
+        public string Primary = null;
+
+        [JsonProperty("ThumbnailImage")] /*Tamanho da imagem miniaturizada*/
+        public Size ThumbnailImage = new Size { Width = 180, Height = 180};
+
+        [JsonProperty("FormatImagem")]
+        public TiposImagem FormatImagem = TiposImagem.Jpeg;
+
+        public ImageFormat TiposImagems = ImageFormat.Png;
+        public string GetResultado()
+        {
+            return Mensagem;
+        }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public void NormalizarTipo() /*Deve ser chamado logo após a instanciação da classe para normalizar o atributo*/
+        {
+            switch (FormatImagem)
+            {
+                case TiposImagem.Png:
+
+                    break;
+
+                default:
+                    TiposImagems = ImageFormat.Png;
+                    break;
             }
         }
-        public class Tela
+    }
+
+    public class Pacote_FrameTelas : ITipoPacote
+    {
+        /**
+         * Classe convertida em json e enviada para o cliente
+         */
+        public class Tela 
         {
             [JsonProperty("Monitor")]
             public string Monitor { get; set; }
 
             [JsonProperty("Primary")]
-            public bool Primary { get; set; }
+            public string Primary { get; set; }
 
-            public Bitmap BitMap = null;
-            public Size T = new Size { };
+            [JsonProperty("ThumbnailImage")]
+            public string ThumbnailImage { get; set; }
+
+            internal Bitmap TelaMonitor = null;
+            internal Size T = new Size { };
+            internal Point P = new Point { };
+
+            internal Graphics CopyTela = null;
 
         }
+
+        Tela[] FrameTelas;
+        ConfigImagem_Monitor Configuracoes_Gerais = new ConfigImagem_Monitor();
+        public Pacote_FrameTelas()
+        {
+            FrameTelas = new Tela[Screen.AllScreens.Length];
+            for (int ii = 0; ii < Screen.AllScreens.Length; ii++)
+            {
+                FrameTelas[ii] = new Tela();
+            }
+            int Count = 0;
+            foreach (Screen i in Screen.AllScreens)
+            {
+                string M = i.DeviceName.Replace("\\", "").Replace(".", "");
+                if (i.Primary)
+                {
+                    Configuracoes_Gerais.Primary = M;
+                }
+                FrameTelas[Count].Monitor = M;
+                FrameTelas[Count].TelaMonitor = new Bitmap(i.Bounds.Width, i.Bounds.Height);
+                FrameTelas[Count].T = new Size { Width = i.Bounds.Width, Height = i.Bounds.Height };
+                FrameTelas[Count].P = i.Bounds.Location;
+                FrameTelas[Count].CopyTela = Graphics.FromImage(FrameTelas[Count].TelaMonitor);
+                Count++;
+            }
+        }
+        internal ConfigImagem_Monitor setConfiguracoesDisplay { set { Configuracoes_Gerais = value; } get { return Configuracoes_Gerais; } }
 
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.FrameTelas;
@@ -198,7 +274,8 @@ namespace ServerClienteOnline.Utilidades
         public string Mensagem { get; set; }
 
         [JsonProperty("Telas")]
-        public Tela Telas { get; set; }
+        public Tela[] Telas { get { return FrameTelas; } }
+
         public TipoPacote GetTipoPacote()
         {
             return Pacote;
@@ -211,7 +288,27 @@ namespace ServerClienteOnline.Utilidades
 
         public void GerarTelas()
         {
+            foreach(Tela TL in FrameTelas)
+            {
+                if(Configuracoes_Gerais.Primary == TL.Monitor)
+                {
+                    TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
+                    MemoryStream TransformImg = new MemoryStream();
+                    TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
+                    TL.Primary = Convert.ToBase64String(TransformImg.ToArray());
 
+                }
+                else
+                {
+                    TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
+                    MemoryStream TransformImg = new MemoryStream();
+                    Image P = TL.TelaMonitor.GetThumbnailImage(Configuracoes_Gerais.ThumbnailImage.Width, Configuracoes_Gerais.ThumbnailImage.Height, null, TL.TelaMonitor.GetHbitmap());
+                    TL.TelaMonitor = (Bitmap)P;
+                    //Image j = P.FromStream(TransformImg);
+                    TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
+                    TL.ThumbnailImage = Convert.ToBase64String(TransformImg.ToArray());
+                }
+            }
         }
     }
 
@@ -702,6 +799,18 @@ namespace ServerClienteOnline.Utilidades
         Javascript = 2
     }
 
+    public enum TiposImagem
+    {
+        MemoryBmp = 0,
+        Bmp = 1,
+        Emf = 2,
+        Wmf = 3,
+        Gif = 4,
+        Jpeg = 5,
+        Png = 6,
+        Tiff = 7,
+        Icon = 8
+    }
     class RegistroCORAC
     {
         public string Registro;

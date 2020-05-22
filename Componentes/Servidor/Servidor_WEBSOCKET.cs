@@ -28,6 +28,7 @@ namespace ServerClienteOnline.Server
 
         List<int> Lista_Conexoes_WEBSOCKET = new List<int>();
 
+        private bool Semafaro = false;
         private bool Gerente_WEBSOCKET(int IP)
         {
             
@@ -72,11 +73,11 @@ namespace ServerClienteOnline.Server
                 Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
                 
                 Pacote_AcessoRemoto_Config_INIT Pacote_Inicial = new Pacote_AcessoRemoto_Config_INIT();
-                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_Inicial)));
+                //ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_Inicial)));
                 /**
                  * aguarda resposta do navegador antes de continuar.
                  */
-                await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                await enviarPacotes(Obter_Contexto_WEBSOCKET, WebSocketMessageType.Text, Pacote_Inicial);
                 
                 try
                 {
@@ -101,16 +102,15 @@ namespace ServerClienteOnline.Server
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
                         ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+                        enviarFrame(Obter_Contexto_WEBSOCKET);
                     }
                     else
                     {
                         Pacote_Error PERR = new Pacote_Error();
                         PERR.Error = true;
                         PERR.Mensagem = "Erro de autenticação!";
+                        await closeConexao(Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
 
-                        DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
-                        await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
-                        Obter_Contexto_WEBSOCKET.Abort();
                     }
                 }
                 catch(Exception e)
@@ -119,10 +119,8 @@ namespace ServerClienteOnline.Server
                     PERR.Error = true;
                     PERR.Mensagem = e.Message;
                     PERR.Numero = e.HResult;
+                    await closeConexao(Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
 
-                    DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
-                    await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
-                    Obter_Contexto_WEBSOCKET.Abort();
                     var d = this;
                 }
 
@@ -173,9 +171,9 @@ namespace ServerClienteOnline.Server
                             PERR.Error = true;
                             PERR.Mensagem = "Pacote inexistente";
                             PERR.Numero = 42000;
-
-                            ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
-                            await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                            await closeConexao(Sck, PERR, WebSocketCloseStatus.InternalServerError);
+                            //ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
+                           // await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
                             break;
                     }
 
@@ -189,19 +187,36 @@ namespace ServerClienteOnline.Server
             }
 
         }
+        private async Task<bool> closeConexao(WebSocket Sck, ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
+        {
+            try
+            {
+                if (Sck.State != WebSocketState.Open) return false;
+                string StgFechamento = Converter_JSON_String.SerializarPacote(Pacote);
+                await Sck.CloseAsync(TipoFechamento, StgFechamento, CancellationToken.None);
+                return true;
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, this.GetType().Name);
+                return false;
+            }
 
+        }
         /**
          * <summary>
          *  Envia os pacotes para o cliente da conexção WEBSOCKET.
          * </summary>
          */
-        private async Task<bool> enviarPacotes(WebSocket Sck, ITipoPacote Pacote)
+        private async Task<bool> enviarPacotes(WebSocket Sck, WebSocketMessageType Tipo, ITipoPacote Pacote)
         {
             try
             {
-                if (Sck.State != WebSocketState.Open) return false;
+                while (Semafaro) { }
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
-                await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
+                Semafaro = true;
+                await Sck.SendAsync(EnviandoDados, Tipo, true, CancellationToken.None);
+                Semafaro = false;
                 return true;
             }
             catch(Exception e)
@@ -232,15 +247,17 @@ namespace ServerClienteOnline.Server
             set { _Auth = value; }
         }
 
-        private async void enviarFrame()
+        private async void enviarFrame(WebSocket Sck)
         {
             try
             {
-                //Pacote_FrameTela[] Telas = new Pacote_FrameTela[Screen.AllScreens.Length];
+                Pacote_FrameTelas CapturarTelas = new Pacote_FrameTelas();
                 bool C = true;
                 while (C)
                 {
-
+                    if (Sck.State != WebSocketState.Open) C = false;
+                    CapturarTelas.GerarTelas();
+                    await enviarPacotes(Sck, WebSocketMessageType.Text, CapturarTelas);
                 }
             }catch(Exception e)
             {
@@ -287,8 +304,8 @@ namespace ServerClienteOnline.Server
             try
             {
                 //if (_CMDs == null) throw new Exception("Nenhum tratador de comados foi identificado.");
-                // if (_Auth == null) throw new Exception("Nenhum processador de autenticação foi identificado.");
-                //if (_GerenciadorCliente == null) throw new Exception("Nenhum gerenciado de processo foi identificado.");
+                 if (_Auth == null) throw new Exception("Nenhum processador de autenticação foi identificado.");
+                if (_GerenciadorCliente == null) throw new Exception("Nenhum gerenciado de processo foi identificado.");
             }
             catch (Exception e)
             {
