@@ -1371,6 +1371,11 @@ namespace CORAC
                 T.Enabled = true;
             }
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //ServidorWEB_Socket.Contro = new AcessoRemoto_WEBSOCKET();
+        }
     }
 
 

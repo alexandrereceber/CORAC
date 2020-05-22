@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Collections;
 using System.Drawing.Imaging;
+using System.Net.WebSockets;
 
 namespace ServerClienteOnline.Utilidades
 {
@@ -213,6 +214,27 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_CloseConection : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Close_Connection;
+
+        [JsonProperty("Close")]
+        public WebSocketState Close { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        string ITipoPacote.GetResultado()
+        {
+            return Mensagem;
+        }
+
+        TipoPacote ITipoPacote.GetTipoPacote()
+        {
+            return Pacote;
+        }
+    }
     public class Pacote_FrameTelas : ITipoPacote
     {
         /**
@@ -741,7 +763,8 @@ namespace ServerClienteOnline.Utilidades
         AcessoRemoto_Resposta = 11,
         AcessoRemoto_SYN = 12,
         AcessoRemoto_Config_INIT = 13,
-        FrameTelas = 14
+        FrameTelas = 14,
+        Close_Connection = 15
 
     };
 

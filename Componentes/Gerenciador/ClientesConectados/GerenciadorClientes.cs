@@ -43,7 +43,7 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
                         {
                             if(Autenticacao.Senha == User.Senha)
                             {
-                                User.ChaveAR = User.ChaveAR;
+                                i.Key.ChaveAR = User.ChaveAR;
                             }
                         }
                     }

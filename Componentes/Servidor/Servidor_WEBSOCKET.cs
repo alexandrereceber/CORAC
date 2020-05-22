@@ -17,6 +17,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 namespace ServerClienteOnline.Server
 {
@@ -48,15 +49,17 @@ namespace ServerClienteOnline.Server
 
         private bool Desconectar_SOCKET(int IP)
         {
-           return Lista_Conexoes_WEBSOCKET.Remove(IP);
+            bool S = Lista_Conexoes_WEBSOCKET.Remove(IP);
+            return S;
         }
-        public async void Iniciar_Begin_AcessoRemoto(object ObjAC)
+        public async Task<bool> Iniciar_Begin_AcessoRemoto(object ObjAC)
         {
+            WebSocket Obter_Contexto_WEBSOCKET;
+            HttpListenerContext IAC;
 
             try
             {
-                WebSocket Obter_Contexto_WEBSOCKET;
-                HttpListenerContext IAC;
+
 
                 /**
                  * Lembrar de criar um gerente de conecções websocket para evitar conflitos.
@@ -66,6 +69,7 @@ namespace ServerClienteOnline.Server
                 int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
                 if (Gerente_WEBSOCKET(IP))
                 {
+                    Desconectar_SOCKET(IP);
                     throw new Exception("Já existem outras conexões vindas desse dispositivo, favor desconectá-los e tentar novamente.");
                 }
 
@@ -87,10 +91,7 @@ namespace ServerClienteOnline.Server
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable)
                     {
-                        if (Gerente_WEBSOCKET(IP))
-                        {
-                            throw new Exception("Ocorreu uma desconexão abrupta!");
-                        }
+                        throw new Exception("Ocorreu um erro não avaliado!.");
                     }
 
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
@@ -99,18 +100,23 @@ namespace ServerClienteOnline.Server
                     Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
 
                     
-                    if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
+                    if (true)
+                    //if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
-                        ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
-                        enviarFrame(Obter_Contexto_WEBSOCKET);
+                        Task<bool> g =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+                        Task<bool> f = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
+                        g.Wait();
+                        f.Wait();
+                        return true;
                     }
                     else
                     {
                         Pacote_Error PERR = new Pacote_Error();
                         PERR.Error = true;
+                        PERR.Numero = 42001;
                         PERR.Mensagem = "Erro de autenticação!";
-                        await closeConexao(Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
-
+                        await closeConexao(IAC, Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.NormalClosure);
+                        //return true;
                     }
                 }
                 catch(Exception e)
@@ -119,9 +125,8 @@ namespace ServerClienteOnline.Server
                     PERR.Error = true;
                     PERR.Mensagem = e.Message;
                     PERR.Numero = e.HResult;
-                    await closeConexao(Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
-
-                    var d = this;
+                    await closeConexao(IAC, Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
+                    return true;
                 }
 
 
@@ -129,7 +134,9 @@ namespace ServerClienteOnline.Server
             }
             catch (Exception e)
             {
+                TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
+                return true;
             }
 
         }
@@ -139,7 +146,7 @@ namespace ServerClienteOnline.Server
          * Recebe os pacotes da conexão SOCKEWEB.
          * </summary>
          */
-        private async void ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
+        private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
         {
             try
             {
@@ -148,13 +155,13 @@ namespace ServerClienteOnline.Server
                 {
                     WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, new CancellationToken());
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
-                    if (p == WebSocketCloseStatus.EndpointUnavailable)
+                    if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
                     {
-                        int IP = Server.Request.RemoteEndPoint.Address.GetHashCode();
-                        if (Desconectar_SOCKET(IP))
-                        {
-                            throw new Exception("Ocorreu uma desconexão abrupta!");
-                        }
+                        Pacote_CloseConection Close = new Pacote_CloseConection();
+                        Close.Close = Sck.State;
+                        await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
+                        //return true;
+                        break;
                     }
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
 
@@ -163,7 +170,7 @@ namespace ServerClienteOnline.Server
                     switch (Base.Pacote)
                     {
                         case TipoPacote.Comando:
-
+                            //return true;
                             break;
 
                         default:
@@ -171,33 +178,45 @@ namespace ServerClienteOnline.Server
                             PERR.Error = true;
                             PERR.Mensagem = "Pacote inexistente";
                             PERR.Numero = 42000;
-                            await closeConexao(Sck, PERR, WebSocketCloseStatus.InternalServerError);
-                            //ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(PERR)));
-                           // await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                            await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
+                            //return true;
                             break;
                     }
 
                 }
+
+                return true;
             }
             catch(Exception e)
             {
                 TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
-
+                return true;
             }
 
         }
-        private async Task<bool> closeConexao(WebSocket Sck, ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
+        private async Task<bool> closeConexao(HttpListenerContext Server, WebSocket Sck, ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
+
             try
             {
-                if (Sck.State != WebSocketState.Open) return false;
-                string StgFechamento = Converter_JSON_String.SerializarPacote(Pacote);
+                
+                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
+                await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                Pacote_CloseConection Close = new Pacote_CloseConection();
+                Close.Close = Sck.State;
+                string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
+
                 await Sck.CloseAsync(TipoFechamento, StgFechamento, CancellationToken.None);
+                
+                int IP = Server.Request.RemoteEndPoint.Address.GetHashCode();
+                Desconectar_SOCKET(IP);
                 return true;
             }
             catch (Exception e)
             {
+                TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
                 return false;
             }
@@ -212,6 +231,7 @@ namespace ServerClienteOnline.Server
         {
             try
             {
+                if (Sck.State != WebSocketState.Open) return false;
                 while (Semafaro) { }
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
                 Semafaro = true;
@@ -221,6 +241,7 @@ namespace ServerClienteOnline.Server
             }
             catch(Exception e)
             {
+                TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
                 return false;
             }
@@ -247,7 +268,7 @@ namespace ServerClienteOnline.Server
             set { _Auth = value; }
         }
 
-        private async void enviarFrame(WebSocket Sck)
+        private async Task<bool> enviarFrame(HttpListenerContext Server, WebSocket Sck)
         {
             try
             {
@@ -255,13 +276,27 @@ namespace ServerClienteOnline.Server
                 bool C = true;
                 while (C)
                 {
-                    if (Sck.State != WebSocketState.Open) C = false;
+                    //if (Sck.State != WebSocketState.Open) break;
                     CapturarTelas.GerarTelas();
-                    await enviarPacotes(Sck, WebSocketMessageType.Text, CapturarTelas);
+                    while (Semafaro) { }
+                    ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
+                    Semafaro = true;
+                    await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
+                    Semafaro = false;
+
+                    await Task.Delay(500, CancellationToken.None);
                 }
-            }catch(Exception e)
+                return true;
+                //Pacote_CloseConection Close = new Pacote_CloseConection();
+                //Close.Close = Sck.State;
+                //await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
+
+            }
+            catch (Exception e)
             {
+                TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
+                return true;
             }
 
         }
@@ -281,6 +316,7 @@ namespace ServerClienteOnline.Server
 
         AcessoRemoto_WEBSOCKET ControleAC = new AcessoRemoto_WEBSOCKET();
 
+        //public AcessoRemoto_WEBSOCKET Contro { get { return ControleAC; } set { ControleAC = value; } }
         public Servidor_WEBSOCKET()
         {
             try
@@ -378,7 +414,7 @@ namespace ServerClienteOnline.Server
           * Dá início à comunicação, criando uma thread para cada cliente
           * Return: string
           */
-        private void IniciarConversa(IAsyncResult s)
+        private  async void IniciarConversa(IAsyncResult s)
         {
             Pacote_Error P_Error;
 
@@ -387,9 +423,11 @@ namespace ServerClienteOnline.Server
             {
 
                 HttpListener Server = (HttpListener)s.AsyncState;
-                
+
                 HttpListenerContext Aceitar = Server.EndGetContext(s);
-                
+
+                Servidor.BeginGetContext(IniciarConversa, Server);
+
                 HttpListenerRequest ObterConteudo = Aceitar.Request;
                 StreamReader _Conteudo = new StreamReader(ObterConteudo.InputStream);
 
@@ -398,15 +436,19 @@ namespace ServerClienteOnline.Server
                 /**
                  * Coloca o servidor para receber outras conexões.
                  */
-                Servidor.BeginGetContext(IniciarConversa, Server);
+
                 Uri URi = Aceitar.Request.Url;
                 switch (URi.LocalPath)
                 {
                     case "/CORAC/AcessoRemoto/":
 
-                        AcessoRemoto = new Thread(ControleAC.Iniciar_Begin_AcessoRemoto);
-                        AcessoRemoto.Name = "AcessoRemoto";
-                        AcessoRemoto.Start(Aceitar);
+                        //AcessoRemoto = new Thread(ControleAC.Iniciar_Begin_AcessoRemoto);
+                        //AcessoRemoto.Name = "AcessoRemoto";
+                        //AcessoRemoto.Start(Aceitar);
+                        
+                        await ControleAC.Iniciar_Begin_AcessoRemoto(Aceitar);
+                        ControleAC = new AcessoRemoto_WEBSOCKET();
+
                         break;
 
                     case "/AA_AcessoRemoto_SYN/":
@@ -505,7 +547,6 @@ namespace ServerClienteOnline.Server
                                     ObterResposta.Close();
                                     break;
                             }
-
                             _Conteudo.Close();
                             //Server.Close();
 
