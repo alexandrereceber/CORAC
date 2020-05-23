@@ -183,7 +183,7 @@ namespace ServerClienteOnline.Utilidades
         public string Primary = null;
 
         [JsonProperty("ThumbnailImage")] /*Tamanho da imagem miniaturizada*/
-        public Size ThumbnailImage = new Size { Width = 180, Height = 180};
+        public Size ThumbnailImage = new Size { Width = 300, Height = 300};
 
         [JsonProperty("FormatImagem")]
         public TiposImagem FormatImagem = TiposImagem.Jpeg;
@@ -310,12 +310,14 @@ namespace ServerClienteOnline.Utilidades
 
         public void GerarTelas()
         {
-            foreach(Tela TL in FrameTelas)
+            MemoryStream TransformImg = new MemoryStream();
+
+            foreach (Tela TL in FrameTelas)
             {
                 if(Configuracoes_Gerais.Primary == TL.Monitor)
                 {
                     TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
-                    MemoryStream TransformImg = new MemoryStream();
+                    TransformImg = new MemoryStream();
                     TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
                     TL.Primary = Convert.ToBase64String(TransformImg.ToArray());
 
@@ -323,12 +325,10 @@ namespace ServerClienteOnline.Utilidades
                 else
                 {
                     TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
-                    MemoryStream TransformImg = new MemoryStream();
-                    Image P = TL.TelaMonitor.GetThumbnailImage(Configuracoes_Gerais.ThumbnailImage.Width, Configuracoes_Gerais.ThumbnailImage.Height, null, TL.TelaMonitor.GetHbitmap());
-                    TL.TelaMonitor = (Bitmap)P;
-                    //Image j = P.FromStream(TransformImg);
+                    TransformImg = new MemoryStream();
                     TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
                     TL.ThumbnailImage = Convert.ToBase64String(TransformImg.ToArray());
+
                 }
             }
         }

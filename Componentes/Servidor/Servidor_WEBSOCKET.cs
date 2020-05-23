@@ -100,13 +100,16 @@ namespace ServerClienteOnline.Server
                     Pacote_AcessoRemoto_Config_INIT PIC = (Pacote_AcessoRemoto_Config_INIT)Saida;
 
                     
-                    if (true)
-                    //if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
+                    //if (true)
+                    if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
-                        Task<bool> g =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
-                        Task<bool> f = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
-                        g.Wait();
-                        f.Wait();
+                        Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+                        Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
+                        Task[] FluxoDados = new Task[2];
+                        FluxoDados[0] = RCB;
+                        FluxoDados[1] = EFM;
+
+                        Task.WaitAll(FluxoDados);
                         return true;
                     }
                     else
@@ -116,7 +119,7 @@ namespace ServerClienteOnline.Server
                         PERR.Numero = 42001;
                         PERR.Mensagem = "Erro de autenticação!";
                         await closeConexao(IAC, Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.NormalClosure);
-                        //return true;
+                        return true;
                     }
                 }
                 catch(Exception e)
@@ -160,7 +163,6 @@ namespace ServerClienteOnline.Server
                         Pacote_CloseConection Close = new Pacote_CloseConection();
                         Close.Close = Sck.State;
                         await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
-                        //return true;
                         break;
                     }
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
@@ -170,7 +172,7 @@ namespace ServerClienteOnline.Server
                     switch (Base.Pacote)
                     {
                         case TipoPacote.Comando:
-                            //return true;
+                            
                             break;
 
                         default:
@@ -272,6 +274,7 @@ namespace ServerClienteOnline.Server
         {
             try
             {
+                ArraySegment<byte> EnviandoDados;
                 Pacote_FrameTelas CapturarTelas = new Pacote_FrameTelas();
                 bool C = true;
                 while (C)
@@ -279,7 +282,7 @@ namespace ServerClienteOnline.Server
                     //if (Sck.State != WebSocketState.Open) break;
                     CapturarTelas.GerarTelas();
                     while (Semafaro) { }
-                    ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
+                    EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
                     Semafaro = true;
                     await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
                     Semafaro = false;
@@ -339,7 +342,6 @@ namespace ServerClienteOnline.Server
         {
             try
             {
-                //if (_CMDs == null) throw new Exception("Nenhum tratador de comados foi identificado.");
                  if (_Auth == null) throw new Exception("Nenhum processador de autenticação foi identificado.");
                 if (_GerenciadorCliente == null) throw new Exception("Nenhum gerenciado de processo foi identificado.");
             }
