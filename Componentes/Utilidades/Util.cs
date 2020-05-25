@@ -420,14 +420,14 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Formato")]
         public TiposSaidas Formato = TiposSaidas.JSON;
 
-        [JsonProperty("Configuracoes")]
-        public List<Display> Configuracoes = null;
+        [JsonProperty("Displays")]
+        public List<Display> Displays = null;
 
         public Pacote_AcessoRemoto_Resposta()
         {
             foreach (Screen s in Screen.AllScreens)
             {
-                Configuracoes = GetConfig_Video();
+                Displays = GetConfig_Video();
             }
         }
 
