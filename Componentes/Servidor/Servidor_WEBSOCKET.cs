@@ -143,7 +143,16 @@ namespace ServerClienteOnline.Server
             }
 
         }
+        private void encerramentoAtendimento()
+        {
+            MessageBox.Show("O atendimento foi encerrado. Obrigado! \nQualquer dúvida, entrar em contato com o departamento de tecnologia.","Atendimento finalizado!", MessageBoxButtons.OK,MessageBoxIcon.Information,MessageBoxDefaultButton.Button1,MessageBoxOptions.ServiceNotification);
+        }
 
+        private void Encerramento_Falha()
+        {
+            MessageBox.Show("O atendimento foi encerrado devido a uma falha no acesso remoto!\nFavor, entrar em contato com o departamento de tecnologia.", "Atendimento finalizado!", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+
+        }
         /**
          * <summary>
          * Recebe os pacotes da conexão SOCKEWEB.
@@ -153,16 +162,21 @@ namespace ServerClienteOnline.Server
         {
             try
             {
-                ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+                ArraySegment<byte> DadosRecebendo;
+                Pacote_TecladoRemoto TecladoRmt;
+
                 while (Sck.State == WebSocketState.Open)
                 {
-                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, new CancellationToken());
+                    DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+
+                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, CancellationToken.None);
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
                     {
                         Pacote_CloseConection Close = new Pacote_CloseConection();
                         Close.Close = Sck.State;
                         await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
+                        encerramentoAtendimento();
                         break;
                     }
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
@@ -171,8 +185,9 @@ namespace ServerClienteOnline.Server
 
                     switch (Base.Pacote)
                     {
-                        case TipoPacote.Comando:
-                            
+                        case TipoPacote.TecladoRemoto:
+                            TecladoRmt = (Pacote_TecladoRemoto)Saida;
+                            TecladoRmt.ChamarTeclas();
                             break;
 
                         default:
@@ -193,6 +208,13 @@ namespace ServerClienteOnline.Server
             {
                 TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
+
+                Pacote_Error PERR = new Pacote_Error();
+                PERR.Error = true;
+                PERR.Mensagem = e.Message;
+                PERR.Numero = 42003;
+                Encerramento_Falha();
+                await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
                 return true;
             }
 
@@ -481,7 +503,7 @@ namespace ServerClienteOnline.Server
                                     /*
                                      * Requisita liberação de acesso à visualização da tela.
                                      */
-                                    DialogResult Resposta = MessageBox.Show("O atendente: " + _Auth.GetAutenticacao.Usuario + "\nestá realizando um pedido de acesso remoto a essa máquina. \n\nLiberar acesso?", "Pedido de acesso remoto.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                                    DialogResult Resposta = MessageBox.Show("O atendente: " + _Auth.GetAutenticacao.Usuario + "\nestá realizando um pedido de acesso remoto a essa máquina. \n\nLiberar acesso?", "Pedido de acesso remoto.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
 
                                     string DadosPacote = null;
                                     Pacote_AcessoRemoto_Resposta PCR = new Pacote_AcessoRemoto_Resposta();

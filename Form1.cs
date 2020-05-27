@@ -315,12 +315,17 @@ namespace CORAC
 
                             if (!(ServidorWEB_Local == null))
                             {
-                                if(ServidorWEB_Local.StatusServidor())
+                                if (ServidorWEB_Local.StatusServidor()) { 
                                     button_Start_PowerShellCORAC.Enabled = true;
+                                    button_Start_AR_CORAC.Enabled = true;
+                                }
+                                    
                             }
                             else
                             {
                                 button_Start_PowerShellCORAC.Enabled = true;
+                                button_Start_AR_CORAC.Enabled = true;
+
                             }
 
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;

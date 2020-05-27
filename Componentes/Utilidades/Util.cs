@@ -373,6 +373,147 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /*
+     * Pacote recebido do cliente que está enviando, pelo acesso remoto, teclas.
+     */
+    public class Pacote_TecladoRemoto : ITipoPacote
+    {
+        const string SHIFT = "+", CTRL = "^", ALT = "%";
+        private string TECLAS = "{SHIFT}{CTRL}{ALT}{key}";
+        private Dictionary<int, string> MapsTeclas = new Dictionary<int, string>();
+
+        public Pacote_TecladoRemoto()
+        {
+            MapsTeclas.Add(37, "LEFT");
+            MapsTeclas.Add(38, "UP");
+            MapsTeclas.Add(39, "RIGHT");
+            MapsTeclas.Add(40, "DOWN");
+
+            MapsTeclas.Add(33, "PGUP");
+            MapsTeclas.Add(34, "PGDN");
+
+            MapsTeclas.Add(187, "ADD"); 
+            MapsTeclas.Add(107, "ADD");
+            MapsTeclas.Add(189, "SUBTRACT");
+            MapsTeclas.Add(109, "SUBTRACT");
+            MapsTeclas.Add(56, "MULTIPLY");
+            MapsTeclas.Add(106, "MULTIPLY");
+            MapsTeclas.Add(111, "DIVIDE");
+
+        }
+
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.TecladoRemoto;
+
+        [JsonProperty("altKey")]
+        public bool altKey { get; set; }
+
+        [JsonProperty("bubbles")]
+        public bool bubbles { get; set; }
+
+        [JsonProperty("cancelBubble")]
+        public bool cancelBubble { get; set; }
+
+        [JsonProperty("cancelable")]
+        public bool cancelable { get; set; }
+
+        [JsonProperty("charCode")]
+        public int charCode { get; set; }
+
+        [JsonProperty("code")]
+        public string code { get; set; }
+
+        [JsonProperty("composed")]
+        public bool composed { get; set; }
+
+        [JsonProperty("ctrlKey")]
+        public bool ctrlKey { get; set; }
+
+        [JsonProperty("defaultPrevented")]
+        public bool defaultPrevented { get; set; }
+
+        [JsonProperty("detail")]
+        public int detail { get; set; }
+
+        [JsonProperty("eventPhase")]
+        public int eventPhase { get; set; }
+
+        [JsonProperty("isComposing")]
+        public bool isComposing { get; set; }
+
+        [JsonProperty("isTrusted")]
+        public bool isTrusted { get; set; }
+
+        [JsonProperty("key")]
+        public string key { get; set; }
+
+        [JsonProperty("keyCode")]
+        public int keyCode { get; set; }
+
+        [JsonProperty("metaKey")]
+        public bool metaKey { get; set; }
+
+        [JsonProperty("repeat")]
+        public bool repeat { get; set; }
+
+        [JsonProperty("returnValue")]
+        public bool returnValue { get; set; }
+
+        [JsonProperty("shiftKey")]
+        public bool shiftKey { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return "";
+        }
+
+        public bool ChamarTeclas()
+        {
+            if (key == "Dead") return false;
+            switch (keyCode)
+            {
+                case 16:
+                case 18:
+                case 17:
+                case 91:
+                case 219:
+                case 222:
+                case 179:
+                case 177:
+                case 176:
+                    return false;
+
+            }
+            if(key != "?" && keyCode != 32)
+            {
+                bool ACH = MapsTeclas.TryGetValue(keyCode, out string Tecla);
+
+                key = ACH == true ? Tecla : key;
+
+                if (shiftKey) TECLAS = TECLAS.Replace("{SHIFT}", SHIFT); else TECLAS = TECLAS.Replace("{SHIFT}", "");
+                if (altKey) TECLAS = TECLAS.Replace("{ALT}", ALT); else TECLAS = TECLAS.Replace("{ALT}", "");
+                if (ctrlKey) TECLAS = TECLAS.Replace("{CTRL}", CTRL); else TECLAS = TECLAS.Replace("{CTRL}", "");
+
+                TECLAS = TECLAS.Replace("key", key);
+                Console.WriteLine(TECLAS);
+                SendKeys.SendWait(TECLAS);
+                return true;
+            }
+            else
+            {
+                SendKeys.SendWait(key);
+                return true;
+            }
+
+        }
+
+    }
+
     public class Pacote_AcessoRemoto_Resposta : ITipoPacote
     {
         public class Display
@@ -764,7 +905,8 @@ namespace ServerClienteOnline.Utilidades
         AcessoRemoto_SYN = 12,
         AcessoRemoto_Config_INIT = 13,
         FrameTelas = 14,
-        Close_Connection = 15
+        Close_Connection = 15,
+        TecladoRemoto = 16
 
     };
 
@@ -803,8 +945,6 @@ namespace ServerClienteOnline.Utilidades
 
     struct CamposCORAC
     {
-        public string Username;
-        public string Password;
         public string Path_ServerWEB_CORAC;
 
     }
@@ -837,7 +977,7 @@ namespace ServerClienteOnline.Utilidades
     class RegistroCORAC
     {
         public string Registro;
-        public StatusRegistro Status;
+        public StatusRegistro Status = StatusRegistro.Desabilitado;
         public string Chave_BD = null;
     }
 
@@ -910,6 +1050,11 @@ namespace ServerClienteOnline.Utilidades
                 case TipoPacote.AcessoRemoto_Config_INIT:
                     Pacote_AcessoRemoto_Config_INIT Configuracao_Inicial = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config_INIT>(Base.Conteudo);
                     Saida = Configuracao_Inicial;
+                    break;
+
+                case TipoPacote.TecladoRemoto:
+                    Pacote_TecladoRemoto Teclado_Remoto = JsonConvert.DeserializeObject<Pacote_TecladoRemoto>(Base.Conteudo);
+                    Saida = Teclado_Remoto;
                     break;
 
                 default:
