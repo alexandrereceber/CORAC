@@ -12,6 +12,8 @@ using System.Drawing;
 using System.Collections;
 using System.Drawing.Imaging;
 using System.Net.WebSockets;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace ServerClienteOnline.Utilidades
 {
@@ -263,6 +265,7 @@ namespace ServerClienteOnline.Utilidades
         ConfigImagem_Monitor Configuracoes_Gerais = new ConfigImagem_Monitor();
         public Pacote_FrameTelas()
         {
+           // Process.EnterDebugMode();
             FrameTelas = new Tela[Screen.AllScreens.Length];
             for (int ii = 0; ii < Screen.AllScreens.Length; ii++)
             {
@@ -310,27 +313,32 @@ namespace ServerClienteOnline.Utilidades
 
         public void GerarTelas()
         {
-            MemoryStream TransformImg = new MemoryStream();
-
-            foreach (Tela TL in FrameTelas)
+            var LogueUI = Process.GetProcessesByName("LogonUI").Length;
+            if(LogueUI == 0)
             {
-                if(Configuracoes_Gerais.Primary == TL.Monitor)
-                {
-                    TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
-                    TransformImg = new MemoryStream();
-                    TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
-                    TL.Primary = Convert.ToBase64String(TransformImg.ToArray());
+                MemoryStream TransformImg = new MemoryStream();
 
-                }
-                else
+                foreach (Tela TL in FrameTelas)
                 {
-                    TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
-                    TransformImg = new MemoryStream();
-                    TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
-                    TL.ThumbnailImage = Convert.ToBase64String(TransformImg.ToArray());
+                    if (Configuracoes_Gerais.Primary == TL.Monitor)
+                    {
+                        TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
+                        TransformImg = new MemoryStream();
+                        TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
+                        TL.Primary = Convert.ToBase64String(TransformImg.ToArray());
 
+                    }
+                    else
+                    {
+                        TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
+                        TransformImg = new MemoryStream();
+                        TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
+                        TL.ThumbnailImage = Convert.ToBase64String(TransformImg.ToArray());
+
+                    }
                 }
             }
+            
         }
     }
 
@@ -372,11 +380,245 @@ namespace ServerClienteOnline.Utilidades
             return Chave;
         }
     }
+    public class Pacote_EventMouse: ITipoPacote
+    {
+        public TipoPacote Pacote = TipoPacote.EventMouse;
 
-    /*
-     * Pacote recebido do cliente que está enviando, pelo acesso remoto, teclas.
-     */
-    public class Pacote_TecladoRemoto : ITipoPacote
+        public bool altKey { get; set; }
+        public bool bubbles { get; set; }
+        public int button { get; set; }
+        public int buttons { get; set; }
+        public bool cancelBubble { get; set; }
+        public bool cancelable { get; set; }
+        public int clientX { get; set; }
+        public int clientY { get; set; }
+        public bool composed { get; set; }
+        public bool ctrlKey { get; set; }
+        public bool defaultPrevented { get; set; }
+        public int detail { get; set; }
+        public int eventPhase { get; set; }
+        public bool isTrusted { get; set; }
+        public int layerX { get; set; }
+        public int layerY { get; set; }
+        public bool metaKey { get; set; }
+        public int movementX { get; set; }
+        public int movementY { get; set; }
+        public int offsetX { get; set; }
+        public int offsetY { get; set; }
+        public int pageX { get; set; }
+        public int pageY { get; set; }
+        public int screenX { get; set; }
+        public int screenY { get; set; }
+        public bool shiftKey { get; set; }
+        public string type { get; set; }
+        public int x { get; set; }
+        public int y { get; set; }
+
+        public string GetResultado()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+    }
+    public class Pacote_MouseRemoto : ITipoPacote
+    {
+        [DllImport("user32.dll")]
+        static extern bool SetCursorPos(int X, int Y);
+
+        enum SendInputEventType : int
+        {
+            /// <summary>
+            /// Contains Mouse event data
+            /// </summary>
+            InputMouse,
+            /// <summary>
+            /// Contains Keyboard event data
+            /// </summary>
+            InputKeyboard,
+            /// <summary>
+            /// Contains Hardware event data
+            /// </summary>
+            InputHardware
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        struct MouseInputData
+        {
+            /// <summary>
+            /// The x value, if ABSOLUTE is passed in the flag then this is an actual X and Y value
+            /// otherwise it is a delta from the last position
+            /// </summary>
+            public int dx;
+            /// <summary>
+            /// The y value, if ABSOLUTE is passed in the flag then this is an actual X and Y value
+            /// otherwise it is a delta from the last position
+            /// </summary>
+            public int dy;
+            /// <summary>
+            /// Wheel event data, X buttons
+            /// </summary>
+            public uint mouseData;
+            /// <summary>
+            /// ORable field with the various flags about buttons and nature of event
+            /// </summary>
+            public MouseEventFlags dwFlags;
+            /// <summary>
+            /// The timestamp for the event, if zero then the system will provide
+            /// </summary>
+            public uint time;
+            /// <summary>
+            /// Additional data obtained by calling app via GetMessageExtraInfo
+            /// </summary>
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct KEYBDINPUT
+        {
+            public ushort wVk;
+            public ushort wScan;
+            public uint dwFlags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct HARDWAREINPUT
+        {
+            public int uMsg;
+            public short wParamL;
+            public short wParamH;
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        struct MouseKeybdhardwareInputUnion
+        {
+            /// <summary>
+            /// The Mouse Input Data
+            /// </summary>
+            [FieldOffset(0)]
+            public MouseInputData mi;
+
+            /// <summary>
+            /// The Keyboard input data
+            /// </summary>
+            [FieldOffset(0)]
+            public KEYBDINPUT ki;
+
+            /// <summary>
+            /// The hardware input data
+            /// </summary>
+            [FieldOffset(0)]
+            public HARDWAREINPUT hi;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        struct INPUT
+        {
+            /// <summary>
+            /// The actual data type contained in the union Field
+            /// </summary>
+            public SendInputEventType type;
+            public MouseKeybdhardwareInputUnion mkhi;
+        }
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
+
+        [Flags]
+        public enum MouseEventFlags
+        {
+            LEFTDOWN = 0x00000002,
+            LEFTUP = 0x00000004,
+            MIDDLEDOWN = 0x00000020,
+            MIDDLEUP = 0x00000040,
+            MOVE = 0x00000001,
+            ABSOLUTE = 0x00008000,
+            RIGHTDOWN = 0x00000008,
+            RIGHTUP = 0x00000010
+        }
+
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.MouseRemoto;
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return "";
+        }
+        private void Mouse_Click(Pacote_EventMouse Click)
+        {
+            INPUT structInput = new INPUT();
+            structInput.type = SendInputEventType.InputMouse;
+            structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.LEFTDOWN | MouseEventFlags.LEFTUP;
+            structInput.mkhi.mi.dx = 500;
+            structInput.mkhi.mi.dy = 500;
+            uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+        }
+
+        private void Mouse_Move(Pacote_EventMouse Move)
+        {
+            System.Windows.Forms.Cursor.Position = new Point(Move.x, Move.y);
+        }
+
+        private void Mouse_ContextMenu(Pacote_EventMouse Move)
+        {
+
+        }
+        public bool Gerar_EventoMouse(Pacote_EventMouse Evt)
+        {
+            Console.WriteLine(Evt.type);
+
+            switch (Evt.type)
+            {
+                case "click":
+                    Mouse_Click(Evt);
+                    return true;
+
+                case "mousemove":
+                    Mouse_Move(Evt);
+                    return true;
+
+                case "contextmenu":
+                    Mouse_ContextMenu(Evt);
+                    break;
+
+                default:
+                    Console.WriteLine("Pacote de eventos de mouse não identificado");
+                    return false;
+            }
+
+            //System.Windows.Forms.Cursor.Position = new Point(Evt.x, Evt.y);
+            //System.Windows.Input.Mouse.UpdateCursor();
+
+            //Console.CursorVisible = true;
+
+            //SetCursorPos(Evt.x, Evt.y);
+            //Cursor.Show();
+
+            //INPUT structInput = new INPUT();
+            //structInput.type = SendInputEventType.InputMouse;
+            //structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.LEFTDOWN | MouseEventFlags.LEFTUP;
+            //structInput.mkhi.mi.dx = 500;
+            //structInput.mkhi.mi.dy = 500;
+            //uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+
+            Console.WriteLine(Evt.type);
+            return true;
+        }
+
+     }
+        /*
+         * Pacote recebido do cliente que está enviando, pelo acesso remoto, teclas.
+         */
+        public class Pacote_TecladoRemoto : ITipoPacote
     {
         const string SHIFT = "+", CTRL = "^", ALT = "%";
         private string TECLAS = "{SHIFT}{CTRL}{ALT}{key}";
@@ -817,6 +1059,31 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_Confirmacao : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Confirmacao;
+
+        [JsonProperty("Confirm")]
+        public bool Confirm = true;
+
+        [JsonProperty("Error")]
+        public bool Error = false;
+
+        [JsonProperty("Metodo")]
+        public TipoPacote PacoteConfirmado { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return "";
+        }
+    }
+
     public class Pacote_Login : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -906,7 +1173,10 @@ namespace ServerClienteOnline.Utilidades
         AcessoRemoto_Config_INIT = 13,
         FrameTelas = 14,
         Close_Connection = 15,
-        TecladoRemoto = 16
+        TecladoRemoto = 16,
+        MouseRemoto = 17,
+        EventMouse = 18,
+        Confirmacao = 19
 
     };
 
@@ -1003,67 +1273,85 @@ namespace ServerClienteOnline.Utilidades
            */
         public static void DeserializarPacote(string Pacote, out Pacote_Base out_Base, out object Saida)
         {
-            Pacote_Base Base = JsonConvert.DeserializeObject<Pacote_Base>(Pacote);
-
-            switch (Base.Pacote)
+            try
             {
-                case TipoPacote.Auth:
-                    Pacote_Auth Auth = JsonConvert.DeserializeObject<Pacote_Auth>(Base.Conteudo);
-                    Saida = Auth;
-                    break;
+                Pacote_Base Base = JsonConvert.DeserializeObject<Pacote_Base>(Pacote);
 
-                case TipoPacote.Comando:
-                    Pacote_Comando Exec = JsonConvert.DeserializeObject<Pacote_Comando>(Base.Conteudo);
-                    Saida = Exec;
-                    break;
+                switch (Base.Pacote)
+                {
+                    case TipoPacote.Auth:
+                        Pacote_Auth Auth = JsonConvert.DeserializeObject<Pacote_Auth>(Base.Conteudo);
+                        Saida = Auth;
+                        break;
 
-                case TipoPacote.File:
-                    Pacote_File File = JsonConvert.DeserializeObject<Pacote_File>(Base.Conteudo);
-                    Saida = File;
-                    break;
+                    case TipoPacote.Comando:
+                        Pacote_Comando Exec = JsonConvert.DeserializeObject<Pacote_Comando>(Base.Conteudo);
+                        Saida = Exec;
+                        break;
 
-                case TipoPacote.FileSystem:
-                    Pacote_SystemFile FileSystem = JsonConvert.DeserializeObject<Pacote_SystemFile>(Base.Conteudo);
-                    Saida = FileSystem;
-                    break;
+                    case TipoPacote.File:
+                        Pacote_File File = JsonConvert.DeserializeObject<Pacote_File>(Base.Conteudo);
+                        Saida = File;
+                        break;
 
-                case TipoPacote.Echo:
-                    Pacote_PingEcho Ping = JsonConvert.DeserializeObject<Pacote_PingEcho>(Base.Conteudo);
-                    Saida = Ping;
-                    break;
+                    case TipoPacote.FileSystem:
+                        Pacote_SystemFile FileSystem = JsonConvert.DeserializeObject<Pacote_SystemFile>(Base.Conteudo);
+                        Saida = FileSystem;
+                        break;
 
-                case TipoPacote.Replay:
-                    Pacote_PingReplay Replay = JsonConvert.DeserializeObject<Pacote_PingReplay>(Base.Conteudo);
-                    Saida = Replay;
-                    break;
+                    case TipoPacote.Echo:
+                        Pacote_PingEcho Ping = JsonConvert.DeserializeObject<Pacote_PingEcho>(Base.Conteudo);
+                        Saida = Ping;
+                        break;
 
-                case TipoPacote.Inicializacao:
-                    Pacote_Inicializacao Inicializacao = JsonConvert.DeserializeObject<Pacote_Inicializacao>(Base.Conteudo);
-                    Saida = Inicializacao;
-                    break;
+                    case TipoPacote.Replay:
+                        Pacote_PingReplay Replay = JsonConvert.DeserializeObject<Pacote_PingReplay>(Base.Conteudo);
+                        Saida = Replay;
+                        break;
 
-                case TipoPacote.AcessoRemoto_SYN:
-                    Pacote_AcessoRemoto_SYN AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_SYN>(Base.Conteudo);
-                    Saida = AcessoRemoto;
-                    break;
+                    case TipoPacote.Inicializacao:
+                        Pacote_Inicializacao Inicializacao = JsonConvert.DeserializeObject<Pacote_Inicializacao>(Base.Conteudo);
+                        Saida = Inicializacao;
+                        break;
 
-                case TipoPacote.AcessoRemoto_Config_INIT:
-                    Pacote_AcessoRemoto_Config_INIT Configuracao_Inicial = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config_INIT>(Base.Conteudo);
-                    Saida = Configuracao_Inicial;
-                    break;
+                    case TipoPacote.AcessoRemoto_SYN:
+                        Pacote_AcessoRemoto_SYN AcessoRemoto = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_SYN>(Base.Conteudo);
+                        Saida = AcessoRemoto;
+                        break;
 
-                case TipoPacote.TecladoRemoto:
-                    Pacote_TecladoRemoto Teclado_Remoto = JsonConvert.DeserializeObject<Pacote_TecladoRemoto>(Base.Conteudo);
-                    Saida = Teclado_Remoto;
-                    break;
+                    case TipoPacote.AcessoRemoto_Config_INIT:
+                        Pacote_AcessoRemoto_Config_INIT Configuracao_Inicial = JsonConvert.DeserializeObject<Pacote_AcessoRemoto_Config_INIT>(Base.Conteudo);
+                        Saida = Configuracao_Inicial;
+                        break;
 
-                default:
-                   throw new Exception("Tentativa de envio de pacote não reconhecida pelo sistema.");
-                    
+                    case TipoPacote.TecladoRemoto:
+                        Pacote_TecladoRemoto Teclado_Remoto = JsonConvert.DeserializeObject<Pacote_TecladoRemoto>(Base.Conteudo);
+                        Saida = Teclado_Remoto;
+                        break;
 
+                    case TipoPacote.EventMouse:
+                        Pacote_EventMouse Mouse_Remoto = JsonConvert.DeserializeObject<Pacote_EventMouse>(Base.Conteudo);
+                        Saida = Mouse_Remoto;
+                        break;
+
+                    default:
+                        throw new Exception("Tentativa de envio de pacote não reconhecida pelo sistema.");
+
+
+                }
+
+                out_Base = Base;
+            }catch(Exception e)
+            {
+                Pacote_Error PERR = new Pacote_Error();
+                PERR.Error = true;
+                PERR.Mensagem = e.Message;
+                PERR.Numero = e.HResult;
+                Saida = PERR;
+                out_Base = new Pacote_Base();
+                Console.Write(e.StackTrace);
             }
-
-            out_Base = Base;
+            
         }
 
         internal static string SerializarPacote(Pacote_Base pct)

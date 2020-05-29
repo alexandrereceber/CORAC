@@ -104,6 +104,7 @@ namespace ServerClienteOnline.Server
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
                         Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+                        
                         Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
                         Task[] FluxoDados = new Task[2];
                         FluxoDados[0] = RCB;
@@ -158,18 +159,23 @@ namespace ServerClienteOnline.Server
          * Recebe os pacotes da conexão SOCKEWEB.
          * </summary>
          */
+        [STAThread]
         private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
         {
             try
             {
                 ArraySegment<byte> DadosRecebendo;
                 Pacote_TecladoRemoto TecladoRmt;
+                Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
+                Pacote_EventMouse EventosMouseRemotos;
 
                 while (Sck.State == WebSocketState.Open)
                 {
                     DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+                    CancellationToken Token = new CancellationToken();
+                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, Token);
 
-                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, CancellationToken.None);
+
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
                     {
@@ -181,13 +187,31 @@ namespace ServerClienteOnline.Server
                     }
                     string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
 
-                    Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+                    int I = Pacote_String.IndexOf(Convert.ToChar(0));
+                    bool isPacoteInicio = Pacote_String.Substring(0, 10) == "{\"Pacote\":";
 
+                    bool isPacoteFim = Pacote_String.Substring(I - 1, 2) == "}\0";
+                    if (!isPacoteInicio || !isPacoteFim) continue;
+
+                    Console.WriteLine(Pacote_String);
+                    Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+                    
                     switch (Base.Pacote)
                     {
                         case TipoPacote.TecladoRemoto:
                             TecladoRmt = (Pacote_TecladoRemoto)Saida;
                             TecladoRmt.ChamarTeclas();
+
+
+                            break;
+
+                        case TipoPacote.EventMouse:
+                            EventosMouseRemotos = (Pacote_EventMouse)Saida;
+                            Mouse.Gerar_EventoMouse(EventosMouseRemotos);
+                            //Pacote_Confirmacao Confirmado = new Pacote_Confirmacao();
+                            //Confirmado.PacoteConfirmado = TipoPacote.EventMouse;
+
+                            //await enviarPacotes(Sck, WebSocketMessageType.Text, Confirmado);
                             break;
 
                         default:
@@ -199,9 +223,10 @@ namespace ServerClienteOnline.Server
                             //return true;
                             break;
                     }
+                    
 
                 }
-
+                
                 return true;
             }
             catch(Exception e)
@@ -219,6 +244,7 @@ namespace ServerClienteOnline.Server
             }
 
         }
+
         private async Task<bool> closeConexao(HttpListenerContext Server, WebSocket Sck, ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
 
@@ -232,7 +258,8 @@ namespace ServerClienteOnline.Server
                 Close.Close = Sck.State;
                 string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
 
-                await Sck.CloseAsync(TipoFechamento, StgFechamento, CancellationToken.None);
+                CancellationToken Token = new CancellationToken();
+                await Sck.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
                 
                 int IP = Server.Request.RemoteEndPoint.Address.GetHashCode();
                 Desconectar_SOCKET(IP);
@@ -291,7 +318,7 @@ namespace ServerClienteOnline.Server
         {
             set { _Auth = value; }
         }
-
+        [STAThread]
         private async Task<bool> enviarFrame(HttpListenerContext Server, WebSocket Sck)
         {
             try
@@ -525,7 +552,7 @@ namespace ServerClienteOnline.Server
                                         ObterResposta.Close();
 
                                         //Atribui as classes de controle e autenticação para o WEBSOCKET
-                                        ControleAC.SetBuffer = 1204 * 1024;
+                                        ControleAC.SetBuffer = 5000;
                                         ControleAC.Autenticador = _Auth;
                                         ControleAC.Gerenciador_Cliente = _GerenciadorCliente;
 

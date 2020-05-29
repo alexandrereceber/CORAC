@@ -827,7 +827,7 @@ namespace CORAC
             InitializeComponent();
 
             Loaders();
-            Application.ApplicationExit += SairSistema;
+            //Application.ApplicationExit += SairSistema;
         }
 
 
@@ -907,13 +907,14 @@ namespace CORAC
 
         }
 
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            await SairSistema();
             Application.Exit();
             
         }
 
-        private async void SairSistema(object sender, EventArgs e)
+        private async Task<bool> SairSistema()
         {
                 List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
                 KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
@@ -925,6 +926,16 @@ namespace CORAC
             try
             {
                 await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                return true;
+
+            }
+            catch (Exception e)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(e, GetType().Name);
+                return false;
+
             }
             finally
             {
