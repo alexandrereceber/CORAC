@@ -104,7 +104,7 @@ namespace ServerClienteOnline.Server
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
                         Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
-                        
+                        //await RCB.ConfigureAwait(true);
                         Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
                         Task[] FluxoDados = new Task[2];
                         FluxoDados[0] = RCB;
@@ -329,8 +329,8 @@ namespace ServerClienteOnline.Server
                 while (C)
                 {
                     //if (Sck.State != WebSocketState.Open) break;
-                    CapturarTelas.GerarTelas();
-                    while (Semafaro) { }
+                    bool Yes = CapturarTelas.GerarTelas();
+                    while (Semafaro & Yes) { }
                     EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
                     Semafaro = true;
                     await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);

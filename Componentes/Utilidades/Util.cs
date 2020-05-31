@@ -263,6 +263,7 @@ namespace ServerClienteOnline.Utilidades
 
         Tela[] FrameTelas;
         ConfigImagem_Monitor Configuracoes_Gerais = new ConfigImagem_Monitor();
+        bool Confirm_GerarTela = true;
         public Pacote_FrameTelas()
         {
            // Process.EnterDebugMode();
@@ -311,10 +312,12 @@ namespace ServerClienteOnline.Utilidades
             return Mensagem;
         }
 
-        public void GerarTelas()
+        public bool GerarTelas()
         {
-            var LogueUI = Process.GetProcessesByName("LogonUI").Length;
-            if(LogueUI == 0)
+            //var LogueUI = Process.GetProcessesByName("LogonUI").Length;
+            //if(LogueUI == 0)
+            //{
+            try
             {
                 MemoryStream TransformImg = new MemoryStream();
 
@@ -337,7 +340,15 @@ namespace ServerClienteOnline.Utilidades
 
                     }
                 }
+
+                return true;
             }
+            catch(Exception e)
+            {
+                return false;
+            }
+                
+            //}
             
         }
     }
@@ -565,7 +576,7 @@ namespace ServerClienteOnline.Utilidades
 
         private void Mouse_Move(Pacote_EventMouse Move)
         {
-            System.Windows.Forms.Cursor.Position = new Point(Move.x, Move.y);
+            System.Windows.Forms.Cursor.Position = new Point(Move.offsetX, Move.offsetY);
         }
 
         private void Mouse_ContextMenu(Pacote_EventMouse Move)

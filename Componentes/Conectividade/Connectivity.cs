@@ -97,7 +97,7 @@ namespace ServerClienteOnline.Conectividade
 
         public static int Porta_Powershell()
         {
-            return 1199;
+            return 1119;
         }
 
         public static string EnderecoHttpListen_AcessoRemoto()
