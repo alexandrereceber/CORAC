@@ -50,7 +50,6 @@
             this.button_Start_AR_CORAC = new System.Windows.Forms.Button();
             this.pictureBox_AcessoRemoto = new System.Windows.Forms.PictureBox();
             this.button_Stop_AR_CORAC = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.Tab_Config = new System.Windows.Forms.TabPage();
             this.SalvaConfiguracoes = new System.Windows.Forms.Button();
             this.tableLayoutPanel_Principal = new System.Windows.Forms.TableLayoutPanel();
@@ -131,7 +130,6 @@
             this.Layout_Organizacao_CORAC.Controls.Add(this.Registro_Status_GroupBox, 2, 0);
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox7, 0, 1);
             this.Layout_Organizacao_CORAC.Controls.Add(this.groupBox8, 1, 1);
-            this.Layout_Organizacao_CORAC.Controls.Add(this.label1, 2, 1);
             this.Layout_Organizacao_CORAC.Location = new System.Drawing.Point(6, 10);
             this.Layout_Organizacao_CORAC.Name = "Layout_Organizacao_CORAC";
             this.Layout_Organizacao_CORAC.RowCount = 2;
@@ -388,15 +386,6 @@
             this.button_Stop_AR_CORAC.UseVisualStyleBackColor = true;
             this.button_Stop_AR_CORAC.Click += new System.EventHandler(this.button_Stop_AR_CORAC_Click);
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(591, 261);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "label1";
-            // 
             // Tab_Config
             // 
             this.Tab_Config.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -651,7 +640,6 @@
             this.tabCORAC.ResumeLayout(false);
             this.Tab_Status.ResumeLayout(false);
             this.Layout_Organizacao_CORAC.ResumeLayout(false);
-            this.Layout_Organizacao_CORAC.PerformLayout();
             this.Internet_Status_GroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picture_Internet_Status)).EndInit();
             this.Atualizacao_Status_GoupBox.ResumeLayout(false);
@@ -723,7 +711,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button_Stop_PowerShellCORAC;
         private System.Windows.Forms.Button button_Start_AR_CORAC;
-        private System.Windows.Forms.Label label1;
     }
 }
 
