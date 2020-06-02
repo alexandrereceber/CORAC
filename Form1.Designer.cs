@@ -571,7 +571,7 @@
             // 
             // toolStripMenuItem1_MAN
             // 
-            this.toolStripMenuItem1_MAN.Image = global::CORAC.Properties.Resources.Config_39px;
+            this.toolStripMenuItem1_MAN.Image = global::CORAC.Properties.Resources.Configuracoes_CORAC_Local;
             this.toolStripMenuItem1_MAN.Name = "toolStripMenuItem1_MAN";
             this.toolStripMenuItem1_MAN.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuItem1_MAN.Text = "Status / Configurações";
