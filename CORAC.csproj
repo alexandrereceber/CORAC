@@ -118,70 +118,13 @@
     <Folder Include="Resources\Corac_Icone\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Internet.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Update_Systema.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Update_System_256px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Update_System_126px.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Registro_128px.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Registro_256px.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Banco_Dados.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Config_Update_CORAC_256px.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Config_Update_CORAC_128px.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\LDAP_CORAC.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Tipo_Autenticacao.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Conf_Autent_HTTP.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Config_UserPass.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\iconfinder_user_925901.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Config_Userassword_256px.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Config_Servico_BD_CORAC.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\512px_Corac_3.fw-1.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\128px_Corac_1PB.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\128px_Corac.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Powershell_Core.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\AcessoRemoto.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\AcessoRemoto.PB.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Status_Config.ico" />
@@ -199,19 +142,28 @@
     <None Include="Resources\refresh.gif" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\iconAcepty.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Error_Verify.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\verified.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Confguracoes.fw.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="512px_Corac_3.fw-1.ico" />
+    <None Include="Resources\Registro_Color.fw.png" />
+    <None Include="Resources\Registro_Cinza.fw.png" />
+    <None Include="Resources\Configuracoes.fw.png" />
+    <None Include="Resources\Powershell_Color.fw.png" />
+    <None Include="Resources\Powershell_Cinza.fw.png" />
+    <None Include="Resources\Internet2_Color.fw.png" />
+    <None Include="Resources\Internet2_Cinza.fw.png" />
+    <None Include="Resources\Chat_Color.fw.png" />
+    <None Include="Resources\Chat_Cinza.fw.png" />
+    <None Include="Resources\Atualizacoes_Color.fw.png" />
+    <None Include="Resources\Atualizacoes_Cinza.fw.png" />
+    <None Include="Resources\AcessoRemoto_Color.fw.png" />
+    <None Include="Resources\AcessoRemoto_Cinza.fw.png" />
+    <None Include="Resources\Internet_Cinza.fw.png" />
+    <None Include="Resources\Internet_Cor.fw.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

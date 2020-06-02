@@ -121,17 +121,8 @@
   <data name="Acepty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\verified.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Config_AcessoRemoto_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AcessoRemoto.PB.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Config_Servico_BD_CORAC_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Config_Servico_BD_CORAC.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="ICON_MAN" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\512px_Corac_3.fw-1.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Internet" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Internet.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="No_Acepty" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Error_Verify.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -148,28 +139,55 @@
   <data name="Sair1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Sair.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Status_AcessoRemoto_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AcessoRemoto.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Status_Config" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Status_Config.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Status_CORAC_128px_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\128px_Corac_1PB.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Status_PS_Core_128px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Powershell_Core.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Update_System_126px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Update_System_126px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Update_System_256px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Update_System_256px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Wait" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\refresh.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Configuracoes_CORAC_Local" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Confguracoes.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="Internet_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Internet_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Internet_Cor_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Internet_Cor.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AcessoRemoto_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AcessoRemoto_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AcessoRemoto_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AcessoRemoto_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Atualizacoes_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Atualizacoes_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Atualizacoes_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Atualizacoes_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Chat_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Chat_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Chat_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Chat_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Internet2_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Internet2_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Internet2_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Internet2_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Powershell_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Powershell_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Powershell_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Powershell_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Configuracoes_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Configuracoes.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Registro_Cinza_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Registro_Cinza.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Registro_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Registro_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

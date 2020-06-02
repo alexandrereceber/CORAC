@@ -158,7 +158,7 @@
             this.button_VerificarInternet.Enabled = false;
             this.button_VerificarInternet.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lime;
             this.button_VerificarInternet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_VerificarInternet.Location = new System.Drawing.Point(66, 184);
+            this.button_VerificarInternet.Location = new System.Drawing.Point(72, 182);
             this.button_VerificarInternet.Name = "button_VerificarInternet";
             this.button_VerificarInternet.Size = new System.Drawing.Size(120, 23);
             this.button_VerificarInternet.TabIndex = 2;
@@ -172,11 +172,11 @@
             this.picture_Internet_Status.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.picture_Internet_Status.Cursor = System.Windows.Forms.Cursors.Default;
             this.picture_Internet_Status.ErrorImage = null;
-            this.picture_Internet_Status.Image = global::CORAC.Properties.Resources.Internet;
+            this.picture_Internet_Status.Image = global::CORAC.Properties.Resources.Internet_Cinza_fw;
             this.picture_Internet_Status.InitialImage = null;
-            this.picture_Internet_Status.Location = new System.Drawing.Point(66, 45);
+            this.picture_Internet_Status.Location = new System.Drawing.Point(57, 46);
             this.picture_Internet_Status.Name = "picture_Internet_Status";
-            this.picture_Internet_Status.Size = new System.Drawing.Size(120, 131);
+            this.picture_Internet_Status.Size = new System.Drawing.Size(147, 130);
             this.picture_Internet_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Internet_Status.TabIndex = 1;
             this.picture_Internet_Status.TabStop = false;
@@ -203,11 +203,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.picture_Atualizacoes_CORAC.Cursor = System.Windows.Forms.Cursors.Default;
             this.picture_Atualizacoes_CORAC.ErrorImage = null;
-            this.picture_Atualizacoes_CORAC.Image = global::CORAC.Properties.Resources.Update_System_256px;
+            this.picture_Atualizacoes_CORAC.Image = global::CORAC.Properties.Resources.Atualizacoes_Cinza_fw;
             this.picture_Atualizacoes_CORAC.InitialImage = null;
-            this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(72, 45);
+            this.picture_Atualizacoes_CORAC.Location = new System.Drawing.Point(72, 46);
             this.picture_Atualizacoes_CORAC.Name = "picture_Atualizacoes_CORAC";
-            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(129, 131);
+            this.picture_Atualizacoes_CORAC.Size = new System.Drawing.Size(124, 130);
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
@@ -243,11 +243,11 @@
             this.pictureBox_Registro_CORAC.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pictureBox_Registro_CORAC.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox_Registro_CORAC.ErrorImage = null;
-            this.pictureBox_Registro_CORAC.Image = global::CORAC.Properties.Resources.Registro_256px;
+            this.pictureBox_Registro_CORAC.Image = global::CORAC.Properties.Resources.Registro_Cinza_fw;
             this.pictureBox_Registro_CORAC.InitialImage = null;
             this.pictureBox_Registro_CORAC.Location = new System.Drawing.Point(86, 46);
             this.pictureBox_Registro_CORAC.Name = "pictureBox_Registro_CORAC";
-            this.pictureBox_Registro_CORAC.Size = new System.Drawing.Size(119, 131);
+            this.pictureBox_Registro_CORAC.Size = new System.Drawing.Size(119, 130);
             this.pictureBox_Registro_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Registro_CORAC.TabIndex = 3;
             this.pictureBox_Registro_CORAC.TabStop = false;
@@ -261,7 +261,7 @@
             this.button_RegistroMaquina.Enabled = false;
             this.button_RegistroMaquina.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lime;
             this.button_RegistroMaquina.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_RegistroMaquina.Location = new System.Drawing.Point(86, 184);
+            this.button_RegistroMaquina.Location = new System.Drawing.Point(86, 182);
             this.button_RegistroMaquina.Name = "button_RegistroMaquina";
             this.button_RegistroMaquina.Size = new System.Drawing.Size(119, 23);
             this.button_RegistroMaquina.TabIndex = 4;
@@ -304,7 +304,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox_Powershell.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox_Powershell.ErrorImage = null;
-            this.pictureBox_Powershell.Image = global::CORAC.Properties.Resources.Status_PS_Core_128px;
+            this.pictureBox_Powershell.Image = global::CORAC.Properties.Resources.Powershell_Cinza_fw;
             this.pictureBox_Powershell.InitialImage = null;
             this.pictureBox_Powershell.Location = new System.Drawing.Point(77, 55);
             this.pictureBox_Powershell.Name = "pictureBox_Powershell";
@@ -364,7 +364,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox_AcessoRemoto.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox_AcessoRemoto.ErrorImage = null;
-            this.pictureBox_AcessoRemoto.Image = global::CORAC.Properties.Resources.Status_AcessoRemoto_128px;
+            this.pictureBox_AcessoRemoto.Image = global::CORAC.Properties.Resources.AcessoRemoto_Cinza_fw;
             this.pictureBox_AcessoRemoto.InitialImage = null;
             this.pictureBox_AcessoRemoto.Location = new System.Drawing.Point(72, 55);
             this.pictureBox_AcessoRemoto.Name = "pictureBox_AcessoRemoto";
@@ -492,7 +492,7 @@
             // pictureBox6
             // 
             this.pictureBox6.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox6.Image = global::CORAC.Properties.Resources.Config_Servico_BD_CORAC_256px;
+            this.pictureBox6.Image = global::CORAC.Properties.Resources.Configuracoes_fw;
             this.pictureBox6.Location = new System.Drawing.Point(3, 8);
             this.pictureBox6.Name = "pictureBox6";
             this.pictureBox6.Size = new System.Drawing.Size(68, 67);
@@ -571,7 +571,7 @@
             // 
             // toolStripMenuItem1_MAN
             // 
-            this.toolStripMenuItem1_MAN.Image = global::CORAC.Properties.Resources.Configuracoes_CORAC_Local;
+            this.toolStripMenuItem1_MAN.Image = global::CORAC.Properties.Resources.Configuracoes_fw;
             this.toolStripMenuItem1_MAN.Name = "toolStripMenuItem1_MAN";
             this.toolStripMenuItem1_MAN.Size = new System.Drawing.Size(216, 22);
             this.toolStripMenuItem1_MAN.Text = "Status / Configurações";

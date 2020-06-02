@@ -151,7 +151,7 @@ namespace CORAC
         private async Task<bool> Verirficar_Conectividade()
         {
 
-            Image CopiaImagem = picture_Internet_Status.Image;
+            //Image CopiaImagem = picture_Internet_Status.Image;
             picture_Internet_Status.SizeMode = PictureBoxSizeMode.CenterImage;
             picture_Internet_Status.Image = Properties.Resources.Wait;
 
@@ -159,20 +159,20 @@ namespace CORAC
             {
                 Color Vermelho = Color.FromArgb(255, 255, 0, 0);
                 Color Azul = Color.FromArgb(255, 0, 1, 255);
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
+                //Bitmap Internet_ON = Change_Color(CopiaImagem, Vermelho, Azul);
                 picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
                 picture_Internet_Status.Tag = "O acesso à internet está OK.";
-                picture_Internet_Status.Image = Internet_ON;
+                picture_Internet_Status.Image = Properties.Resources.Internet_Cor_fw;
                 return true;
             }
             else
             {
                 Color Vermelho = Color.FromArgb(255, 255, 0, 0);
                 Color Azul = Color.FromArgb(255, 0, 1, 255);
-                Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
+                //Bitmap Internet_ON = Change_Color(CopiaImagem, Azul, Vermelho);
                 picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
                 picture_Internet_Status.Tag = "Falha ao acessa internet.";
-                picture_Internet_Status.Image = Internet_ON;
+                picture_Internet_Status.Image = Properties.Resources.Internet_Cinza_fw;
                 return false;
             }
 
@@ -187,8 +187,8 @@ namespace CORAC
         private async Task<bool> Verificar_Atualizacoes()
         {
 
-            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
-            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            //Color Azul = Color.FromArgb(255, 0, 1, 255);
 
             try
             {
@@ -216,17 +216,17 @@ namespace CORAC
 
                 if (Conteudo.Result.IsSuccessStatusCode)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Vermelho, Azul);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Vermelho, Azul);
                     picture_Internet_Status.Tag = "";
-                    picture_Atualizacoes_CORAC.Image = Internet_ON;
+                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Color_fw;
 
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
                     picture_Internet_Status.Tag = "O sistema de atualização não responde.";
-                    picture_Atualizacoes_CORAC.Image = Internet_ON;
+                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Cinza_fw;
                     return false;
                 }
 
@@ -238,9 +238,9 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
 
-                picture_Atualizacoes_CORAC.Image = Internet_ON;
+                picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Cinza_fw;
 
                 return false;
             }
@@ -253,8 +253,8 @@ namespace CORAC
          */
         private async Task<bool> Verificar_Registro()
         {
-            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
-            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            //Color Azul = Color.FromArgb(255, 0, 1, 255);
             
             try
             {
@@ -329,9 +329,9 @@ namespace CORAC
                             }
 
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
+                            //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
                             pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento ativado. " + Estado;
-                            pictureBox_Registro_CORAC.Image = Internet_ON;
+                            pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Color_fw;
                             FiltrosB.Clear();
                             return true;
                         }
@@ -340,10 +340,10 @@ namespace CORAC
                             //Registro encontrado e equipamento desativado.
                             Registro_Corac.Status = StatusRegistro.Desabilitado;
 
-                            Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
+                            //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                             pictureBox_Registro_CORAC.Tag = "Registro encontrado e equipamento desativado. Favor requisitar habilitação junto ao administrador da sua unidade.";
-                            pictureBox_Registro_CORAC.Image = Internet_ON;
+                            pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Color_fw;
                             FiltrosB.Clear();
                             return false;
                         }
@@ -373,8 +373,8 @@ namespace CORAC
                         }
 
                         //error, registro não encontrado
-                        Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
-                        pictureBox_Registro_CORAC.Image = Internet_ON;
+                        //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
+                        pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Cinza_fw;
                         return false;
                     }
 
@@ -382,9 +382,11 @@ namespace CORAC
                 else
                 {
                     //Mensagem de error no site
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul, Vermelho);
+                    pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
                     pictureBox_Registro_CORAC.Tag = "O Site do CORAC devolveu um erro.";
-                    pictureBox_Registro_CORAC.Image = Internet_ON;
+                    pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Cinza_fw;
                     FiltrosB.Clear();
 
                     return false;
@@ -398,10 +400,10 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
 
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul , Vermelho);
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Azul , Vermelho);
                 pictureBox_Registro_CORAC.Tag = "Error reportado pelo tratador de erros.";
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                pictureBox_Registro_CORAC.Image = Internet_ON;
+                pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Cinza_fw;
 
                 return false;
             }
@@ -435,14 +437,14 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
-                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                    pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
-                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                    pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw;
                     return true;
                 }
 
@@ -454,9 +456,9 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
 
-                pictureBox_AcessoRemoto.Image = Internet_ON;
+                pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw; ;
 
                 return true;
 
@@ -499,14 +501,14 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
-                    pictureBox_Powershell.Image = Internet_ON;
+                   // Bitmap Internet_ON = Change_Color(Properties.Resources.po, Azul, Vermelho);
+                    pictureBox_Powershell.Image = Properties.Resources.Powershell_Cinza_fw ;
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
-                    pictureBox_Powershell.Image = Internet_ON;
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                    pictureBox_Powershell.Image = Properties.Resources.Powershell_Color_fw ;
                     return true;
                 }
 
@@ -518,9 +520,9 @@ namespace CORAC
                 Gerar_Arquivo.TratadorErros(E, GetType().Name);
 
                 pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
 
-                pictureBox_Powershell.Image = Internet_ON;
+                pictureBox_Powershell.Image = Properties.Resources.Powershell_Color_fw;
 
                 return true;
 
@@ -534,10 +536,10 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_PowerShell()
         {
-            pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
+            //pictureBox_Powershell.SizeMode = PictureBoxSizeMode.CenterImage;
 
-            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
-            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            //Color Azul = Color.FromArgb(255, 0, 1, 255);
             
             try
             {
@@ -582,16 +584,16 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
                     pictureBox_Powershell.Tag = "Serviço de powershell instanciado corretamente.";
-                    pictureBox_Powershell.Image = Internet_ON;
+                    pictureBox_Powershell.Image = Properties.Resources.Powershell_Color_fw;
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                     pictureBox_Powershell.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
-                    pictureBox_Powershell.Image = Internet_ON;
+                    pictureBox_Powershell.Image = Properties.Resources.Powershell_Cinza_fw; 
                     return false;
                 }
 
@@ -604,8 +606,8 @@ namespace CORAC
 
                 pictureBox_Powershell.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_Powershell.Tag = E.Message;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
-                pictureBox_Powershell.Image = Internet_ON;
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
+                pictureBox_Powershell.Image = Properties.Resources.Powershell_Cinza_fw; 
 
                 return false;
 
@@ -620,14 +622,11 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_AcessoRemoto()
         {
-            Notificacao.BalloonTipIcon = ToolTipIcon.Info;
-            Notificacao.BalloonTipTitle = "teste";
-            Notificacao.BalloonTipText = "ola";
 
-            pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
+            //pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
 
-            Color Vermelho = Color.FromArgb(255, 255, 0, 0);
-            Color Azul = Color.FromArgb(255, 0, 1, 255);
+            //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            //Color Azul = Color.FromArgb(255, 0, 1, 255);
 
             try
             {
@@ -670,16 +669,16 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
                     pictureBox_AcessoRemoto.Tag = "Serviço de powershell instanciado corretamente.";
-                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw ;
                     return true;
                 }
                 else
                 {
-                    Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
                     pictureBox_AcessoRemoto.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
-                    pictureBox_AcessoRemoto.Image = Internet_ON;
+                    pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
                     return false;
                 }
 
@@ -692,8 +691,8 @@ namespace CORAC
 
                 pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
                 pictureBox_AcessoRemoto.Tag = E.Message;
-                Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
-                pictureBox_AcessoRemoto.Image = Internet_ON;
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
 
                 return false;
 
