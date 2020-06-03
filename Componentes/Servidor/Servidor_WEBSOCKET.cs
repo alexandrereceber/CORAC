@@ -151,7 +151,7 @@ namespace ServerClienteOnline.Server
 
         private void Encerramento_Falha()
         {
-            MessageBox.Show("O atendimento foi encerrado devido a uma falha no acesso remoto!\nFavor, entrar em contato com o departamento de tecnologia.", "Atendimento finalizado!", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            MessageBox.Show("O atendimento foi encerrado devido a uma falha ou uma interrupção do serviço de acesso remoto!\nFavor, entrar em contato com o departamento de tecnologia.", "Atendimento finalizado!", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
 
         }
         /**
@@ -212,6 +212,11 @@ namespace ServerClienteOnline.Server
                             //Confirmado.PacoteConfirmado = TipoPacote.EventMouse;
 
                             //await enviarPacotes(Sck, WebSocketMessageType.Text, Confirmado);
+                            break;
+
+                        case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
+                            await closeConexao(Server, Sck, (Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
+
                             break;
 
                         default:

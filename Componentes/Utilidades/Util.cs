@@ -552,6 +552,9 @@ namespace ServerClienteOnline.Utilidades
             RIGHTUP = 0x00000010
         }
 
+        bool Botao1_press = false;
+        bool Botao2_press = false;
+
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.MouseRemoto;
 
@@ -573,14 +576,70 @@ namespace ServerClienteOnline.Utilidades
             structInput.mkhi.mi.dy = 500;
             uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
         }
+        private void Mouse_PressButton(ref Pacote_EventMouse Mouse)
+        {
+            if (Mouse.buttons == 1)
+            {
+                if (Botao1_press == false)
+                {
+                    Botao1_press = true;
+                    INPUT structInput = new INPUT();
+                    structInput.type = SendInputEventType.InputMouse;
+                    structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.LEFTDOWN;
+                    structInput.mkhi.mi.dx = 500;
+                    structInput.mkhi.mi.dy = 500;
+                    uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+                }
 
+            }
+            else if(Mouse.buttons == 0)
+            {
+                if(Botao1_press == true)
+                {
+                    Botao1_press = false;
+                    INPUT structInput = new INPUT();
+                    structInput.type = SendInputEventType.InputMouse;
+                    structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.LEFTUP;
+                    structInput.mkhi.mi.dx = 500;
+                    structInput.mkhi.mi.dy = 500;
+                    uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+                }
+
+            }
+            else if (Mouse.buttons == 2)
+            {
+                if (Botao1_press == false)
+                {
+                    Botao2_press = true;
+                    INPUT structInput = new INPUT();
+                    structInput.type = SendInputEventType.InputMouse;
+                    structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.RIGHTDOWN;
+                    structInput.mkhi.mi.dx = 500;
+                    structInput.mkhi.mi.dy = 500;
+                    uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+                }
+
+            }
+
+        }
         private void Mouse_Move(Pacote_EventMouse Move)
         {
+            Mouse_PressButton(ref Move);
             System.Windows.Forms.Cursor.Position = new Point(Move.offsetX, Move.offsetY);
         }
 
         private void Mouse_ContextMenu(Pacote_EventMouse Move)
         {
+            if(Move.button == 2)
+            {
+                Botao2_press = false;
+                INPUT structInput = new INPUT();
+                structInput.type = SendInputEventType.InputMouse;
+                structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.RIGHTDOWN | MouseEventFlags.RIGHTUP;
+                structInput.mkhi.mi.dx = 500;
+                structInput.mkhi.mi.dy = 500;
+                uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+            }
 
         }
         public bool Gerar_EventoMouse(Pacote_EventMouse Evt)
@@ -1360,6 +1419,8 @@ namespace ServerClienteOnline.Utilidades
                 PERR.Numero = e.HResult;
                 Saida = PERR;
                 out_Base = new Pacote_Base();
+                out_Base.Pacote = TipoPacote.Error;
+
                 Console.Write(e.StackTrace);
             }
             
