@@ -411,6 +411,8 @@ namespace ServerClienteOnline.Utilidades
         public bool isTrusted { get; set; }
         public int layerX { get; set; }
         public int layerY { get; set; }
+        public int deltaX { get; set; }
+        public int deltaY { get; set; }
         public bool metaKey { get; set; }
         public int movementX { get; set; }
         public int movementY { get; set; }
@@ -549,7 +551,8 @@ namespace ServerClienteOnline.Utilidades
             MOVE = 0x00000001,
             ABSOLUTE = 0x00008000,
             RIGHTDOWN = 0x00000008,
-            RIGHTUP = 0x00000010
+            RIGHTUP = 0x00000010,
+            MOUSEEVENTF_WHEEL = 0x0800
         }
 
         bool Botao1_press = false;
@@ -578,6 +581,7 @@ namespace ServerClienteOnline.Utilidades
         }
         private void Mouse_PressButton(ref Pacote_EventMouse Mouse)
         {
+
             if (Mouse.buttons == 1)
             {
                 if (Botao1_press == false)
@@ -589,6 +593,16 @@ namespace ServerClienteOnline.Utilidades
                     structInput.mkhi.mi.dx = 500;
                     structInput.mkhi.mi.dy = 500;
                     uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+
+                    if (Mouse.ctrlKey)
+                    {
+                        SendKeys.SendWait("^");
+                    }
+                    else if (Mouse.shiftKey)
+                    {
+                        SendKeys.SendWait("+");
+                    }
+
                 }
 
             }
@@ -608,7 +622,7 @@ namespace ServerClienteOnline.Utilidades
             }
             else if (Mouse.buttons == 2)
             {
-                if (Botao1_press == false)
+                if (Botao2_press == false)
                 {
                     Botao2_press = true;
                     INPUT structInput = new INPUT();
@@ -642,6 +656,19 @@ namespace ServerClienteOnline.Utilidades
             }
 
         }
+
+        private void Mouse_Whell(Pacote_EventMouse Whell)
+        {
+
+                INPUT structInput = new INPUT();
+                structInput.type = SendInputEventType.InputMouse;
+                structInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_WHEEL;
+                structInput.mkhi.mi.mouseData = (uint)100;
+                structInput.mkhi.mi.dx = 500;
+                structInput.mkhi.mi.dy = 500;
+                uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
+
+        }
         public bool Gerar_EventoMouse(Pacote_EventMouse Evt)
         {
             Console.WriteLine(Evt.type);
@@ -659,6 +686,10 @@ namespace ServerClienteOnline.Utilidades
                 case "contextmenu":
                     Mouse_ContextMenu(Evt);
                     break;
+
+                case "wheel":
+                    Mouse_Whell(Evt);
+                    break; 
 
                 default:
                     Console.WriteLine("Pacote de eventos de mouse não identificado");
