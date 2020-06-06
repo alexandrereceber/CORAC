@@ -113,6 +113,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Cabecalho_fw {
+            get {
+                object obj = ResourceManager.GetObject("Cabecalho_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Chat_Cinza_fw {
             get {
                 object obj = ResourceManager.GetObject("Chat_Cinza_fw", resourceCulture);
@@ -131,11 +141,31 @@ namespace CORAC.Properties {
         }
         
         /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Icon semelhante a (Ícone).
+        /// </summary>
+        internal static System.Drawing.Icon chat_ico {
+            get {
+                object obj = ResourceManager.GetObject("chat_ico", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap Configuracoes_fw {
             get {
                 object obj = ResourceManager.GetObject("Configuracoes_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap enviarmensagem {
+            get {
+                object obj = ResourceManager.GetObject("enviarmensagem", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -276,6 +306,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap Sair1 {
             get {
                 object obj = ResourceManager.GetObject("Sair1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap sharescreen {
+            get {
+                object obj = ResourceManager.GetObject("sharescreen", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

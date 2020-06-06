@@ -21,6 +21,7 @@ using ServerClienteOnline.MetodosAutenticacao;
 using ServerClienteOnline.Gerenciador.ClientesConectados;
 using CamadaDeDados.RESTFormat;
 using ServerClienteOnline.WMIs;
+using CORAC.Chat;
 
 namespace CORAC
 {
@@ -39,6 +40,9 @@ namespace CORAC
 
         Autenticador_WEB Autent_WEB = null;
         RegistroCORAC Registro_Corac = new RegistroCORAC();
+
+        Form CaixaDialog = new Chat_CORAC();
+
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
         {
             int count = 0;
@@ -622,7 +626,7 @@ namespace CORAC
           */
         private async Task<bool> Iniciar_Servidor_AcessoRemoto()
         {
-
+            //CaixaDialog.Show();
             //pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.CenterImage;
 
             //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
@@ -661,6 +665,7 @@ namespace CORAC
                 ServidorWEB_Socket.Autenticador = Autent_WEB;
                 ServidorWEB_Socket.Gerenciador_Cliente = GerenteClientes;
 
+                
                 bool Server_HTTP = await Task.Run(ServidorWEB_Socket.StartServidor);
 
                 //------------------------------------------------------------------------------------------------------
@@ -698,7 +703,6 @@ namespace CORAC
 
             }
         }
-
         private async Task<bool> Loaders()
         {
             Task Atualizar, Registro,  Powerhell_WEB, Acesso_Remoto;
@@ -1315,9 +1319,9 @@ namespace CORAC
         {
             Status_Informacao.Text = (string)(sender as PictureBox).Tag;
         }
-
         private async void button_Start_AR_CORAC_Click(object sender, EventArgs e)
         {
+
             Button T = (Button)sender;
             T.Enabled = false;
 
@@ -1390,6 +1394,13 @@ namespace CORAC
         private void button2_Click(object sender, EventArgs e)
         {
             //ServidorWEB_Socket.Contro = new AcessoRemoto_WEBSOCKET();
+        }
+
+        private async void button2_Click_1(object sender, EventArgs e)
+        {
+            await Task.Run(()=> 1+1);
+            Form kk = new Chat.Chat_CORAC();
+            kk.Show();
         }
     }
 

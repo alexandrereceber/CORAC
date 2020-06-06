@@ -594,15 +594,6 @@ namespace ServerClienteOnline.Utilidades
                     structInput.mkhi.mi.dy = 500;
                     uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 
-                    if (Mouse.ctrlKey)
-                    {
-                        SendKeys.SendWait("^");
-                    }
-                    else if (Mouse.shiftKey)
-                    {
-                        SendKeys.SendWait("+");
-                    }
-
                 }
 
             }
@@ -663,7 +654,7 @@ namespace ServerClienteOnline.Utilidades
                 INPUT structInput = new INPUT();
                 structInput.type = SendInputEventType.InputMouse;
                 structInput.mkhi.mi.dwFlags = MouseEventFlags.MOUSEEVENTF_WHEEL;
-                structInput.mkhi.mi.mouseData = (uint)100;
+                structInput.mkhi.mi.mouseData = (uint)(Whell.deltaY == -1 ? Whell.deltaX: Whell.deltaY);
                 structInput.mkhi.mi.dx = 500;
                 structInput.mkhi.mi.dy = 500;
                 uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));

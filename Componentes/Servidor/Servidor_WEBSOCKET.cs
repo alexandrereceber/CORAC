@@ -18,9 +18,35 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
-
+using CORAC.Chat;
 namespace ServerClienteOnline.Server
 {
+
+    class AcessoRemoto_Chat : Tratador_Erros
+    {
+       
+        static Form CaixaDialogo;
+        public AcessoRemoto_Chat()
+        {
+
+        }
+
+        public static void CriarCaixaDialog()
+        {
+            CaixaDialogo = new Chat_CORAC();
+            CaixaDialogo.Show();
+            //CaixaDialogo.FormClosed += FecharDialogo;
+        }
+        private static void FecharDialogo(object sender, FormClosedEventArgs e)
+        {
+            MessageBox.Show("tchau");
+        }
+        ~AcessoRemoto_Chat()
+        {
+
+        }
+    }
+
     class AcessoRemoto_WEBSOCKET: Tratador_Erros
     {
         private IGClienteHTML _GerenciadorCliente;
@@ -52,6 +78,7 @@ namespace ServerClienteOnline.Server
             bool S = Lista_Conexoes_WEBSOCKET.Remove(IP);
             return S;
         }
+
         public async Task<bool> Iniciar_Begin_AcessoRemoto(object ObjAC)
         {
             WebSocket Obter_Contexto_WEBSOCKET;
@@ -103,7 +130,9 @@ namespace ServerClienteOnline.Server
                     //if (true)
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
+
                         Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+                        
                         //await RCB.ConfigureAwait(true);
                         Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
                         Task[] FluxoDados = new Task[2];
@@ -159,7 +188,7 @@ namespace ServerClienteOnline.Server
          * Recebe os pacotes da conexão SOCKEWEB.
          * </summary>
          */
-        [STAThread]
+
         private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
         {
             try
@@ -443,6 +472,7 @@ namespace ServerClienteOnline.Server
         }
 
         /*Dá início ao servidor*/
+        [STAThread]
         public bool StartServidor()
         {
             try
@@ -470,11 +500,11 @@ namespace ServerClienteOnline.Server
           * Dá início à comunicação, criando uma thread para cada cliente
           * Return: string
           */
-        private  async void IniciarConversa(IAsyncResult s)
+        private async void IniciarConversa(IAsyncResult s)
         {
             Pacote_Error P_Error;
 
-            Thread AcessoRemoto, Chat;
+            //Thread AcessoRemoto, Chat;
             try
             {
 

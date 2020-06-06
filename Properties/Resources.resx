@@ -190,4 +190,16 @@
   <data name="Registro_Color_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Registro_Color.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Cabecalho_fw" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Cabecalho.fw.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="enviarmensagem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\enviarmensagem.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="sharescreen" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\sharescreen.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="chat_ico" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Corac_Icone\chat_ico.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
