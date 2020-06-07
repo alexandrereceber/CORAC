@@ -78,5 +78,36 @@ namespace CORAC.Chat
             }
 
         }
+
+        private void Chat_CORAC_FormClosed(object sender, FormClosedEventArgs e)
+        {
+
+        }
+
+        private async void Chat_CORAC_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DialogResult Resposta = MessageBox.Show("Tem certeza que deseja encerra o atendimento?", "Encerrar atendimento!.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
+            if (Resposta != DialogResult.Yes)
+            {
+                e.Cancel = true;
+            }
+            else
+            {
+                Pacote_UserCloseDialog Fechar = new Pacote_UserCloseDialog();
+                Fechar.Close = Obter_Contexto_WEBSOCKET.State;
+                Fechar.Mensagem = "Close_User_Dialog";
+
+                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Fechar)));
+                await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                Pacote_CloseConection Close = new Pacote_CloseConection();
+                Close.Close = Obter_Contexto_WEBSOCKET.State;
+                string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
+
+                CancellationToken Token = new CancellationToken();
+                await Obter_Contexto_WEBSOCKET.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, StgFechamento, Token);
+            }
+
+        }
     }
 }

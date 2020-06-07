@@ -28,23 +28,30 @@ namespace ServerClienteOnline.Server
 
     class AcessoRemoto_Chat : Tratador_Erros
     {
-        public static bool teste = true;
-        //private Chat_CORAC CaixaDialogo;
+        private Chat_CORAC CaixaDialogo;
         public AcessoRemoto_Chat()
         {
 
         }
 
+        public void FecharCaixa()
+        {
+            CaixaDialogo.Close();
+            CaixaDialogo.Dispose();
+        }
         public void CriarCaixaDialog(object sender)
         {
 
-            Chat_CORAC CaixaDialogo = new Chat_CORAC();
+            CaixaDialogo = new Chat_CORAC();
+            CaixaDialogo.TopLevel = true;
+            CaixaDialogo.TopMost = true;
             CaixaDialogo.Send_SCK_Listener(ref sender);
+            //CaixaDialogo.FormClosed += FecharDialogo;
             CaixaDialogo.ShowDialog();
             CaixaDialogo.Dispose();
+
             //CaixaDialogo = null;
 
-            //CaixaDialogo.FormClosed += FecharDialogo;
         }
         private void FecharDialogo(object sender, FormClosedEventArgs e)
         {
@@ -228,7 +235,7 @@ namespace ServerClienteOnline.Server
                     WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, Token);
 
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
-                    if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
+                    if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty || p == WebSocketCloseStatus.NormalClosure)
                     {
                         Pacote_CloseConection Close = new Pacote_CloseConection();
                         Close.Close = Obter_Contexto_WEBSOCKET.State;
@@ -419,6 +426,8 @@ namespace ServerClienteOnline.Server
             }
             catch (Exception e)
             {
+                int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
+                Desconectar_SOCKET(IP);
                 TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
                 return false;

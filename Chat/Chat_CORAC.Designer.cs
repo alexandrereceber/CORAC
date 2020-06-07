@@ -70,7 +70,7 @@
             this.tableLayoutPanel_Chat.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 336F));
             this.tableLayoutPanel_Chat.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 55F));
             this.tableLayoutPanel_Chat.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel_Chat.Size = new System.Drawing.Size(807, 537);
+            this.tableLayoutPanel_Chat.Size = new System.Drawing.Size(727, 537);
             this.tableLayoutPanel_Chat.TabIndex = 0;
             // 
             // CabecalhoChat
@@ -80,8 +80,8 @@
             this.CabecalhoChat.InitialImage = null;
             this.CabecalhoChat.Location = new System.Drawing.Point(4, 4);
             this.CabecalhoChat.Name = "CabecalhoChat";
-            this.CabecalhoChat.Size = new System.Drawing.Size(799, 84);
-            this.CabecalhoChat.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.CabecalhoChat.Size = new System.Drawing.Size(719, 84);
+            this.CabecalhoChat.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.CabecalhoChat.TabIndex = 0;
             this.CabecalhoChat.TabStop = false;
             // 
@@ -92,7 +92,7 @@
             this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.webBrowser1.Name = "webBrowser1";
             this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(799, 330);
+            this.webBrowser1.Size = new System.Drawing.Size(719, 330);
             this.webBrowser1.TabIndex = 2;
             this.webBrowser1.Url = new System.Uri("http://192.168.15.10/CORAC/ChatOnline/", System.UriKind.Absolute);
             // 
@@ -109,8 +109,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
-            this.splitContainer1.Size = new System.Drawing.Size(799, 50);
-            this.splitContainer1.SplitterDistance = 711;
+            this.splitContainer1.Size = new System.Drawing.Size(719, 50);
+            this.splitContainer1.SplitterDistance = 639;
             this.splitContainer1.TabIndex = 4;
             // 
             // MensagemEnviar
@@ -118,7 +118,7 @@
             this.MensagemEnviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MensagemEnviar.Location = new System.Drawing.Point(97, 15);
             this.MensagemEnviar.Name = "MensagemEnviar";
-            this.MensagemEnviar.Size = new System.Drawing.Size(587, 27);
+            this.MensagemEnviar.Size = new System.Drawing.Size(518, 27);
             this.MensagemEnviar.TabIndex = 1;
             // 
             // label1
@@ -156,14 +156,14 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.AvisoTelaShare);
             this.splitContainer2.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.splitContainer2.Size = new System.Drawing.Size(799, 44);
-            this.splitContainer2.SplitterDistance = 179;
+            this.splitContainer2.Size = new System.Drawing.Size(719, 44);
+            this.splitContainer2.SplitterDistance = 161;
             this.splitContainer2.TabIndex = 5;
             // 
             // pictureBox2
             // 
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
-            this.pictureBox2.Location = new System.Drawing.Point(112, 0);
+            this.pictureBox2.Location = new System.Drawing.Point(97, 0);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(54, 43);
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -176,7 +176,7 @@
             this.AvisoTelaShare.AutoSize = true;
             this.AvisoTelaShare.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AvisoTelaShare.ForeColor = System.Drawing.SystemColors.Highlight;
-            this.AvisoTelaShare.Location = new System.Drawing.Point(54, 8);
+            this.AvisoTelaShare.Location = new System.Drawing.Point(23, 8);
             this.AvisoTelaShare.Name = "AvisoTelaShare";
             this.AvisoTelaShare.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.AvisoTelaShare.Size = new System.Drawing.Size(427, 29);
@@ -188,19 +188,20 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(806, 540);
+            this.ClientSize = new System.Drawing.Size(726, 532);
             this.Controls.Add(this.tableLayoutPanel_Chat);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ImeMode = System.Windows.Forms.ImeMode.AlphaFull;
+            this.ImeMode = System.Windows.Forms.ImeMode.KatakanaHalf;
             this.Name = "Chat_CORAC";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SUPORTE REMOTO";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Chat_CORAC_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Chat_CORAC_FormClosed);
             this.Load += new System.EventHandler(this.Chat_CORAC_Load);
             this.Leave += new System.EventHandler(this.Chat_CORAC_Leave);
             this.tableLayoutPanel_Chat.ResumeLayout(false);
-            this.tableLayoutPanel_Chat.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CabecalhoChat)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();

@@ -216,6 +216,30 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_UserCloseDialog : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.User_CloseDialog;
+
+        [JsonProperty("Close")]
+        public WebSocketState Close { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Error")]
+        public bool Error = false;
+        string ITipoPacote.GetResultado()
+        {
+            return Mensagem;
+        }
+
+        TipoPacote ITipoPacote.GetTipoPacote()
+        {
+            return Pacote;
+        }
+    }
+
     public class Pacote_CloseConection : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -227,6 +251,8 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Mensagem")]
         public string Mensagem { get; set; }
 
+        [JsonProperty("Error")]
+        public bool Error = false;
         string ITipoPacote.GetResultado()
         {
             return Mensagem;
@@ -1268,7 +1294,8 @@ namespace ServerClienteOnline.Utilidades
         TecladoRemoto = 16,
         MouseRemoto = 17,
         EventMouse = 18,
-        Confirmacao = 19
+        Confirmacao = 19,
+        User_CloseDialog = 20
 
     };
 
