@@ -33,7 +33,7 @@
             this.CabecalhoChat = new System.Windows.Forms.PictureBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.MensagemEnviar = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -103,7 +103,7 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.textBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.MensagemEnviar);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             // 
             // splitContainer1.Panel2
@@ -113,13 +113,13 @@
             this.splitContainer1.SplitterDistance = 711;
             this.splitContainer1.TabIndex = 4;
             // 
-            // textBox1
+            // MensagemEnviar
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(97, 15);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(587, 27);
-            this.textBox1.TabIndex = 1;
+            this.MensagemEnviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MensagemEnviar.Location = new System.Drawing.Point(97, 15);
+            this.MensagemEnviar.Name = "MensagemEnviar";
+            this.MensagemEnviar.Size = new System.Drawing.Size(587, 27);
+            this.MensagemEnviar.TabIndex = 1;
             // 
             // label1
             // 
@@ -133,6 +133,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
             this.pictureBox1.Image = global::CORAC.Properties.Resources.enviarmensagem;
             this.pictureBox1.Location = new System.Drawing.Point(16, 0);
             this.pictureBox1.Name = "pictureBox1";
@@ -223,7 +224,7 @@
         private System.Windows.Forms.PictureBox CabecalhoChat;
         private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox MensagemEnviar;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.SplitContainer splitContainer2;

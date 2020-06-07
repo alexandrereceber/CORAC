@@ -21,33 +21,43 @@ using System.Runtime.CompilerServices;
 using CORAC.Chat;
 namespace ServerClienteOnline.Server
 {
+    class ControleSend
+    {
+        public bool Semafaro = false;
+    }
 
     class AcessoRemoto_Chat : Tratador_Erros
     {
-       
-        static Form CaixaDialogo;
+        public static bool teste = true;
+        //private Chat_CORAC CaixaDialogo;
         public AcessoRemoto_Chat()
         {
 
         }
 
-        public static void CriarCaixaDialog()
+        public void CriarCaixaDialog(object sender)
         {
-            CaixaDialogo = new Chat_CORAC();
-            CaixaDialogo.Show();
+
+            Chat_CORAC CaixaDialogo = new Chat_CORAC();
+            CaixaDialogo.Send_SCK_Listener(ref sender);
+            CaixaDialogo.ShowDialog();
+            CaixaDialogo.Dispose();
+            //CaixaDialogo = null;
+
             //CaixaDialogo.FormClosed += FecharDialogo;
         }
-        private static void FecharDialogo(object sender, FormClosedEventArgs e)
+        private void FecharDialogo(object sender, FormClosedEventArgs e)
         {
             MessageBox.Show("tchau");
         }
         ~AcessoRemoto_Chat()
         {
+            //CaixaDialogo = null;
 
         }
     }
 
-    class AcessoRemoto_WEBSOCKET: Tratador_Erros
+    public class AcessoRemoto_WEBSOCKET: Tratador_Erros
     {
         private IGClienteHTML _GerenciadorCliente;
         private IAuthHTML _Auth;
@@ -55,7 +65,11 @@ namespace ServerClienteOnline.Server
 
         List<int> Lista_Conexoes_WEBSOCKET = new List<int>();
 
-        private bool Semafaro = false;
+        private ControleSend Semafaro = new ControleSend();
+
+        WebSocket Obter_Contexto_WEBSOCKET;
+        HttpListenerContext IAC;
+        AcessoRemoto_Chat Caixa;
         private bool Gerente_WEBSOCKET(int IP)
         {
             
@@ -81,8 +95,7 @@ namespace ServerClienteOnline.Server
 
         public async Task<bool> Iniciar_Begin_AcessoRemoto(object ObjAC)
         {
-            WebSocket Obter_Contexto_WEBSOCKET;
-            HttpListenerContext IAC;
+
 
             try
             {
@@ -108,7 +121,7 @@ namespace ServerClienteOnline.Server
                 /**
                  * aguarda resposta do navegador antes de continuar.
                  */
-                await enviarPacotes(Obter_Contexto_WEBSOCKET, WebSocketMessageType.Text, Pacote_Inicial);
+                await enviarPacotes(WebSocketMessageType.Text, Pacote_Inicial);
                 
                 try
                 {
@@ -131,15 +144,19 @@ namespace ServerClienteOnline.Server
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
 
-                        Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
-                        
-                        //await RCB.ConfigureAwait(true);
-                        Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
-                        Task[] FluxoDados = new Task[2];
-                        FluxoDados[0] = RCB;
-                        FluxoDados[1] = EFM;
+                        Thread RecebePacotes = new Thread(ReceberPacotes);
+                        RecebePacotes.SetApartmentState(ApartmentState.STA);
+                        RecebePacotes.Start();
 
-                        Task.WaitAll(FluxoDados);
+                        //Task<bool> RCB =  ReceberPacotes(IAC, Obter_Contexto_WEBSOCKET);
+
+                        //await RCB.ConfigureAwait(true);
+                         Task<bool> EFM = enviarFrame(IAC, Obter_Contexto_WEBSOCKET);
+                        // Task[] FluxoDados = new Task[2];
+                        //FluxoDados[0] = RCB;
+                        // FluxoDados[1] = EFM;
+
+                        EFM.Wait();
                         return true;
                     }
                     else
@@ -148,7 +165,7 @@ namespace ServerClienteOnline.Server
                         PERR.Error = true;
                         PERR.Numero = 42001;
                         PERR.Mensagem = "Erro de autenticação!";
-                        await closeConexao(IAC, Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.NormalClosure);
+                        await closeConexao(PERR, WebSocketCloseStatus.NormalClosure);
                         return true;
                     }
                 }
@@ -158,7 +175,7 @@ namespace ServerClienteOnline.Server
                     PERR.Error = true;
                     PERR.Mensagem = e.Message;
                     PERR.Numero = e.HResult;
-                    await closeConexao(IAC, Obter_Contexto_WEBSOCKET, PERR, WebSocketCloseStatus.InternalServerError);
+                    await closeConexao(PERR, WebSocketCloseStatus.InternalServerError);
                     return true;
                 }
 
@@ -183,34 +200,39 @@ namespace ServerClienteOnline.Server
             MessageBox.Show("O atendimento foi encerrado devido a uma falha ou uma interrupção do serviço de acesso remoto!\nFavor, entrar em contato com o departamento de tecnologia.", "Atendimento finalizado!", MessageBoxButtons.OK, MessageBoxIcon.Error, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
 
         }
-        /**
-         * <summary>
-         * Recebe os pacotes da conexão SOCKEWEB.
-         * </summary>
-         */
 
-        private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
+        private async void ReceberPacotes()
         {
             try
             {
+                Dictionary<int, object> Acesso_SCK = new Dictionary<int, object>();
+                Acesso_SCK.Add(0, Obter_Contexto_WEBSOCKET);
+                Acesso_SCK.Add(1, IAC);
+                Acesso_SCK.Add(2, Semafaro);
+
+                Caixa = new AcessoRemoto_Chat();
+                Thread Dialog = new Thread(Caixa.CriarCaixaDialog);
+                Dialog.SetApartmentState(ApartmentState.STA);
+                Dialog.Start(Acesso_SCK);
+
+                //AcessoRemoto_Chat.CaixaDialogo
                 ArraySegment<byte> DadosRecebendo;
                 Pacote_TecladoRemoto TecladoRmt;
                 Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
                 Pacote_EventMouse EventosMouseRemotos;
 
-                while (Sck.State == WebSocketState.Open)
+                while (Obter_Contexto_WEBSOCKET.State == WebSocketState.Open)
                 {
                     DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
                     CancellationToken Token = new CancellationToken();
-                    WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, Token);
-
+                    WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, Token);
 
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
                     {
                         Pacote_CloseConection Close = new Pacote_CloseConection();
-                        Close.Close = Sck.State;
-                        await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
+                        Close.Close = Obter_Contexto_WEBSOCKET.State;
+                        await closeConexao(Close, WebSocketCloseStatus.InternalServerError);
                         encerramentoAtendimento();
                         break;
                     }
@@ -224,7 +246,7 @@ namespace ServerClienteOnline.Server
 
                     Console.WriteLine(Pacote_String);
                     Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
-                    
+
                     switch (Base.Pacote)
                     {
                         case TipoPacote.TecladoRemoto:
@@ -244,7 +266,7 @@ namespace ServerClienteOnline.Server
                             break;
 
                         case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
-                            await closeConexao(Server, Sck, (Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
+                            await closeConexao((Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
 
                             break;
 
@@ -253,17 +275,17 @@ namespace ServerClienteOnline.Server
                             PERR.Error = true;
                             PERR.Mensagem = "Pacote inexistente";
                             PERR.Numero = 42000;
-                            await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
+                            await closeConexao(PERR, WebSocketCloseStatus.InternalServerError);
                             //return true;
                             break;
                     }
-                    
+
 
                 }
-                
-                return true;
+
+
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 TSaida_Error = TipoSaidaErros.Arquivo;
                 TratadorErros(e, this.GetType().Name);
@@ -273,29 +295,125 @@ namespace ServerClienteOnline.Server
                 PERR.Mensagem = e.Message;
                 PERR.Numero = 42003;
                 Encerramento_Falha();
-                await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
-                return true;
+                await closeConexao(PERR, WebSocketCloseStatus.InternalServerError);
+
             }
 
         }
 
-        private async Task<bool> closeConexao(HttpListenerContext Server, WebSocket Sck, ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
+        /**
+         * <summary>
+         * Recebe os pacotes da conexão SOCKEWEB.
+         * </summary>
+         */
+
+        //private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
+        //{
+        //    try
+        //    {
+        //        ArraySegment<byte> DadosRecebendo;
+        //        Pacote_TecladoRemoto TecladoRmt;
+        //        Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
+        //        Pacote_EventMouse EventosMouseRemotos;
+
+        //        while (Sck.State == WebSocketState.Open)
+        //        {
+        //            DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
+        //            CancellationToken Token = new CancellationToken();
+        //            WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, Token);
+
+
+        //            WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
+        //            if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
+        //            {
+        //                Pacote_CloseConection Close = new Pacote_CloseConection();
+        //                Close.Close = Sck.State;
+        //                await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
+        //                encerramentoAtendimento();
+        //                break;
+        //            }
+        //            string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
+
+        //            int I = Pacote_String.IndexOf(Convert.ToChar(0));
+        //            bool isPacoteInicio = Pacote_String.Substring(0, 10) == "{\"Pacote\":";
+
+        //            bool isPacoteFim = Pacote_String.Substring(I - 1, 2) == "}\0";
+        //            if (!isPacoteInicio || !isPacoteFim) continue;
+
+        //            Console.WriteLine(Pacote_String);
+        //            Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
+
+        //            switch (Base.Pacote)
+        //            {
+        //                case TipoPacote.TecladoRemoto:
+        //                    TecladoRmt = (Pacote_TecladoRemoto)Saida;
+        //                    TecladoRmt.ChamarTeclas();
+
+
+        //                    break;
+
+        //                case TipoPacote.EventMouse:
+        //                    EventosMouseRemotos = (Pacote_EventMouse)Saida;
+        //                    Mouse.Gerar_EventoMouse(EventosMouseRemotos);
+        //                    //Pacote_Confirmacao Confirmado = new Pacote_Confirmacao();
+        //                    //Confirmado.PacoteConfirmado = TipoPacote.EventMouse;
+
+        //                    //await enviarPacotes(Sck, WebSocketMessageType.Text, Confirmado);
+        //                    break;
+
+        //                case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
+        //                    await closeConexao(Server, Sck, (Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
+
+        //                    break;
+
+        //                default:
+        //                    Pacote_Error PERR = new Pacote_Error();
+        //                    PERR.Error = true;
+        //                    PERR.Mensagem = "Pacote inexistente";
+        //                    PERR.Numero = 42000;
+        //                    await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
+        //                    //return true;
+        //                    break;
+        //            }
+
+
+        //        }
+
+        //        return true;
+        //    }
+        //    catch(Exception e)
+        //    {
+        //        TSaida_Error = TipoSaidaErros.Arquivo;
+        //        TratadorErros(e, this.GetType().Name);
+
+        //        Pacote_Error PERR = new Pacote_Error();
+        //        PERR.Error = true;
+        //        PERR.Mensagem = e.Message;
+        //        PERR.Numero = 42003;
+        //        Encerramento_Falha();
+        //        await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
+        //        return true;
+        //    }
+
+        //}
+
+        private async Task<bool> closeConexao(ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
 
             try
             {
                 
                 ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
-                await Sck.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
 
                 Pacote_CloseConection Close = new Pacote_CloseConection();
-                Close.Close = Sck.State;
+                Close.Close = Obter_Contexto_WEBSOCKET.State;
                 string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
 
                 CancellationToken Token = new CancellationToken();
-                await Sck.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
+                await Obter_Contexto_WEBSOCKET.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
                 
-                int IP = Server.Request.RemoteEndPoint.Address.GetHashCode();
+                int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
                 Desconectar_SOCKET(IP);
                 return true;
             }
@@ -312,16 +430,19 @@ namespace ServerClienteOnline.Server
          *  Envia os pacotes para o cliente da conexção WEBSOCKET.
          * </summary>
          */
-        private async Task<bool> enviarPacotes(WebSocket Sck, WebSocketMessageType Tipo, ITipoPacote Pacote)
+        public async Task<bool> enviarPacotes(WebSocketMessageType Tipo, ITipoPacote Pacote)
         {
+            
             try
             {
-                if (Sck.State != WebSocketState.Open) return false;
-                while (Semafaro) { }
+                if (Obter_Contexto_WEBSOCKET.State != WebSocketState.Open) return false;
+                while (Semafaro.Semafaro) { }
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
-                Semafaro = true;
-                await Sck.SendAsync(EnviandoDados, Tipo, true, CancellationToken.None);
-                Semafaro = false;
+
+                Semafaro.Semafaro = true;
+                await Obter_Contexto_WEBSOCKET.SendAsync(EnviandoDados, Tipo, true, CancellationToken.None);
+                Semafaro.Semafaro = false;
+
                 return true;
             }
             catch(Exception e)
@@ -352,7 +473,7 @@ namespace ServerClienteOnline.Server
         {
             set { _Auth = value; }
         }
-        [STAThread]
+
         private async Task<bool> enviarFrame(HttpListenerContext Server, WebSocket Sck)
         {
             try
@@ -362,13 +483,15 @@ namespace ServerClienteOnline.Server
                 bool C = true;
                 while (C)
                 {
-                    //if (Sck.State != WebSocketState.Open) break;
                     bool Yes = CapturarTelas.GerarTelas();
-                    while (Semafaro & Yes) { }
+                    while (Semafaro.Semafaro & Yes) { }
                     EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
-                    Semafaro = true;
+                    Semafaro.Semafaro = true;
+                    
+                    if (Sck.State != WebSocketState.Open) break;
+
                     await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
-                    Semafaro = false;
+                    Semafaro.Semafaro = false;
 
                     await Task.Delay(500, CancellationToken.None);
                 }
