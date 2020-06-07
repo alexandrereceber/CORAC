@@ -22,7 +22,12 @@ namespace CORAC.Chat
         WebSocket Obter_Contexto_WEBSOCKET;
         HttpListenerContext IAC;
         ControleSend Semafaro;
+        bool Cls_User = false;
 
+        public bool Close_User()
+        {
+            return Cls_User;
+        }
         public void Send_SCK_Listener(ref object WEB_SCK)
         {
             try
@@ -93,6 +98,7 @@ namespace CORAC.Chat
             }
             else
             {
+                Cls_User = true;
                 Pacote_UserCloseDialog Fechar = new Pacote_UserCloseDialog();
                 Fechar.Close = Obter_Contexto_WEBSOCKET.State;
                 Fechar.Mensagem = "Close_User_Dialog";
@@ -109,5 +115,6 @@ namespace CORAC.Chat
             }
 
         }
+
     }
 }

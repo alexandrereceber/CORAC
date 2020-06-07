@@ -33,30 +33,42 @@ namespace ServerClienteOnline.Server
         {
 
         }
-
+        public bool get_Close_User()
+        {
+            return CaixaDialogo.Close_User();
+        }
         public void FecharCaixa()
         {
+            
+        }
+
+        public void Close_Caixa_Dialog()
+        {
             CaixaDialogo.Close();
-            CaixaDialogo.Dispose();
         }
         public void CriarCaixaDialog(object sender)
         {
+            try
+            {
+                CaixaDialogo = new Chat_CORAC();
+                CaixaDialogo.TopLevel = true;
+                CaixaDialogo.TopMost = true;
+                CaixaDialogo.Send_SCK_Listener(ref sender);
+                //CaixaDialogo.FormClosing += FecharDialogo;
+                CaixaDialogo.ShowDialog();
+                CaixaDialogo.Dispose();
+            }
+            catch(ThreadAbortException e)
+            {
+                CaixaDialogo.Close();
+                CaixaDialogo.Dispose();
+            }
 
-            CaixaDialogo = new Chat_CORAC();
-            CaixaDialogo.TopLevel = true;
-            CaixaDialogo.TopMost = true;
-            CaixaDialogo.Send_SCK_Listener(ref sender);
-            //CaixaDialogo.FormClosed += FecharDialogo;
-            CaixaDialogo.ShowDialog();
-            CaixaDialogo.Dispose();
 
             //CaixaDialogo = null;
 
         }
-        private void FecharDialogo(object sender, FormClosedEventArgs e)
-        {
-            MessageBox.Show("tchau");
-        }
+
         ~AcessoRemoto_Chat()
         {
             //CaixaDialogo = null;
@@ -74,9 +86,10 @@ namespace ServerClienteOnline.Server
 
         private ControleSend Semafaro = new ControleSend();
 
-        WebSocket Obter_Contexto_WEBSOCKET;
-        HttpListenerContext IAC;
-        AcessoRemoto_Chat Caixa;
+        private WebSocket Obter_Contexto_WEBSOCKET;
+        private HttpListenerContext IAC;
+        private AcessoRemoto_Chat Caixa;
+        private Thread Dialog;
         private bool Gerente_WEBSOCKET(int IP)
         {
             
@@ -218,7 +231,7 @@ namespace ServerClienteOnline.Server
                 Acesso_SCK.Add(2, Semafaro);
 
                 Caixa = new AcessoRemoto_Chat();
-                Thread Dialog = new Thread(Caixa.CriarCaixaDialog);
+                Dialog = new Thread(Caixa.CriarCaixaDialog);
                 Dialog.SetApartmentState(ApartmentState.STA);
                 Dialog.Start(Acesso_SCK);
 
@@ -237,6 +250,11 @@ namespace ServerClienteOnline.Server
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty || p == WebSocketCloseStatus.NormalClosure)
                     {
+                        if (Caixa.get_Close_User() == false)
+                        {
+                            Dialog.Abort();
+                        }
+
                         Pacote_CloseConection Close = new Pacote_CloseConection();
                         Close.Close = Obter_Contexto_WEBSOCKET.State;
                         await closeConexao(Close, WebSocketCloseStatus.InternalServerError);
