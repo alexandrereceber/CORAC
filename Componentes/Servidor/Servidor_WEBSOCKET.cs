@@ -21,10 +21,6 @@ using System.Runtime.CompilerServices;
 using CORAC.Chat;
 namespace ServerClienteOnline.Server
 {
-    class ControleSend
-    {
-        public bool Semafaro = false;
-    }
 
     class AcessoRemoto_Chat : Tratador_Erros
     {
@@ -33,18 +29,37 @@ namespace ServerClienteOnline.Server
         {
 
         }
+        public void Receber_MensagemSuporte(Pacote_ChatSuporte Pct)
+        {
+            CaixaDialogo.ReceberMensagem(Pct);
+        }
         public bool get_Close_User()
         {
             return CaixaDialogo.Close_User();
         }
-        public void FecharCaixa()
+        public void setSemafaro(bool Semaf)
         {
-            
+            if(CaixaDialogo != null)
+            {
+                CaixaDialogo.Semafaro = Semaf;
+            }
+
+        }
+        public bool getSemafaro()
+        {
+            if(CaixaDialogo != null)
+            {
+                return CaixaDialogo.Semafaro;
+            }
+            return false;
         }
 
-        public void Close_Caixa_Dialog()
+        public void CloseCaixa()
         {
-            CaixaDialogo.Close();
+            if (CaixaDialogo != null)
+            {
+                CaixaDialogo.CloseCaixa() ;
+            }
         }
         public void CriarCaixaDialog(object sender)
         {
@@ -57,6 +72,7 @@ namespace ServerClienteOnline.Server
                 //CaixaDialogo.FormClosing += FecharDialogo;
                 CaixaDialogo.ShowDialog();
                 CaixaDialogo.Dispose();
+                CaixaDialogo = null;
             }
             catch(ThreadAbortException e)
             {
@@ -69,11 +85,6 @@ namespace ServerClienteOnline.Server
 
         }
 
-        ~AcessoRemoto_Chat()
-        {
-            //CaixaDialogo = null;
-
-        }
     }
 
     public class AcessoRemoto_WEBSOCKET: Tratador_Erros
@@ -84,7 +95,7 @@ namespace ServerClienteOnline.Server
 
         List<int> Lista_Conexoes_WEBSOCKET = new List<int>();
 
-        private ControleSend Semafaro = new ControleSend();
+        bool Semafaro = false;
 
         private WebSocket Obter_Contexto_WEBSOCKET;
         private HttpListenerContext IAC;
@@ -228,7 +239,6 @@ namespace ServerClienteOnline.Server
                 Dictionary<int, object> Acesso_SCK = new Dictionary<int, object>();
                 Acesso_SCK.Add(0, Obter_Contexto_WEBSOCKET);
                 Acesso_SCK.Add(1, IAC);
-                Acesso_SCK.Add(2, Semafaro);
 
                 Caixa = new AcessoRemoto_Chat();
                 Dialog = new Thread(Caixa.CriarCaixaDialog);
@@ -240,6 +250,7 @@ namespace ServerClienteOnline.Server
                 Pacote_TecladoRemoto TecladoRmt;
                 Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
                 Pacote_EventMouse EventosMouseRemotos;
+                Pacote_ChatSuporte ChatSuporte;
 
                 while (Obter_Contexto_WEBSOCKET.State == WebSocketState.Open)
                 {
@@ -252,7 +263,7 @@ namespace ServerClienteOnline.Server
                     {
                         if (Caixa.get_Close_User() == false)
                         {
-                            Dialog.Abort();
+                            Caixa.CloseCaixa();
                         }
 
                         Pacote_CloseConection Close = new Pacote_CloseConection();
@@ -284,10 +295,11 @@ namespace ServerClienteOnline.Server
                         case TipoPacote.EventMouse:
                             EventosMouseRemotos = (Pacote_EventMouse)Saida;
                             Mouse.Gerar_EventoMouse(EventosMouseRemotos);
-                            //Pacote_Confirmacao Confirmado = new Pacote_Confirmacao();
-                            //Confirmado.PacoteConfirmado = TipoPacote.EventMouse;
+                            break;
 
-                            //await enviarPacotes(Sck, WebSocketMessageType.Text, Confirmado);
+                        case TipoPacote.Chat_Suporte:
+                            ChatSuporte = (Pacote_ChatSuporte)Saida;
+                            Caixa.Receber_MensagemSuporte(ChatSuporte);
                             break;
 
                         case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
@@ -326,108 +338,14 @@ namespace ServerClienteOnline.Server
 
         }
 
-        /**
-         * <summary>
-         * Recebe os pacotes da conexão SOCKEWEB.
-         * </summary>
-         */
-
-        //private async Task<bool> ReceberPacotes(HttpListenerContext Server, WebSocket Sck)
-        //{
-        //    try
-        //    {
-        //        ArraySegment<byte> DadosRecebendo;
-        //        Pacote_TecladoRemoto TecladoRmt;
-        //        Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
-        //        Pacote_EventMouse EventosMouseRemotos;
-
-        //        while (Sck.State == WebSocketState.Open)
-        //        {
-        //            DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
-        //            CancellationToken Token = new CancellationToken();
-        //            WebSocketReceiveResult Resultado_WS = await Sck.ReceiveAsync(DadosRecebendo, Token);
-
-
-        //            WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
-        //            if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty)
-        //            {
-        //                Pacote_CloseConection Close = new Pacote_CloseConection();
-        //                Close.Close = Sck.State;
-        //                await closeConexao(Server, Sck, Close, WebSocketCloseStatus.InternalServerError);
-        //                encerramentoAtendimento();
-        //                break;
-        //            }
-        //            string Pacote_String = ASCIIEncoding.UTF8.GetString(DadosRecebendo.Array);
-
-        //            int I = Pacote_String.IndexOf(Convert.ToChar(0));
-        //            bool isPacoteInicio = Pacote_String.Substring(0, 10) == "{\"Pacote\":";
-
-        //            bool isPacoteFim = Pacote_String.Substring(I - 1, 2) == "}\0";
-        //            if (!isPacoteInicio || !isPacoteFim) continue;
-
-        //            Console.WriteLine(Pacote_String);
-        //            Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
-
-        //            switch (Base.Pacote)
-        //            {
-        //                case TipoPacote.TecladoRemoto:
-        //                    TecladoRmt = (Pacote_TecladoRemoto)Saida;
-        //                    TecladoRmt.ChamarTeclas();
-
-
-        //                    break;
-
-        //                case TipoPacote.EventMouse:
-        //                    EventosMouseRemotos = (Pacote_EventMouse)Saida;
-        //                    Mouse.Gerar_EventoMouse(EventosMouseRemotos);
-        //                    //Pacote_Confirmacao Confirmado = new Pacote_Confirmacao();
-        //                    //Confirmado.PacoteConfirmado = TipoPacote.EventMouse;
-
-        //                    //await enviarPacotes(Sck, WebSocketMessageType.Text, Confirmado);
-        //                    break;
-
-        //                case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
-        //                    await closeConexao(Server, Sck, (Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
-
-        //                    break;
-
-        //                default:
-        //                    Pacote_Error PERR = new Pacote_Error();
-        //                    PERR.Error = true;
-        //                    PERR.Mensagem = "Pacote inexistente";
-        //                    PERR.Numero = 42000;
-        //                    await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
-        //                    //return true;
-        //                    break;
-        //            }
-
-
-        //        }
-
-        //        return true;
-        //    }
-        //    catch(Exception e)
-        //    {
-        //        TSaida_Error = TipoSaidaErros.Arquivo;
-        //        TratadorErros(e, this.GetType().Name);
-
-        //        Pacote_Error PERR = new Pacote_Error();
-        //        PERR.Error = true;
-        //        PERR.Mensagem = e.Message;
-        //        PERR.Numero = 42003;
-        //        Encerramento_Falha();
-        //        await closeConexao(Server, Sck, PERR, WebSocketCloseStatus.InternalServerError);
-        //        return true;
-        //    }
-
-        //}
 
         private async Task<bool> closeConexao(ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
 
             try
             {
-                
+
+                Caixa.setSemafaro(true);
                 ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
                 await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
 
@@ -437,7 +355,8 @@ namespace ServerClienteOnline.Server
 
                 CancellationToken Token = new CancellationToken();
                 await Obter_Contexto_WEBSOCKET.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
-                
+                Caixa.setSemafaro(false);
+
                 int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
                 Desconectar_SOCKET(IP);
                 return true;
@@ -463,12 +382,12 @@ namespace ServerClienteOnline.Server
             try
             {
                 if (Obter_Contexto_WEBSOCKET.State != WebSocketState.Open) return false;
-                while (Semafaro.Semafaro) { }
+                bool SMF = Caixa == null ? false : Caixa.getSemafaro();
+                while (Semafaro & SMF) { }
+                Caixa?.setSemafaro(true); Semafaro = true;
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
-
-                Semafaro.Semafaro = true;
                 await Obter_Contexto_WEBSOCKET.SendAsync(EnviandoDados, Tipo, true, CancellationToken.None);
-                Semafaro.Semafaro = false;
+                Caixa?.setSemafaro(true); Semafaro = false;
 
                 return true;
             }
@@ -511,16 +430,15 @@ namespace ServerClienteOnline.Server
                 while (C)
                 {
                     bool Yes = CapturarTelas.GerarTelas();
-                    while (Semafaro.Semafaro & Yes) { }
+                    while (Semafaro & Yes & Caixa.getSemafaro()) { }
                     EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
-                    Semafaro.Semafaro = true;
-                    
                     if (Sck.State != WebSocketState.Open) break;
-
+                    Caixa.setSemafaro(true); Semafaro = true;
                     await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
-                    Semafaro.Semafaro = false;
 
-                    await Task.Delay(500, CancellationToken.None);
+                    await Task.Delay(400, CancellationToken.None);
+                    Caixa.setSemafaro(false); Semafaro = false;
+
                 }
                 return true;
                 //Pacote_CloseConection Close = new Pacote_CloseConection();

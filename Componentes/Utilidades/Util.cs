@@ -229,12 +229,12 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("Error")]
         public bool Error = false;
-        string ITipoPacote.GetResultado()
+        public string GetResultado()
         {
             return Mensagem;
         }
 
-        TipoPacote ITipoPacote.GetTipoPacote()
+        public TipoPacote GetTipoPacote()
         {
             return Pacote;
         }
@@ -1237,6 +1237,56 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_ChatUser : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Chat_User;
+
+        [JsonProperty("Nome")]
+        public string Nome { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Hora")]
+        public string Hora { get { return DateTime.Now.ToShortTimeString(); } }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Pacote.ToString();
+        }
+    }
+
+    public class Pacote_ChatSuporte : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Chat_Suporte;
+
+        [JsonProperty("Nome")]
+        public string Nome { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Hora")]
+        public string Hora { get { return DateTime.Now.ToShortTimeString(); } }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Pacote.ToString();
+        }
+    }
+
     public enum TiposRequisicaoAR
     {
         Pedido_Acesso = 0,
@@ -1295,7 +1345,9 @@ namespace ServerClienteOnline.Utilidades
         MouseRemoto = 17,
         EventMouse = 18,
         Confirmacao = 19,
-        User_CloseDialog = 20
+        User_CloseDialog = 20,
+        Chat_User = 21,
+        Chat_Suporte = 22
 
     };
 
@@ -1451,6 +1503,11 @@ namespace ServerClienteOnline.Utilidades
                     case TipoPacote.EventMouse:
                         Pacote_EventMouse Mouse_Remoto = JsonConvert.DeserializeObject<Pacote_EventMouse>(Base.Conteudo);
                         Saida = Mouse_Remoto;
+                        break;
+
+                    case TipoPacote.Chat_Suporte:
+                        Pacote_ChatSuporte Pacote_Suporte = JsonConvert.DeserializeObject<Pacote_ChatSuporte>(Base.Conteudo);
+                        Saida = Pacote_Suporte;
                         break;
 
                     default:

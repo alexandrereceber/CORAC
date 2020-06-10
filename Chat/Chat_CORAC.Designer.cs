@@ -31,21 +31,21 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Chat_CORAC));
             this.tableLayoutPanel_Chat = new System.Windows.Forms.TableLayoutPanel();
             this.CabecalhoChat = new System.Windows.Forms.PictureBox();
-            this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.MensagemEnviar = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.Botao_Enviar_Mensagem = new System.Windows.Forms.PictureBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.AvisoTelaShare = new System.Windows.Forms.Label();
+            this.webchat = new System.Windows.Forms.WebBrowser();
             this.tableLayoutPanel_Chat.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.CabecalhoChat)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Botao_Enviar_Mensagem)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -59,9 +59,9 @@
             this.tableLayoutPanel_Chat.ColumnCount = 1;
             this.tableLayoutPanel_Chat.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel_Chat.Controls.Add(this.CabecalhoChat, 0, 0);
-            this.tableLayoutPanel_Chat.Controls.Add(this.webBrowser1, 0, 2);
             this.tableLayoutPanel_Chat.Controls.Add(this.splitContainer1, 0, 3);
             this.tableLayoutPanel_Chat.Controls.Add(this.splitContainer2, 0, 1);
+            this.tableLayoutPanel_Chat.Controls.Add(this.webchat, 0, 2);
             this.tableLayoutPanel_Chat.Location = new System.Drawing.Point(-1, -2);
             this.tableLayoutPanel_Chat.Name = "tableLayoutPanel_Chat";
             this.tableLayoutPanel_Chat.RowCount = 4;
@@ -76,7 +76,7 @@
             // CabecalhoChat
             // 
             this.CabecalhoChat.Dock = System.Windows.Forms.DockStyle.Top;
-            this.CabecalhoChat.Image = global::CORAC.Properties.Resources.Cabecalho_fw;
+            this.CabecalhoChat.Image = ((System.Drawing.Image)(resources.GetObject("CabecalhoChat.Image")));
             this.CabecalhoChat.InitialImage = null;
             this.CabecalhoChat.Location = new System.Drawing.Point(4, 4);
             this.CabecalhoChat.Name = "CabecalhoChat";
@@ -84,17 +84,6 @@
             this.CabecalhoChat.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.CabecalhoChat.TabIndex = 0;
             this.CabecalhoChat.TabStop = false;
-            // 
-            // webBrowser1
-            // 
-            this.webBrowser1.AllowNavigation = false;
-            this.webBrowser1.Location = new System.Drawing.Point(4, 146);
-            this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowser1.Name = "webBrowser1";
-            this.webBrowser1.ScriptErrorsSuppressed = true;
-            this.webBrowser1.Size = new System.Drawing.Size(719, 330);
-            this.webBrowser1.TabIndex = 2;
-            this.webBrowser1.Url = new System.Uri("http://192.168.15.10/CORAC/ChatOnline/", System.UriKind.Absolute);
             // 
             // splitContainer1
             // 
@@ -108,40 +97,44 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.pictureBox1);
+            this.splitContainer1.Panel2.Controls.Add(this.Botao_Enviar_Mensagem);
             this.splitContainer1.Size = new System.Drawing.Size(719, 50);
-            this.splitContainer1.SplitterDistance = 639;
+            this.splitContainer1.SplitterDistance = 626;
             this.splitContainer1.TabIndex = 4;
             // 
             // MensagemEnviar
             // 
+            this.MensagemEnviar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.MensagemEnviar.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MensagemEnviar.Location = new System.Drawing.Point(97, 15);
+            this.MensagemEnviar.Location = new System.Drawing.Point(99, 12);
             this.MensagemEnviar.Name = "MensagemEnviar";
-            this.MensagemEnviar.Size = new System.Drawing.Size(518, 27);
+            this.MensagemEnviar.Size = new System.Drawing.Size(524, 27);
             this.MensagemEnviar.TabIndex = 1;
+            this.MensagemEnviar.TextChanged += new System.EventHandler(this.MensagemEnviar_TextChanged);
+            this.MensagemEnviar.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MensagemEnviar_KeyUp);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(10, 20);
+            this.label1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.label1.Font = new System.Drawing.Font("Times New Roman", 10.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(23, 17);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(81, 17);
+            this.label1.Size = new System.Drawing.Size(72, 16);
             this.label1.TabIndex = 0;
             this.label1.Text = "Mensagem:";
             // 
-            // pictureBox1
+            // Botao_Enviar_Mensagem
             // 
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pictureBox1.Image = global::CORAC.Properties.Resources.enviarmensagem;
-            this.pictureBox1.Location = new System.Drawing.Point(16, 0);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(53, 50);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.Botao_Enviar_Mensagem.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.Botao_Enviar_Mensagem.Image = ((System.Drawing.Image)(resources.GetObject("Botao_Enviar_Mensagem.Image")));
+            this.Botao_Enviar_Mensagem.Location = new System.Drawing.Point(3, 4);
+            this.Botao_Enviar_Mensagem.Name = "Botao_Enviar_Mensagem";
+            this.Botao_Enviar_Mensagem.Size = new System.Drawing.Size(42, 39);
+            this.Botao_Enviar_Mensagem.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.Botao_Enviar_Mensagem.TabIndex = 2;
+            this.Botao_Enviar_Mensagem.TabStop = false;
+            this.Botao_Enviar_Mensagem.Click += new System.EventHandler(this.Botao_Enviar_Mensagem_Click);
             // 
             // splitContainer2
             // 
@@ -174,21 +167,31 @@
             // 
             this.AvisoTelaShare.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.AvisoTelaShare.AutoSize = true;
-            this.AvisoTelaShare.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AvisoTelaShare.Font = new System.Drawing.Font("Georgia", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AvisoTelaShare.ForeColor = System.Drawing.SystemColors.Highlight;
             this.AvisoTelaShare.Location = new System.Drawing.Point(23, 8);
             this.AvisoTelaShare.Name = "AvisoTelaShare";
             this.AvisoTelaShare.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.AvisoTelaShare.Size = new System.Drawing.Size(427, 29);
+            this.AvisoTelaShare.Size = new System.Drawing.Size(454, 29);
             this.AvisoTelaShare.TabIndex = 0;
             this.AvisoTelaShare.Text = "Tela compartilhado com Atendente.";
             this.AvisoTelaShare.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // webchat
+            // 
+            this.webchat.Location = new System.Drawing.Point(4, 146);
+            this.webchat.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webchat.Name = "webchat";
+            this.webchat.Size = new System.Drawing.Size(719, 330);
+            this.webchat.TabIndex = 6;
+            this.webchat.Url = new System.Uri("http://192.168.15.10/CORAC/LoadPages/ChatOnline.php", System.UriKind.Absolute);
+            this.webchat.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webchat_DocumentCompleted_1);
             // 
             // Chat_CORAC
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(726, 532);
+            this.ClientSize = new System.Drawing.Size(727, 532);
             this.Controls.Add(this.tableLayoutPanel_Chat);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -208,7 +211,7 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.Botao_Enviar_Mensagem)).EndInit();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
@@ -223,13 +226,13 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel_Chat;
         private System.Windows.Forms.PictureBox CabecalhoChat;
-        private System.Windows.Forms.WebBrowser webBrowser1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TextBox MensagemEnviar;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox Botao_Enviar_Mensagem;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Label AvisoTelaShare;
+        private System.Windows.Forms.WebBrowser webchat;
     }
 }
