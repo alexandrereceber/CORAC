@@ -29,12 +29,13 @@ namespace ServerClienteOnline.Server
         {
 
         }
-        public void Receber_MensagemSuporte(Pacote_ChatSuporte Pct)
+        public void Receber_MensagemSuporte(ITipoPacote Pct)
         {
             CaixaDialogo.ReceberMensagem(Pct);
         }
         public bool get_Close_User()
         {
+            if (CaixaDialogo != null) return true;
             return CaixaDialogo.Close_User();
         }
         public void setSemafaro(bool Semaf)
@@ -297,9 +298,9 @@ namespace ServerClienteOnline.Server
                             Mouse.Gerar_EventoMouse(EventosMouseRemotos);
                             break;
 
+                        case TipoPacote.Chat_Digitando:
                         case TipoPacote.Chat_Suporte:
-                            ChatSuporte = (Pacote_ChatSuporte)Saida;
-                            Caixa.Receber_MensagemSuporte(ChatSuporte);
+                            Caixa.Receber_MensagemSuporte((ITipoPacote)Saida);
                             break;
 
                         case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.

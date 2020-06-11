@@ -110,6 +110,7 @@
             this.MensagemEnviar.Name = "MensagemEnviar";
             this.MensagemEnviar.Size = new System.Drawing.Size(524, 27);
             this.MensagemEnviar.TabIndex = 1;
+            this.MensagemEnviar.ModifiedChanged += new System.EventHandler(this.MensagemEnviar_ModifiedChanged);
             this.MensagemEnviar.TextChanged += new System.EventHandler(this.MensagemEnviar_TextChanged);
             this.MensagemEnviar.KeyUp += new System.Windows.Forms.KeyEventHandler(this.MensagemEnviar_KeyUp);
             // 
@@ -191,7 +192,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(727, 532);
+            this.ClientSize = new System.Drawing.Size(724, 532);
             this.Controls.Add(this.tableLayoutPanel_Chat);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

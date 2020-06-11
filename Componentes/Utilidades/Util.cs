@@ -1262,6 +1262,25 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_ChatDigitando : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Chat_Digitando;
+
+        [JsonProperty("Digitando")]
+        public bool Digitando { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Pacote.ToString();
+        }
+    }
+
     public class Pacote_ChatSuporte : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1347,7 +1366,8 @@ namespace ServerClienteOnline.Utilidades
         Confirmacao = 19,
         User_CloseDialog = 20,
         Chat_User = 21,
-        Chat_Suporte = 22
+        Chat_Suporte = 22,
+        Chat_Digitando = 23
 
     };
 
@@ -1508,6 +1528,11 @@ namespace ServerClienteOnline.Utilidades
                     case TipoPacote.Chat_Suporte:
                         Pacote_ChatSuporte Pacote_Suporte = JsonConvert.DeserializeObject<Pacote_ChatSuporte>(Base.Conteudo);
                         Saida = Pacote_Suporte;
+                        break;
+
+                    case TipoPacote.Chat_Digitando:
+                        Pacote_ChatDigitando Pacote_Dig = JsonConvert.DeserializeObject<Pacote_ChatDigitando>(Base.Conteudo);
+                        Saida = Pacote_Dig;
                         break;
 
                     default:
