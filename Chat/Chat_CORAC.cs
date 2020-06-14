@@ -124,7 +124,9 @@ namespace CORAC.Chat
 
                 if (Obter_Contexto_WEBSOCKET.State == WebSocketState.Open)
                 {
-                    while (Semafaro) { }
+                    while (Semafaro) {
+                        Console.Write("Semafaro" + GetType().Name);
+                    }
                     Semafaro = true;
                     ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_MSG)));
                     await Obter_Contexto_WEBSOCKET.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
@@ -143,7 +145,9 @@ namespace CORAC.Chat
             }else if(Pacote.GetTipoPacote() == TipoPacote.Chat_Digitando)
             {
                 Pacote_ChatDigitando Pacote_MSG = (Pacote_ChatDigitando)Pacote;
-                while (Semafaro) { }
+                while (Semafaro) {
+                    Console.Write("Semafaro" + GetType().Name);
+                }
                 Semafaro = true;
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote_MSG)));
                 await Obter_Contexto_WEBSOCKET.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);

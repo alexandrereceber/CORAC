@@ -1306,6 +1306,32 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    public class Pacote_Credencial : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Credencial;
+
+        [JsonProperty("Usuario")]
+        public string Usuario { get; set; }
+
+        [JsonProperty("Senha")]
+        public string Senha { get; set; }
+
+        [JsonProperty("Dominio")]
+        public string Dominio { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Pacote.ToString();
+        }
+    }
+
+
     public enum TiposRequisicaoAR
     {
         Pedido_Acesso = 0,
@@ -1367,7 +1393,8 @@ namespace ServerClienteOnline.Utilidades
         User_CloseDialog = 20,
         Chat_User = 21,
         Chat_Suporte = 22,
-        Chat_Digitando = 23
+        Chat_Digitando = 23,
+        Credencial = 24
 
     };
 
@@ -1533,6 +1560,11 @@ namespace ServerClienteOnline.Utilidades
                     case TipoPacote.Chat_Digitando:
                         Pacote_ChatDigitando Pacote_Dig = JsonConvert.DeserializeObject<Pacote_ChatDigitando>(Base.Conteudo);
                         Saida = Pacote_Dig;
+                        break;
+
+                    case TipoPacote.Credencial:
+                        Pacote_Credencial Pacote_Credential = JsonConvert.DeserializeObject<Pacote_Credencial>(Base.Conteudo);
+                        Saida = Pacote_Credential;
                         break;
 
                     default:

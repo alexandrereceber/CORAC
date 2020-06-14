@@ -19,9 +19,67 @@ using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Runtime.CompilerServices;
 using CORAC.Chat;
+using System.Diagnostics;
+using System.Security;
+
 namespace ServerClienteOnline.Server
 {
+    class Installer : Tratador_Erros
+    {
+        private Process Instalador = null;
+        private bool Carregado = false;
+        private int CodigoSaida = 0;
+        public async void ProcessoInstaler(object Sender)
+        {
+            Pacote_Credencial Auth = (Pacote_Credencial)Sender;
+            try
+            {
+                if (Auth.Usuario != "" || Auth.Senha != "")
+                {
+                    if (Auth.Dominio == "")
+                    {
+                        Auth.Dominio = ".\\";
+                    }
+                    SecureString Password = new SecureString();
 
+                    foreach (char i in Auth.Senha)
+                    {
+                        Password.AppendChar(i);
+                    }
+
+                    Instalador = new Process();
+                    Instalador.StartInfo.UseShellExecute = false;
+                    Instalador.StartInfo.UserName = Auth.Usuario;
+                    Instalador.StartInfo.Password = Password;
+                    Instalador.StartInfo.Domain = Auth.Dominio;
+
+                    Instalador.StartInfo.FileName = "C:\\Users\\Administrador\\source\\repos\\INSMSI\\bin\\Debug\\INSMSI.exe";
+                    //Installer.
+                    Instalador.Start();
+                    Instalador.Exited += new EventHandler(Exit);
+                }
+                
+            }
+            catch (Exception e)
+            {
+                TratadorErros(e, GetType().Name);
+            }
+
+        }
+
+        public void Exit(object sender, EventArgs e)
+        {
+            MessageBox.Show("d");
+        }
+
+        public void FecharInstalador()
+        {
+            if(Instalador != null)
+            {
+                Instalador.Close();
+            }
+        }
+    }
     class AcessoRemoto_Chat : Tratador_Erros
     {
         private Chat_CORAC CaixaDialogo;
@@ -35,7 +93,7 @@ namespace ServerClienteOnline.Server
         }
         public bool get_Close_User()
         {
-            if (CaixaDialogo != null) return true;
+            if (CaixaDialogo == null) return true;
             return CaixaDialogo.Close_User();
         }
         public void setSemafaro(bool Semaf)
@@ -96,12 +154,14 @@ namespace ServerClienteOnline.Server
 
         List<int> Lista_Conexoes_WEBSOCKET = new List<int>();
 
-        bool Semafaro = false;
-
+        volatile bool Semafaro = false;
         private WebSocket Obter_Contexto_WEBSOCKET;
         private HttpListenerContext IAC;
         private AcessoRemoto_Chat Caixa;
         private Thread Dialog;
+        Process Installer = null;
+
+        Task Instalar_Softares = null;
         private bool Gerente_WEBSOCKET(int IP)
         {
             
@@ -251,13 +311,13 @@ namespace ServerClienteOnline.Server
                 Pacote_TecladoRemoto TecladoRmt;
                 Pacote_MouseRemoto Mouse = new Pacote_MouseRemoto();
                 Pacote_EventMouse EventosMouseRemotos;
-                Pacote_ChatSuporte ChatSuporte;
 
                 while (Obter_Contexto_WEBSOCKET.State == WebSocketState.Open)
                 {
                     DadosRecebendo = new ArraySegment<byte>(new byte[Buffer_Server]);
-                    CancellationToken Token = new CancellationToken();
-                    WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, Token);
+                    //CancellationToken Token = new CancellationToken();
+
+                    WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, CancellationToken.None);
 
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty || p == WebSocketCloseStatus.NormalClosure)
@@ -303,6 +363,32 @@ namespace ServerClienteOnline.Server
                             Caixa.Receber_MensagemSuporte((ITipoPacote)Saida);
                             break;
 
+                        case TipoPacote.Credencial:
+                            bool Chamada;
+                            try
+                            {
+                                Chamada = await ExecutarInstalador((Pacote_Credencial)Saida);
+
+                            }
+                            catch (Exception h)
+                            {
+                                Chamada = false;
+                            }
+
+                            if (!Chamada)
+                            {
+
+                                Pacote_Error Chamad_Credenciais = new Pacote_Error();
+                                Chamad_Credenciais.Error = true;
+                                Chamad_Credenciais.Mensagem = "Usuário ou senha incorretos!";
+                                Chamad_Credenciais.Numero = 42002;
+                                await enviarPacotes(WebSocketMessageType.Text, Chamad_Credenciais);
+
+                            }
+
+                            break;
+
+
                         case TipoPacote.Error: //Caso ocorra algum problema dentro do método de conversção.
                             await closeConexao((Pacote_Error)Saida, WebSocketCloseStatus.InternalServerError);
 
@@ -312,7 +398,7 @@ namespace ServerClienteOnline.Server
                             Pacote_Error PERR = new Pacote_Error();
                             PERR.Error = true;
                             PERR.Mensagem = "Pacote inexistente";
-                            PERR.Numero = 42000;
+                            PERR.Numero = 42004;
                             await closeConexao(PERR, WebSocketCloseStatus.InternalServerError);
                             //return true;
                             break;
@@ -331,7 +417,7 @@ namespace ServerClienteOnline.Server
                 Pacote_Error PERR = new Pacote_Error();
                 PERR.Error = true;
                 PERR.Mensagem = e.Message;
-                PERR.Numero = 42003;
+                PERR.Numero = 42005;
                 Encerramento_Falha();
                 await closeConexao(PERR, WebSocketCloseStatus.InternalServerError);
 
@@ -339,6 +425,39 @@ namespace ServerClienteOnline.Server
 
         }
 
+        private async Task<bool> ExecutarInstalador(Pacote_Credencial Auth)
+        {
+
+            if (Auth.Usuario == "" || Auth.Senha == "")
+            {
+                return false;
+            }
+
+            if (Auth.Dominio == "")
+            {
+                Auth.Dominio = ".\\";
+            }
+
+            SecureString Password = new SecureString();
+
+            foreach (char i in Auth.Senha)
+            {
+                Password.AppendChar(i);
+            }
+
+            Installer = new Process();
+            Installer.StartInfo.UseShellExecute = false;
+            Installer.StartInfo.UserName = Auth.Usuario;
+            Installer.StartInfo.Password = Password;
+            Installer.StartInfo.Domain = Auth.Dominio;
+
+            Installer.StartInfo.FileName = "C:\\Users\\Administrador\\source\\repos\\INSMSI\\bin\\Debug\\INSMSI.exe";
+            //Installer.
+            return Installer.Start();
+
+
+
+        }
 
         private async Task<bool> closeConexao(ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
@@ -384,11 +503,16 @@ namespace ServerClienteOnline.Server
             {
                 if (Obter_Contexto_WEBSOCKET.State != WebSocketState.Open) return false;
                 bool SMF = Caixa == null ? false : Caixa.getSemafaro();
-                while (Semafaro & SMF) { }
-                Caixa?.setSemafaro(true); Semafaro = true;
+
+                while (Semafaro || SMF) {
+                    SMF = Caixa == null ? false : Caixa.getSemafaro();
+                    Console.Write("Semafaro" + GetType().Name);
+                }
+
+                Semafaro = true; Caixa?.setSemafaro(true); 
                 ArraySegment<byte> EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
                 await Obter_Contexto_WEBSOCKET.SendAsync(EnviandoDados, Tipo, true, CancellationToken.None);
-                Caixa?.setSemafaro(true); Semafaro = false;
+                Semafaro = false; Caixa?.setSemafaro(false); 
 
                 return true;
             }
@@ -430,15 +554,19 @@ namespace ServerClienteOnline.Server
                 bool C = true;
                 while (C)
                 {
-                    bool Yes = CapturarTelas.GerarTelas();
-                    while (Semafaro & Yes & Caixa.getSemafaro()) { }
-                    EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
                     if (Sck.State != WebSocketState.Open) break;
-                    Caixa.setSemafaro(true); Semafaro = true;
+                    
+                    bool Yes = CapturarTelas.GerarTelas();
+                    EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
+                    
+                    while (Semafaro || Caixa.getSemafaro()) {
+                        Console.Write("Semafaro" + GetType().Name);
+                    }
+                    
+                    Semafaro = true; Caixa.setSemafaro(true); 
                     await Sck.SendAsync(EnviandoDados, WebSocketMessageType.Text, true, CancellationToken.None);
-
-                    await Task.Delay(400, CancellationToken.None);
-                    Caixa.setSemafaro(false); Semafaro = false;
+                    Semafaro = false; Caixa.setSemafaro(false);
+                    //await Task.Delay(400, CancellationToken.None);
 
                 }
                 return true;
