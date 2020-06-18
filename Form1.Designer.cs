@@ -50,6 +50,7 @@
             this.button_Start_AR_CORAC = new System.Windows.Forms.Button();
             this.pictureBox_AcessoRemoto = new System.Windows.Forms.PictureBox();
             this.button_Stop_AR_CORAC = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             this.Tab_Config = new System.Windows.Forms.TabPage();
             this.SalvaConfiguracoes = new System.Windows.Forms.Button();
             this.tableLayoutPanel_Principal = new System.Windows.Forms.TableLayoutPanel();
@@ -72,7 +73,6 @@
             this.Status_Informacao = new System.Windows.Forms.ToolStripStatusLabel();
             this.Data_Sistema_TLPrincipal = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.button2 = new System.Windows.Forms.Button();
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
             this.Layout_Organizacao_CORAC.SuspendLayout();
@@ -254,6 +254,7 @@
             this.pictureBox_Registro_CORAC.TabIndex = 3;
             this.pictureBox_Registro_CORAC.TabStop = false;
             this.pictureBox_Registro_CORAC.Tag = "ll";
+            this.pictureBox_Registro_CORAC.Click += new System.EventHandler(this.pictureBox_Registro_CORAC_Click);
             this.pictureBox_Registro_CORAC.MouseEnter += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseEnter);
             this.pictureBox_Registro_CORAC.MouseLeave += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseLeave);
             // 
@@ -387,6 +388,16 @@
             this.button_Stop_AR_CORAC.Text = "Stop";
             this.button_Stop_AR_CORAC.UseVisualStyleBackColor = true;
             this.button_Stop_AR_CORAC.Click += new System.EventHandler(this.button_Stop_AR_CORAC_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(591, 264);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.TabIndex = 10;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // Tab_Config
             // 
@@ -620,16 +631,6 @@
             this.statusStrip1.Size = new System.Drawing.Size(904, 22);
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(591, 264);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 10;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click_1);
             // 
             // CORAC_TPrincipal
             // 

@@ -55,8 +55,8 @@ namespace ServerClienteOnline.Server
 
                     Instalador.StartInfo.FileName = "C:\\Users\\Administrador\\source\\repos\\INSMSI\\bin\\Debug\\INSMSI.exe";
                     //Installer.
-                    Instalador.Start();
                     Instalador.Exited += new EventHandler(Exit);
+                    Instalador.Start();
                 }
                 
             }
@@ -69,6 +69,7 @@ namespace ServerClienteOnline.Server
 
         public void Exit(object sender, EventArgs e)
         {
+
             MessageBox.Show("d");
         }
 
@@ -364,26 +365,18 @@ namespace ServerClienteOnline.Server
                             break;
 
                         case TipoPacote.Credencial:
-                            bool Chamada;
                             try
                             {
-                                Chamada = await ExecutarInstalador((Pacote_Credencial)Saida);
+                                await ExecutarInstalador((Pacote_Credencial)Saida);
 
                             }
                             catch (Exception h)
                             {
-                                Chamada = false;
-                            }
-
-                            if (!Chamada)
-                            {
-
                                 Pacote_Error Chamad_Credenciais = new Pacote_Error();
                                 Chamad_Credenciais.Error = true;
-                                Chamad_Credenciais.Mensagem = "Usuário ou senha incorretos!";
+                                Chamad_Credenciais.Mensagem = h.Message;
                                 Chamad_Credenciais.Numero = 42002;
                                 await enviarPacotes(WebSocketMessageType.Text, Chamad_Credenciais);
-
                             }
 
                             break;
@@ -450,20 +443,28 @@ namespace ServerClienteOnline.Server
             Installer.StartInfo.UserName = Auth.Usuario;
             Installer.StartInfo.Password = Password;
             Installer.StartInfo.Domain = Auth.Dominio;
+            Installer.StartInfo.RedirectStandardOutput = true;
+            Installer.StartInfo.FileName = ".\\INSMSI.exe";
 
-            Installer.StartInfo.FileName = "C:\\Users\\Administrador\\source\\repos\\INSMSI\\bin\\Debug\\INSMSI.exe";
-            //Installer.
-            return Installer.Start();
+            Installer.Start();
 
-
+            int ID_Process_Saida = Convert.ToInt16(Installer.StandardOutput.ReadToEnd().Replace("\r\n",""));
+            Installer = Process.GetProcessById(ID_Process_Saida);
+            return true;
 
         }
+
 
         private async Task<bool> closeConexao(ITipoPacote Pacote, WebSocketCloseStatus TipoFechamento)
         {
 
             try
             {
+                if (Installer != null)
+                {
+                    Installer.Kill();
+                    Installer = null;
+                }
 
                 Caixa.setSemafaro(true);
                 ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
@@ -479,6 +480,9 @@ namespace ServerClienteOnline.Server
 
                 int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
                 Desconectar_SOCKET(IP);
+
+
+
                 return true;
             }
             catch (Exception e)
@@ -569,6 +573,8 @@ namespace ServerClienteOnline.Server
                     //await Task.Delay(400, CancellationToken.None);
 
                 }
+                Caixa.Dispose();
+                Caixa = null;
                 return true;
                 //Pacote_CloseConection Close = new Pacote_CloseConection();
                 //Close.Close = Sck.State;

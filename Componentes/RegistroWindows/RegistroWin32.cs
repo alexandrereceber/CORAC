@@ -185,7 +185,7 @@ namespace RegistroWindows
 
             try
             {
-                RegistryKey SubChave = LocalMachine.OpenSubKey(Chave, true);
+                RegistryKey SubChave = LocalMachine.OpenSubKey(Chave, false);
                 string[] Campos = SubChave.GetValueNames();
                 foreach(string i in Campos)
                 {

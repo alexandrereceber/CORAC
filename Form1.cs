@@ -267,7 +267,7 @@ namespace CORAC
                 pictureBox_Registro_CORAC.Image = Properties.Resources.Wait;
                 pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
                 
-                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade");
+                if (!await Conexoes.VerificarConectividade()) throw new Exception("Sem conectividade!");
 
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
                 string pth = EndURI.Scheme + "://" + EndURI.Host + ":" + EndURI.Port + "/CORAC/ControladorTabelas/";
@@ -1401,6 +1401,11 @@ namespace CORAC
             await Task.Run(()=> 1+1);
             Form kk = new Chat.Chat_CORAC();
             kk.Show();
+        }
+
+        private void pictureBox_Registro_CORAC_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
