@@ -24,6 +24,35 @@ using System.Security;
 
 namespace ServerClienteOnline.Server
 {
+    class AcessoRemoto_LOGO : Tratador_Erros
+    {
+        private LogoAR LOGO_AR = new LogoAR();
+
+        public AcessoRemoto_LOGO()
+        {
+
+        }
+
+        public void get_Close_User()
+        {
+        }
+
+
+        public void CloseLOGO()
+        {
+            LOGO_AR.Close();
+
+        }
+
+        public void CriarCaixaLOGO()
+        {
+            LOGO_AR.ShowDialog();
+
+            //CaixaDialogo = null;
+
+        }
+
+    }
     class Installer : Tratador_Erros
     {
         private Process Instalador = null;
