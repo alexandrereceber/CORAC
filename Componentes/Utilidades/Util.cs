@@ -274,10 +274,10 @@ namespace ServerClienteOnline.Utilidades
             public string Monitor { get; set; }
 
             [JsonProperty("Primary")]
-            public string Primary { get; set; }
+            public bool Primary { get; set; }
 
-            [JsonProperty("ThumbnailImage")]
-            public string ThumbnailImage { get; set; }
+            [JsonProperty("Screen")]
+            public string Screen { get; set; }
 
             internal Bitmap TelaMonitor = null;
             internal Size T = new Size { };
@@ -351,18 +351,20 @@ namespace ServerClienteOnline.Utilidades
                 {
                     if (Configuracoes_Gerais.Primary == TL.Monitor)
                     {
+                        TL.Primary = true;
                         TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
                         TransformImg = new MemoryStream();
                         TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
-                        TL.Primary = Convert.ToBase64String(TransformImg.ToArray());
+                        TL.Screen = Convert.ToBase64String(TransformImg.ToArray());
 
                     }
                     else
                     {
+                        TL.Primary = false;
                         TL.CopyTela.CopyFromScreen(TL.P, new Point { X = 0, Y = 0 }, TL.T);
                         TransformImg = new MemoryStream();
                         TL.TelaMonitor.Save(TransformImg, Configuracoes_Gerais.TiposImagems);
-                        TL.ThumbnailImage = Convert.ToBase64String(TransformImg.ToArray());
+                        TL.Screen = Convert.ToBase64String(TransformImg.ToArray());
 
                     }
                 }
