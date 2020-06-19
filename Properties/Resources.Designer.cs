@@ -93,6 +93,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AR_LOGO {
+            get {
+                object obj = ResourceManager.GetObject("AR_LOGO", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Atualizacoes_Cinza_fw {
             get {
                 object obj = ResourceManager.GetObject("Atualizacoes_Cinza_fw", resourceCulture);

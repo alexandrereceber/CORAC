@@ -124,7 +124,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\CORAC_AR.fw.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Registro_128px.png" />
   </ItemGroup>
@@ -186,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Corac_Icone\chat_ico.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\AR_LOGO.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
