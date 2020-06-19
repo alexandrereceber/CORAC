@@ -21,9 +21,39 @@ using System.Runtime.CompilerServices;
 using CORAC.Chat;
 using System.Diagnostics;
 using System.Security;
+using CORAC.Logo;
 
 namespace ServerClienteOnline.Server
 {
+    class AcessoRemoto_LOGO : Tratador_Erros
+    {
+        private LogoAR LOGO_AR = new LogoAR();
+
+        public AcessoRemoto_LOGO()
+        {
+
+        }
+
+        public void get_Close_User()
+        {
+        }
+
+
+        public void CloseLOGO()
+        {
+            LOGO_AR.Close();
+
+        }
+
+        public void CriarCaixaLOGO()
+        {
+            LOGO_AR.ShowDialog();
+
+            //CaixaDialogo = null;
+
+        }
+
+    }
     class Installer : Tratador_Erros
     {
         private Process Instalador = null;
@@ -84,6 +114,8 @@ namespace ServerClienteOnline.Server
     class AcessoRemoto_Chat : Tratador_Erros
     {
         private Chat_CORAC CaixaDialogo;
+        private LogoAR LOGO_AR = new LogoAR();
+
         public AcessoRemoto_Chat()
         {
 
@@ -121,6 +153,7 @@ namespace ServerClienteOnline.Server
                 CaixaDialogo.CloseCaixa() ;
             }
         }
+
         public void CriarCaixaDialog(object sender)
         {
             try
@@ -159,7 +192,9 @@ namespace ServerClienteOnline.Server
         private WebSocket Obter_Contexto_WEBSOCKET;
         private HttpListenerContext IAC;
         private AcessoRemoto_Chat Caixa;
+        private AcessoRemoto_LOGO Lg_AR;
         private Thread Dialog;
+        private Thread LOGOAR;
         Process Installer = null;
 
         Task Instalar_Softares = null;
@@ -236,7 +271,7 @@ namespace ServerClienteOnline.Server
                     //if (true)
                     if (_GerenciadorCliente.Validar_Chave_AR(PIC.Chave_AR))
                     {
-
+                        
                         Thread RecebePacotes = new Thread(ReceberPacotes);
                         RecebePacotes.SetApartmentState(ApartmentState.STA);
                         RecebePacotes.Start();
@@ -307,6 +342,11 @@ namespace ServerClienteOnline.Server
                 Dialog.SetApartmentState(ApartmentState.STA);
                 Dialog.Start(Acesso_SCK);
 
+                //AcessoRemoto_LOGO LGAR = new AcessoRemoto_LOGO();
+                //LOGOAR = new Thread(LGAR.CriarCaixaLOGO);
+                //LOGOAR.SetApartmentState(ApartmentState.STA);
+                //LOGOAR.Start();
+
                 //AcessoRemoto_Chat.CaixaDialogo
                 ArraySegment<byte> DadosRecebendo;
                 Pacote_TecladoRemoto TecladoRmt;
@@ -326,6 +366,8 @@ namespace ServerClienteOnline.Server
                         if (Caixa.get_Close_User() == false)
                         {
                             Caixa.CloseCaixa();
+                            Lg_AR.CloseLOGO();
+
                         }
 
                         Pacote_CloseConection Close = new Pacote_CloseConection();
@@ -465,6 +507,9 @@ namespace ServerClienteOnline.Server
                     Installer.Kill();
                     Installer = null;
                 }
+                Lg_AR.CloseLOGO();
+
+
 
                 Caixa.setSemafaro(true);
                 ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));

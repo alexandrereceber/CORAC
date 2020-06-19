@@ -22,10 +22,17 @@ namespace CORAC
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Form CORAC = new CORAC_TPrincipal();
-            Application.Run();
+            try
+            {
+                Application.EnableVisualStyles();
+                Application.SetCompatibleTextRenderingDefault(false);
+                Form CORAC = new CORAC_TPrincipal();
+                Application.Run();
+            }catch(Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
         }
     }
 }

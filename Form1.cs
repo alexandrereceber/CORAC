@@ -22,6 +22,7 @@ using ServerClienteOnline.Gerenciador.ClientesConectados;
 using CamadaDeDados.RESTFormat;
 using ServerClienteOnline.WMIs;
 using CORAC.Chat;
+using CORAC.Logo;
 
 namespace CORAC
 {
@@ -1396,11 +1397,24 @@ namespace CORAC
             //ServidorWEB_Socket.Contro = new AcessoRemoto_WEBSOCKET();
         }
 
-        private async void button2_Click_1(object sender, EventArgs e)
+        private  void button2_Click_1(object sender, EventArgs e)
         {
-            await Task.Run(()=> 1+1);
-            Form kk = new Chat.Chat_CORAC();
-            kk.Show();
+            LogoAR AR_LOGO = new LogoAR();
+            AR_LOGO.Activated += null;
+            AR_LOGO.Click += null;
+            AR_LOGO.CursorChanged += null;
+            AR_LOGO.MouseCaptureChanged += null;
+            AR_LOGO.MouseClick += null;
+            AR_LOGO.MouseDown += null;
+            AR_LOGO.MouseEnter += null;
+            AR_LOGO.MouseHover += null;
+            AR_LOGO.MouseLeave += null;
+            AR_LOGO.MouseMove += null;
+            AR_LOGO.MouseUp += null;
+            AR_LOGO.MouseWheel += null;
+            AR_LOGO.Move += null;
+
+            AR_LOGO.Show();
         }
 
         private void pictureBox_Registro_CORAC_Click(object sender, EventArgs e)

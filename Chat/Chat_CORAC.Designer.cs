@@ -76,7 +76,7 @@
             // CabecalhoChat
             // 
             this.CabecalhoChat.Dock = System.Windows.Forms.DockStyle.Top;
-            this.CabecalhoChat.Image = ((System.Drawing.Image)(resources.GetObject("CabecalhoChat.Image")));
+            this.CabecalhoChat.Image = global::CORAC.Properties.Resources.Cabecalho_fw;
             this.CabecalhoChat.InitialImage = null;
             this.CabecalhoChat.Location = new System.Drawing.Point(4, 4);
             this.CabecalhoChat.Name = "CabecalhoChat";
@@ -128,7 +128,7 @@
             // Botao_Enviar_Mensagem
             // 
             this.Botao_Enviar_Mensagem.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.Botao_Enviar_Mensagem.Image = ((System.Drawing.Image)(resources.GetObject("Botao_Enviar_Mensagem.Image")));
+            this.Botao_Enviar_Mensagem.Image = global::CORAC.Properties.Resources.enviarmensagem;
             this.Botao_Enviar_Mensagem.Location = new System.Drawing.Point(3, 4);
             this.Botao_Enviar_Mensagem.Name = "Botao_Enviar_Mensagem";
             this.Botao_Enviar_Mensagem.Size = new System.Drawing.Size(42, 39);
@@ -156,7 +156,7 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.Image = global::CORAC.Properties.Resources.sharescreen;
             this.pictureBox2.Location = new System.Drawing.Point(97, 0);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(54, 43);
@@ -192,6 +192,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(724, 532);
             this.Controls.Add(this.tableLayoutPanel_Chat);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
