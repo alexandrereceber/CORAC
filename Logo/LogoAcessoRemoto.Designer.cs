@@ -35,7 +35,7 @@
             // LOGO_AR
             // 
             this.LOGO_AR.Image = global::CORAC.Properties.Resources.AR_LOGO;
-            this.LOGO_AR.Location = new System.Drawing.Point(12, 12);
+            this.LOGO_AR.Location = new System.Drawing.Point(11, 11);
             this.LOGO_AR.Name = "LOGO_AR";
             this.LOGO_AR.Size = new System.Drawing.Size(141, 114);
             this.LOGO_AR.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;

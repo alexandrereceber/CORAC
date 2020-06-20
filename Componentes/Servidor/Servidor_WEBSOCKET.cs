@@ -21,67 +21,52 @@ using System.Runtime.CompilerServices;
 using CORAC.Chat;
 using System.Diagnostics;
 using System.Security;
-
+using CORAC.Logo;
 
 namespace ServerClienteOnline.Server
 {
 
-    class Installer : Tratador_Erros
+    class Logo_AcessoRemoto : Tratador_Erros
     {
-        private Process Instalador = null;
-        private bool Carregado = false;
-        private int CodigoSaida = 0;
-        public async void ProcessoInstaler(object Sender)
+        private static LogoAcessoRemoto MarcaDagua;
+        private delegate void FecharLogo();
+        static bool JaFechou = false;
+        public Logo_AcessoRemoto()
         {
-            Pacote_Credencial Auth = (Pacote_Credencial)Sender;
+        }
+
+        private static void Fechar_Marcadagua()
+        {
+            MarcaDagua.Close();
+        }
+        public static void CloseCaixa()
+        {
+            if(JaFechou == false)
+            {
+                FecharLogo Sair = Fechar_Marcadagua;
+                MarcaDagua.Invoke(Sair);
+                JaFechou = true;
+            }
+
+        }
+        public static void CriarMarcaDagua(object sender)
+        {
             try
             {
-                if (Auth.Usuario != "" || Auth.Senha != "")
-                {
-                    if (Auth.Dominio == "")
-                    {
-                        Auth.Dominio = ".\\";
-                    }
-                    SecureString Password = new SecureString();
-
-                    foreach (char i in Auth.Senha)
-                    {
-                        Password.AppendChar(i);
-                    }
-
-                    Instalador = new Process();
-                    Instalador.StartInfo.UseShellExecute = false;
-                    Instalador.StartInfo.UserName = Auth.Usuario;
-                    Instalador.StartInfo.Password = Password;
-                    Instalador.StartInfo.Domain = Auth.Dominio;
-
-                    Instalador.StartInfo.FileName = "C:\\Users\\Administrador\\source\\repos\\INSMSI\\bin\\Debug\\INSMSI.exe";
-                    //Installer.
-                    Instalador.Exited += new EventHandler(Exit);
-                    Instalador.Start();
-                }
-                
+                MarcaDagua = new LogoAcessoRemoto();
+                JaFechou = false;
+                MarcaDagua.ShowDialog();
             }
-            catch (Exception e)
+            catch (ThreadAbortException e)
             {
-                TratadorErros(e, GetType().Name);
+                MarcaDagua.Dispose();
             }
 
+
+            //CaixaDialogo = null;
+
         }
 
-        public void Exit(object sender, EventArgs e)
-        {
-
-            MessageBox.Show("d");
-        }
-
-        public void FecharInstalador()
-        {
-            if(Instalador != null)
-            {
-                Instalador.Close();
-            }
-        }
     }
     class AcessoRemoto_Chat : Tratador_Erros
     {
@@ -162,6 +147,7 @@ namespace ServerClienteOnline.Server
         private HttpListenerContext IAC;
         private AcessoRemoto_Chat Caixa;
         private Thread Dialog;
+        private Thread Marca_Dagua;
         Process Installer = null;
 
         Task Instalar_Softares = null;
@@ -309,6 +295,10 @@ namespace ServerClienteOnline.Server
                 Dialog.SetApartmentState(ApartmentState.STA);
                 Dialog.Start(Acesso_SCK);
 
+                Marca_Dagua = new Thread(Logo_AcessoRemoto.CriarMarcaDagua);
+                Marca_Dagua.SetApartmentState(ApartmentState.STA);
+                Marca_Dagua.Start();
+
                 //AcessoRemoto_Chat.CaixaDialogo
                 ArraySegment<byte> DadosRecebendo;
                 Pacote_TecladoRemoto TecladoRmt;
@@ -325,11 +315,6 @@ namespace ServerClienteOnline.Server
                     WebSocketCloseStatus? p = Resultado_WS.CloseStatus;
                     if (p == WebSocketCloseStatus.EndpointUnavailable || p == WebSocketCloseStatus.Empty || p == WebSocketCloseStatus.NormalClosure)
                     {
-                        if (Caixa.get_Close_User() == false)
-                        {
-                            Caixa.CloseCaixa();
-                        }
-
                         Pacote_CloseConection Close = new Pacote_CloseConection();
                         Close.Close = Obter_Contexto_WEBSOCKET.State;
                         await closeConexao(Close, WebSocketCloseStatus.InternalServerError);
@@ -467,18 +452,39 @@ namespace ServerClienteOnline.Server
                     Installer.Kill();
                     Installer = null;
                 }
+                Logo_AcessoRemoto.CloseCaixa();
 
-                Caixa.setSemafaro(true);
-                ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
-                await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+                if (Caixa.get_Close_User() == false)
+                {
+                    Caixa.CloseCaixa();
 
-                Pacote_CloseConection Close = new Pacote_CloseConection();
-                Close.Close = Obter_Contexto_WEBSOCKET.State;
-                string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
+                    Caixa.setSemafaro(true);
+                    ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
+                    await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
 
-                CancellationToken Token = new CancellationToken();
-                await Obter_Contexto_WEBSOCKET.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
-                Caixa.setSemafaro(false);
+                    Pacote_CloseConection Close = new Pacote_CloseConection();
+                    Close.Close = Obter_Contexto_WEBSOCKET.State;
+                    string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
+
+                    CancellationToken Token = new CancellationToken();
+                    await Obter_Contexto_WEBSOCKET.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
+                    Caixa.setSemafaro(false);
+                }
+                else
+                {
+                    Caixa.setSemafaro(true);
+                    ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(Pacote)));
+                    await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                    Pacote_CloseConection Close = new Pacote_CloseConection();
+                    Close.Close = Obter_Contexto_WEBSOCKET.State;
+                    string StgFechamento = Converter_JSON_String.SerializarPacote(Close);
+
+                    CancellationToken Token = new CancellationToken();
+                    await Obter_Contexto_WEBSOCKET.CloseOutputAsync(TipoFechamento, StgFechamento, Token);
+                    Caixa.setSemafaro(false);
+                }
+
 
                 int IP = IAC.Request.RemoteEndPoint.Address.GetHashCode();
                 Desconectar_SOCKET(IP);

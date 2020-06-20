@@ -19,7 +19,7 @@ namespace CORAC.Logo
 
         private void LogoAcessoRemoto_Load(object sender, EventArgs e)
         {
-            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 140, 100);
+            Location = new Point(Screen.PrimaryScreen.Bounds.Width - 170, 80);
         }
     }
 }
