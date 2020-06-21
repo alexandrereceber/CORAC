@@ -292,7 +292,7 @@ namespace ServerClienteOnline.Utilidades
         bool Confirm_GerarTela = true;
         public Pacote_FrameTelas()
         {
-           // Process.EnterDebugMode();
+            
             FrameTelas = new Tela[Screen.AllScreens.Length];
             for (int ii = 0; ii < Screen.AllScreens.Length; ii++)
             {
@@ -424,6 +424,7 @@ namespace ServerClienteOnline.Utilidades
         public TipoPacote Pacote = TipoPacote.EventMouse;
 
         public bool altKey { get; set; }
+        public string Screen { get; set; }
         public bool bubbles { get; set; }
         public int button { get; set; }
         public int buttons { get; set; }
@@ -586,6 +587,19 @@ namespace ServerClienteOnline.Utilidades
         bool Botao1_press = false;
         bool Botao2_press = false;
 
+        private Screen Primary = null;
+        public Pacote_MouseRemoto()
+        {
+            //foreach(Screen i in Screen.AllScreens)
+            //{
+            //    if (i.Primary)
+            //    {
+            //        Primary = i;
+            //        break;
+            //    }
+            //}
+        }
+
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.MouseRemoto;
 
@@ -658,7 +672,25 @@ namespace ServerClienteOnline.Utilidades
         private void Mouse_Move(Pacote_EventMouse Move)
         {
             Mouse_PressButton(ref Move);
-            System.Windows.Forms.Cursor.Position = new Point(Move.offsetX, Move.offsetY);
+            Cursor.Position = new Point(Move.offsetX, Move.offsetY);
+
+            //foreach (Screen i in Screen.AllScreens)
+            //{
+            //    if (i.DeviceName.Contains(Move.Screen))
+            //    {
+            //        if (i.Primary)
+            //        {
+            //            Cursor.Position = new Point(Move.offsetX, Move.offsetY);
+            //            break;
+            //        }
+            //        else
+            //        {
+            //            Cursor.Position = new Point(i.Bounds.Width + Move.offsetX, i.Bounds.Height + Move.offsetY);
+            //            break;
+            //        }
+
+            //    }
+            //}
         }
 
         private void Mouse_ContextMenu(Pacote_EventMouse Move)

@@ -874,55 +874,6 @@ namespace ServerClienteOnline.Server
                 }
                 
 
-
-
-                /**
-                 * Coloca o servidor em listen novamente;
-                 */
-
-                //HttpListenerWebSocketContext WebSocket_CORAC =  await aceita.AcceptWebSocketAsync(null);
-
-
-                //WebSocket Obter_Contexto_WEBSOCKET = WebSocket_CORAC.WebSocket;
-                //Uri URi = Aceitar.Request.Url;
-                //switch (URi.LocalPath)
-                //{
-                //    case "/AcessoRemoto/":
-                //        Thread AC = new Thread(ControleAC.Iniciar_Begin_AcessoRemoto);
-                //        AC.Name = "AcessoRemoto";
-                //        AC.Start(Aceitar);
-                //        break;
-
-                //    default:
-
-                //        break;
-                //}
-
-                //ArraySegment<byte> DadosRecebendo = new ArraySegment<byte>(new byte[5]);
-                // WebSocketReceiveResult Resultado_WS = await Obter_Contexto_WEBSOCKET.ReceiveAsync(DadosRecebendo, new CancellationToken());
-
-                //while (Obter_Contexto_WEBSOCKET.State == WebSocketState.Open)
-                //{
-                //    var sf = Screen.AllScreens;
-                //    Bitmap printscreen = new Bitmap(sf[0].Bounds.Width, sf[0].Bounds.Height);
-
-                //    Size ss = new Size(sf[0].Bounds.Width, sf[1].Bounds.Height);
-                //    Graphics tela = Graphics.FromImage(printscreen);
-                //    tela.CopyFromScreen(0, 0, 0, 0, ss);
-                //    //pictureBox1.Image = printscreen;
-
-                //    MemoryStream Img = new MemoryStream();
-
-                //    printscreen.Save(Img, ImageFormat.Png);
-                //    byte[] trans = Img.ToArray();
-                //    string kk = Convert.ToBase64String(trans);
-                //    ArraySegment<byte> DadosEnviando = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(kk));
-
-                //    await Obter_Contexto_WEBSOCKET.SendAsync(DadosEnviando, WebSocketMessageType.Text, true, CancellationToken.None);
-
-                //}
-                /*Inicia novamente o estado de escuta com o fim de ouvir outros clientes*/
-
             }
             catch (Exception e)
             {
