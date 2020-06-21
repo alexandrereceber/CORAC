@@ -9,18 +9,19 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-using ServerClienteOnline.Conectividade;
-using ServerClienteOnline.TratadorDeErros;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Net.Http;
+
+using ServerClienteOnline.Conectividade;
+using ServerClienteOnline.TratadorDeErros;
 using ServerClienteOnline.Server;
-using Power_Shell.AmbienteExecucao;
 using ServerClienteOnline.MetodosAutenticacao;
 using ServerClienteOnline.Gerenciador.ClientesConectados;
-using CamadaDeDados.RESTFormat;
 using ServerClienteOnline.WMIs;
+
+using Power_Shell.AmbienteExecucao;
+using CamadaDeDados.RESTFormat;
 using CORAC.Chat;
 
 namespace CORAC
@@ -28,20 +29,20 @@ namespace CORAC
 
     public partial class CORAC_TPrincipal : Form
     {
-        RegistroWin32 ChavesCORAC;
-        List<KeyValuePair<string, string>> KeysValues;
+        private RegistroWin32 ChavesCORAC;
+        private List<KeyValuePair<string, string>> KeysValues;
         /**
          * Gerente de autenticação do servidor WEBPowershell
          */
-        GerenciadorClientes GerenteClientes = new GerenciadorClientes();
-        Ambiente_PowerShell AbrirComando = null;
-        Servidor_HTTP ServidorWEB_Local = null;
-        Servidor_WEBSOCKET ServidorWEB_Socket = null;
+        private GerenciadorClientes GerenteClientes = new GerenciadorClientes();
+        private Ambiente_PowerShell AbrirComando = null;
+        private Servidor_HTTP ServidorWEB_Local = null;
+        private Servidor_WEBSOCKET ServidorWEB_Socket = null;
 
-        Autenticador_WEB Autent_WEB = null;
-        RegistroCORAC Registro_Corac = new RegistroCORAC();
+        private Autenticador_WEB Autent_WEB = null;
+        private RegistroCORAC Registro_Corac = new RegistroCORAC();
 
-        Form CaixaDialog = new Chat_CORAC();
+        //Form CaixaDialog = new Chat_CORAC();
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
         {
@@ -150,6 +151,7 @@ namespace CORAC
         /**
          * <summary>
             Verifica se existe saída para internet.
+            <para>Data</para>
          * </summary>
          */
         private async Task<bool> Verirficar_Conectividade()

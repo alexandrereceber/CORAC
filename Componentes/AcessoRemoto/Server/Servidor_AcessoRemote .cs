@@ -19,7 +19,7 @@ using System.Drawing;
 namespace ServerClienteOnline.AcessoRemoto.Server
 {
 
-    public class Server_AcessoRemoto :Tratador_Erros, IDisposable, IAcesso_Remoto, IServidor
+    public class Server_AcessoRemoto :Tratador_Erros, IDisposable, IServidor
     {
        
 

@@ -34,9 +34,10 @@ namespace ServerClienteOnline.Conectividade
 
         /**
          * <summary>
-         * Verifica a conectividade do host para a rede local ou internet.
+         * Verifica a conectividade do host com a rede local ou internet.
          * <para>
-         * <paramref name="Endereco"/>: Informando um endereço, o método tentará realizar a verificação da conectividade até o endereço.
+         * <paramref name="Endereco"/>: 
+         *              Informando um endereço, o método tentará realizar a verificação da conectividade até o endereço.
          * Caso não seja informado um endereço o sistema tentará acesso ao www.google.com.br. Poderá ser tanto um IP quanto um endereço de domínio.
          * </para>
          * </summary>
@@ -65,14 +66,20 @@ namespace ServerClienteOnline.Conectividade
             }
 
         }
-
-        public static Exception get_Erro { get; }
-
+        /**
+            <summary>
+                Verifica se existe rede disponível no computador atual.
+            </summary>
+         */
         public static bool CXRedeDisponivel()
         {
             return NetworkInterface.GetIsNetworkAvailable();
         }
-
+        /**
+            <summary>
+                Busca as interfaces de rede do computador e retorna informações em uma lista de conexões do host.
+            </summary>
+         */
         public static List<ListaConexoesHost> ObterIps()
         {
             IPIdentificados = new List<ListaConexoesHost>();
@@ -89,22 +96,38 @@ namespace ServerClienteOnline.Conectividade
             return IPIdentificados;
             
         }
-
+        /**
+            <summary>
+                Busca as interfaces de rede do computador e retorna informações em uma lista de conexões do host.
+            </summary>
+         */
         public static string EnderecoHttpListen_Powershell()
         {
             return "*";
         }
-
+        /**
+            <summary>
+                Especifica o número da porta que o powershell ficará escutando as conexões.
+            </summary>
+         */
         public static int Porta_Powershell()
         {
             return 1119;
         }
-
+        /**
+            <summary>
+                Especifica a url que o sistema ficará escutando.
+            </summary>
+         */
         public static string EnderecoHttpListen_AcessoRemoto()
         {
             return "*";
         }
-
+        /**
+            <summary>
+                Especifica o número da porta que o serviço de acesso remoto ficará escutando as conexões.
+            </summary>
+         */
         public static int Porta_AcessoRemoto()
         {
             return 1199;

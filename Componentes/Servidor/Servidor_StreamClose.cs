@@ -36,7 +36,6 @@ namespace ServerClienteOnline.Server
         private IRuntime _CMDs;
         private IAuth _Auth;
         private IGClienteHTML _GerenciadorCliente;
-        private IAcesso_Remoto _AcessoRemoto;
 
         private bool Active = false;
 
@@ -180,14 +179,6 @@ namespace ServerClienteOnline.Server
         public IGClienteHTML Gerenciador_Cliente
         {
             set { _GerenciadorCliente = value; }
-        }
-
-        public IAcesso_Remoto AcessoRemoto
-        {
-            set
-            {
-                _AcessoRemoto = value;
-            }
         }
 
         /**

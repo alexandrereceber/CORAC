@@ -56,22 +56,6 @@ namespace ServerClienteOnline.Interfaces
         string GetResultado();
     }
 
-    /**
-     * <summary>Interface acesso remoto.</summary>
-     */
-     public interface IAcesso_Remoto
-    {
-
-    }
-
-    /**
-     * <summary>Tipo de pacote do acesso remoto</summary>
-     */
-    public interface IPacote_AR
-    {
-        TipoPacote Obter_Tipo_Pacote_AR();
-    }
-
     public interface IServidor
     {
         bool StartServidor();
