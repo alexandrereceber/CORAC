@@ -74,6 +74,9 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.ConfiguracoesCORAC = new System.Windows.Forms.Timer(this.components);
             this.Relógio = new System.Windows.Forms.Timer(this.components);
+            this.onConnect = new System.Windows.Forms.Timer(this.components);
+            this.onAssinatura = new System.Windows.Forms.Timer(this.components);
+            this.onNetwork = new System.Windows.Forms.Timer(this.components);
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
             this.Layout_Organizacao_CORAC.SuspendLayout();
@@ -182,6 +185,7 @@
             this.picture_Internet_Status.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Internet_Status.TabIndex = 1;
             this.picture_Internet_Status.TabStop = false;
+            this.picture_Internet_Status.Tag = "Acesso à rede.";
             this.picture_Internet_Status.MouseEnter += new System.EventHandler(this.Picture_Internet_Status_MouseEnter);
             // 
             // Atualizacao_Status_GoupBox
@@ -213,6 +217,7 @@
             this.picture_Atualizacoes_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picture_Atualizacoes_CORAC.TabIndex = 3;
             this.picture_Atualizacoes_CORAC.TabStop = false;
+            this.picture_Atualizacoes_CORAC.Tag = "Atualizações do sistema CORAC Desktop.";
             this.picture_Atualizacoes_CORAC.MouseEnter += new System.EventHandler(this.Picture_Atualizacoes_CORAC_MouseEnter);
             // 
             // button_AtualizacoesCORAC
@@ -253,7 +258,7 @@
             this.pictureBox_Registro_CORAC.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Registro_CORAC.TabIndex = 3;
             this.pictureBox_Registro_CORAC.TabStop = false;
-            this.pictureBox_Registro_CORAC.Tag = "ll";
+            this.pictureBox_Registro_CORAC.Tag = "Registro da máquina no sistema WEB CORAC.";
             this.pictureBox_Registro_CORAC.Click += new System.EventHandler(this.pictureBox_Registro_CORAC_Click);
             this.pictureBox_Registro_CORAC.MouseEnter += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseEnter);
             this.pictureBox_Registro_CORAC.MouseLeave += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseLeave);
@@ -315,7 +320,7 @@
             this.pictureBox_Powershell.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_Powershell.TabIndex = 3;
             this.pictureBox_Powershell.TabStop = false;
-            this.pictureBox_Powershell.Tag = "PowershellCORAC";
+            this.pictureBox_Powershell.Tag = "Serviço de Powershell";
             this.pictureBox_Powershell.MouseEnter += new System.EventHandler(this.pictureBox_Powershell_MouseEnter);
             this.pictureBox_Powershell.MouseLeave += new System.EventHandler(this.pictureBox_Powershell_MouseLeave);
             // 
@@ -376,6 +381,7 @@
             this.pictureBox_AcessoRemoto.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_AcessoRemoto.TabIndex = 3;
             this.pictureBox_AcessoRemoto.TabStop = false;
+            this.pictureBox_AcessoRemoto.Tag = "Serviço de Acesso Remoto";
             this.pictureBox_AcessoRemoto.MouseLeave += new System.EventHandler(this.pictureBox_AcessoRemoto_MouseLeave);
             // 
             // button_Stop_AR_CORAC
@@ -479,7 +485,8 @@
             this.textBox_Path_ServerWEB_CORAC.Size = new System.Drawing.Size(292, 22);
             this.textBox_Path_ServerWEB_CORAC.TabIndex = 4;
             this.textBox_Path_ServerWEB_CORAC.Tag = "Path_ServerWEB_CORAC";
-            this.textBox_Path_ServerWEB_CORAC.Enter += new System.EventHandler(this.textBox5_BD_CORAC_Enter);
+            this.textBox_Path_ServerWEB_CORAC.TextChanged += new System.EventHandler(this.textBox_Path_ServerWEB_CORAC_TextChanged);
+            this.textBox_Path_ServerWEB_CORAC.Enter += new System.EventHandler(this.textBox_BD_CORAC_Enter);
             this.textBox_Path_ServerWEB_CORAC.Leave += new System.EventHandler(this.textBox_Path_ServerWEB_CORAC_Leave);
             this.textBox_Path_ServerWEB_CORAC.Validating += new System.ComponentModel.CancelEventHandler(this.textBox_Path_ServerWEB_CORAC_Validating);
             // 
@@ -552,7 +559,7 @@
             this.listBox_FILE_LOG.FormattingEnabled = true;
             this.listBox_FILE_LOG.Location = new System.Drawing.Point(0, 41);
             this.listBox_FILE_LOG.Name = "listBox_FILE_LOG";
-            this.listBox_FILE_LOG.Size = new System.Drawing.Size(139, 433);
+            this.listBox_FILE_LOG.Size = new System.Drawing.Size(139, 420);
             this.listBox_FILE_LOG.TabIndex = 1;
             this.listBox_FILE_LOG.SelectedValueChanged += new System.EventHandler(this.listBox_FILE_LOG_SelectedValueChanged);
             // 
@@ -634,6 +641,16 @@
             this.Relógio.Interval = 1000;
             this.Relógio.Tick += new System.EventHandler(this.Relógio_Tick);
             // 
+            // onAssinatura
+            // 
+            this.onAssinatura.Interval = 10000;
+            this.onAssinatura.Tick += new System.EventHandler(this.onAssinatura_Tick);
+            // 
+            // onNetwork
+            // 
+            this.onNetwork.Interval = 10000;
+            this.onNetwork.Tick += new System.EventHandler(this.onNetwork_Tick);
+            // 
             // CORAC_TPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -651,10 +668,8 @@
             this.Text = "CORAC";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CORAC_TPrincipal_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.CORAC_TPrincipal_FormClosed);
             this.Load += new System.EventHandler(this.CORAC_TPrincipal_Load);
             this.Shown += new System.EventHandler(this.CORAC_TPrincipal_Shown);
-            this.VisibleChanged += new System.EventHandler(this.CORAC_TPrincipal_VisibleChanged);
             this.tabCORAC.ResumeLayout(false);
             this.Tab_Status.ResumeLayout(false);
             this.Layout_Organizacao_CORAC.ResumeLayout(false);
@@ -731,6 +746,9 @@
         private System.Windows.Forms.Button button_Start_AR_CORAC;
         private System.Windows.Forms.Timer ConfiguracoesCORAC;
         private System.Windows.Forms.Timer Relógio;
+        private System.Windows.Forms.Timer onConnect;
+        private System.Windows.Forms.Timer onAssinatura;
+        private System.Windows.Forms.Timer onNetwork;
     }
 }
 

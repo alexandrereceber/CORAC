@@ -1866,4 +1866,18 @@ namespace ServerClienteOnline.Utilidades
             throw new NotImplementedException();
         }
     }
+
+    //class Mensagem
+    //{
+    //    public static List<KeyValuePair<string, string>> ProgressoInicializacao = new List<KeyValuePair<string, string>>();
+    //}
+
+    class Assinatura
+    {
+        [JsonProperty("Sistema")]
+        public string Sistema { get; set; }
+
+        [JsonProperty("Signacture")]
+        public string Signacture { get; set; }
+    }
 }

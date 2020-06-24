@@ -22,12 +22,14 @@ using CORAC.Chat;
 using System.Diagnostics;
 using System.Security;
 using CORAC.Logo;
+using System.Runtime.InteropServices;
 
 namespace ServerClienteOnline.Server
 {
 
     class Logo_AcessoRemoto : Tratador_Erros
     {
+   
         private static LogoAcessoRemoto MarcaDagua;
         private delegate void FecharLogo();
         static bool JaFechou = false;
@@ -55,6 +57,8 @@ namespace ServerClienteOnline.Server
             {
                 MarcaDagua = new LogoAcessoRemoto();
                 JaFechou = false;
+                MarcaDagua.TopLevel = true;
+                MarcaDagua.TopMost = true;
                 MarcaDagua.ShowDialog();
             }
             catch (ThreadAbortException e)
@@ -298,6 +302,7 @@ namespace ServerClienteOnline.Server
                 Marca_Dagua = new Thread(Logo_AcessoRemoto.CriarMarcaDagua);
                 Marca_Dagua.SetApartmentState(ApartmentState.STA);
                 Marca_Dagua.Start();
+
 
                 //AcessoRemoto_Chat.CaixaDialogo
                 ArraySegment<byte> DadosRecebendo;
