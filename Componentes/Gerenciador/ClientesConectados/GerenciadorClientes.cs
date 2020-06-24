@@ -64,10 +64,12 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
         }
 
         /**
-  * Data: 27/02/2019
-  * Adiciona em uma lista os clientes que se concectaram ao servidor.
-  * Return: ParametrosInicializacao
-  */
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Verifica se o cliente já esta autenticado pelo sistema CORAC.</para>
+                <para>Return: ParametrosInicializacao</para>            
+            </summary>
+         */
         public bool Validar_Chave_AR(string Chave)
         {
             try
@@ -95,7 +97,13 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
                 return false;
             }
         }
-
+        /**
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Implementação incompleta.</para>
+                <para>Return: bool</para>            
+            </summary>
+         */
         public bool _OAuth(string Chave)
         {
             byte[] BaseByte = Convert.FromBase64String(Chave);
@@ -115,10 +123,12 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
         }
 
         /**
-          * Data: 27/02/2019
-          * Remove os clientes, que desconectaram, da lista de clientes conectados.
-          * Return: void
-          */
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Remove da lista dos clientes conectados, através do endereço IP e Porta, sobre o cliente.</para>
+                <para>Return: ParametrosInicializacao</para>            
+            </summary>
+         */
         private void Desconectar_Cliente(string IP, string Porta)
         {
             try
@@ -145,10 +155,12 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
         }
 
         /**
-          * Data: 27/02/2019
-          * Remove os clientes, que desconectaram, da lista de clientes conectados.
-          * Return: void
-          */
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Remove da lista de clientes conectados, utilizando uma classe abstrata EndPoint.</para>
+                <para>Return: void</para>            
+            </summary>
+         */
         public void Desconectar_Cliente(EndPoint Client)
         {
 
@@ -178,26 +190,40 @@ namespace ServerClienteOnline.Gerenciador.ClientesConectados
         {
             throw new NotImplementedException();
         }
-
+        /**
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Verifica se o cliente já esta autenticado pelo sistema CORAC.</para>
+                <para>Return: ParametrosInicializacao</para>            
+            </summary>
+         */
         public bool StartServidor()
         {
             return true;
         }
-
+        /**
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Limpa a variável de gerenciamento.</para>
+                <para>Return: bool</para>            
+            </summary>
+         */
         public bool StopServidor()
         {
             ListaClientes_Conectados = null;
             return true;
         }
-
+        /**
+            <summary>
+                <para>Data: 27/02/2019</para>
+                <para>Sem implementação para o método atual.</para>
+                <para>Return: ParametrosInicializacao</para>            
+            </summary>
+         */
         public bool StatusServidor()
         {
             return true;
         }
 
-        public bool ConectarCliente(EndPoint Client, bool Autenticacao)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

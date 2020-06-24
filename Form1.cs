@@ -23,6 +23,7 @@ using ServerClienteOnline.WMIs;
 using Power_Shell.AmbienteExecucao;
 using CamadaDeDados.RESTFormat;
 using CORAC.Chat;
+using System.Management.Automation;
 
 namespace CORAC
 {
@@ -41,7 +42,6 @@ namespace CORAC
 
         private Autenticador_WEB Autent_WEB = null;
         private RegistroCORAC Registro_Corac = new RegistroCORAC();
-
         //Form CaixaDialog = new Chat_CORAC();
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
@@ -185,6 +185,7 @@ namespace CORAC
 
         }
 
+       
         /**
          * <summary>
             Verifica se existe atualizações do sistema CORAC, esta verificação é realizada através da internet em um site próprio.
@@ -247,6 +248,60 @@ namespace CORAC
                 //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
 
                 picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Cinza_fw;
+
+                return false;
+            }
+        }
+
+        /**
+        * <summary>
+        * Criado: 23/06/2020 -
+           Método que busca as configurações dos diversos componentes do desktop CORAC.
+        * </summary>
+        */
+        private async Task<bool> Buscar_ConfiguracoesCORAC()
+        {
+
+            try
+            {
+                string Path_Config = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
+                string ConfPath = Regex.Replace(Path_Config, "/Checked/", "/ConfCORAC/", RegexOptions.IgnoreCase);
+                Uri EndURI = new Uri(ConfPath);
+                
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                var content = new FormUrlEncodedContent(pairs);
+                URL.Timeout = TimeSpan.FromSeconds(30);
+
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
+
+
+                if (Conteudo.Result.IsSuccessStatusCode)
+                {
+                    string Conf = await Conteudo.Result.Content.ReadAsStringAsync();
+                    Conexoes.Config = JsonConvert.DeserializeObject<ConfiguracoesCORAC>(Conf);
+                    Conexoes.ConfigLoad = true;
+                    return true;
+                }
+                else
+                {
+                    Conexoes.ConfigLoad = false;
+                    return false;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+                
+                Conexoes.ConfigLoad = false;
 
                 return false;
             }
@@ -319,20 +374,31 @@ namespace CORAC
                             Registro_Corac.Status = StatusRegistro.Habilitado;
                             Registro_Corac.Chave_BD = getChave;
 
-                            if (!(ServidorWEB_Local == null))
+                            bool Confg_CORAC = await Buscar_ConfiguracoesCORAC();
+                            if (Confg_CORAC)
                             {
-                                if (ServidorWEB_Local.StatusServidor()) { 
+
+                                if (!(ServidorWEB_Local == null))
+                                {
+                                    if (ServidorWEB_Local.StatusServidor())
+                                    {
+                                        button_Start_PowerShellCORAC.Enabled = true;
+                                        button_Start_AR_CORAC.Enabled = true;
+                                    }
+
+                                }
+                                else
+                                {
                                     button_Start_PowerShellCORAC.Enabled = true;
                                     button_Start_AR_CORAC.Enabled = true;
+
                                 }
-                                    
                             }
                             else
                             {
-                                button_Start_PowerShellCORAC.Enabled = true;
-                                button_Start_AR_CORAC.Enabled = true;
-
+                                Estado += ". As configurações dos serviços CORAC não foram encontradas!";
                             }
+
 
                             pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
                             //Bitmap Internet_ON = Change_Color(Properties.Resources.Registro_256px, Vermelho, Azul);
@@ -570,7 +636,7 @@ namespace CORAC
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 
                 string EndString = Conexoes.EnderecoHttpListen_Powershell();
-                int EndPorta = Conexoes.Porta_Powershell();
+                int EndPorta = Conexoes.Config.Servicos.PowerShell;
 
                 ServidorWEB_Local = new Servidor_HTTP();
                 
@@ -655,7 +721,7 @@ namespace CORAC
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 
                 string EndString = Conexoes.EnderecoHttpListen_AcessoRemoto();
-                int EndPorta = Conexoes.Porta_AcessoRemoto();
+                int EndPorta = Conexoes.Config.Servicos.AR;
 
                 ServidorWEB_Socket = new Servidor_WEBSOCKET();
 
@@ -744,26 +810,33 @@ namespace CORAC
                 }else if(Tarefa.Id == Registro_ID){
                     Servicos.Remove(Tarefa);
                     button_RegistroMaquina.Enabled = true;
-
-                    if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                    if (Conexoes.ConfigLoad)
                     {
-                        //-------------------------Serviço de PowerShell-----------------------------
-                        Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
-                        Powerhell_WEB_ID = Powerhell_WEB.Id;
-                        //-------------------------FIM-----------------------------------------------
+                        if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                        {
+                            //-------------------------Serviço de PowerShell-----------------------------
+                            Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
+                            Powerhell_WEB_ID = Powerhell_WEB.Id;
+                            //-------------------------FIM-----------------------------------------------
 
-                        //-------------------------Serviço de ACESSO REMOTO--------------------------
-                        Acesso_Remoto = Task.Run(Iniciar_Servidor_AcessoRemoto);
-                        Acesso_Remoto_ID = Acesso_Remoto.Id;
-                        //-------------------------FIM-----------------------------------------------
-                        
-                        Servicos.Add(Acesso_Remoto);
-                        Servicos.Add(Powerhell_WEB);
+                            //-------------------------Serviço de ACESSO REMOTO--------------------------
+                            Acesso_Remoto = Task.Run(Iniciar_Servidor_AcessoRemoto);
+                            Acesso_Remoto_ID = Acesso_Remoto.Id;
+                            //-------------------------FIM-----------------------------------------------
+
+                            Servicos.Add(Acesso_Remoto);
+                            Servicos.Add(Powerhell_WEB);
+                        }
+                        else
+                        {
+                            pictureBox_Powershell.Tag = "Favor verificar o registro da máquina!";
+                        }
                     }
                     else
                     {
-                        pictureBox_Powershell.Tag = "Favor verificar o registro da máquina!";
+                        ConfiguracoesCORAC.Start();
                     }
+
 
 
                 }
@@ -827,6 +900,7 @@ namespace CORAC
 
         public CORAC_TPrincipal()
         {
+
             ObterConfiguracoes();
 
             InitializeComponent();
@@ -882,7 +956,7 @@ namespace CORAC
         {
             try
             {
-                Data_Sistema_TLPrincipal.Text = DateTime.Now.Date.ToString();
+
                 this.MaximizeBox = false;
                 this.MinimizeBox = false;
                 
@@ -902,6 +976,7 @@ namespace CORAC
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
+                Relógio.Stop();
                 e.Cancel = true;
                 this.Hide();
             }
@@ -980,12 +1055,7 @@ namespace CORAC
 
         private void Text_Box_Path_Update_CORAC_Leave(object sender, EventArgs e)
         {
-            TextBox T = sender as TextBox;
 
-            if (T.Modified)
-            {
-                ArmazenarAlteracoesCampos((string)T.Tag, T.Text);
-            }
         }
 
         private void textBox_Path_Type_AutenticationLDAP_Leave(object sender, EventArgs e)
@@ -1355,6 +1425,10 @@ namespace CORAC
             }
             catch (Exception E)
             {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
                 T.Enabled = true;
             }
         }
@@ -1389,6 +1463,10 @@ namespace CORAC
             }
             catch (Exception E)
             {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
                 T.Enabled = true;
             }
         }
@@ -1400,7 +1478,7 @@ namespace CORAC
 
         private async void button2_Click_1(object sender, EventArgs e)
         {
-            await Task.Run(()=> 1+1);
+            await Task.Run(() => 1 + 1);
             Form kk = new Chat.Chat_CORAC();
             kk.Show();
         }
@@ -1408,6 +1486,123 @@ namespace CORAC
         private void pictureBox_Registro_CORAC_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private async void ConfiguracoesCORAC_Tick(object sender, EventArgs e)
+        {
+            if (await Buscar_ConfiguracoesCORAC())
+            {
+                //-------------------------------------------------------------------------------------------------
+                try
+                {
+                    bool ServerCORAC = await Task.Run(Iniciar_Servidor_PowerShell);
+                    if (ServerCORAC)
+                    {
+                        if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                        {
+                            List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                            KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                            List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                            ADados.Add(new KeyValuePair<string, string>("SPowershell", "1"));
+
+                            await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                        }
+                        button_Stop_PowerShellCORAC.Enabled = true;
+
+                    }
+                    else
+                    {
+                        button_Stop_PowerShellCORAC.Enabled = false;
+                    }
+
+
+                }
+                catch (Exception E)
+                {
+                    Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                    Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                    Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                    Status_Informacao.Text = "Ocorreram erros ao acessar o repositório de configurações do CORAC.";
+                }
+
+                //-------------------------------------------------------------------------------------------------
+
+                try
+                {
+                    bool ServerCORAC = await Task.Run(Iniciar_Servidor_AcessoRemoto);
+                    if (ServerCORAC)
+                    {
+
+                        if (Registro_Corac.Status == StatusRegistro.Habilitado)
+                        {
+                            List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
+                            KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
+
+                            List<KeyValuePair<string, string>> ADados = new List<KeyValuePair<string, string>>();
+                            ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "1"));
+
+                            await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
+                        }
+
+                        button_Stop_AR_CORAC.Enabled = true;
+                    }
+                    else
+                    {
+                        button_Stop_AR_CORAC.Enabled = false;
+                    }
+                    ConfiguracoesCORAC.Stop();
+
+                }
+                catch (Exception E)
+                {
+                    Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                    Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                    Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                    Status_Informacao.Text = "Ocorreram erros ao acessar o repositório de configurações do CORAC.";
+                }
+
+                //-------------------------------------------------------------------------------------------------
+
+                ConfiguracoesCORAC.Stop();
+            }
+            else
+            {
+                Status_Informacao.Text = "O repositório de configurações está inacessível. Verificação: " + DateTime.Now.ToString();
+            }
+
+        }
+
+        private void pictureBox_Powershell_MouseLeave(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "";
+        }
+
+        private void pictureBox_AcessoRemoto_MouseLeave(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "";
+        }
+
+        private void Relógio_Tick(object sender, EventArgs e)
+        {
+            Data_Sistema_TLPrincipal.Text = DateTime.Now.ToString();
+            Console.WriteLine("Relogio");
+        }
+
+        private void CORAC_TPrincipal_Shown(object sender, EventArgs e)
+        {
+            Relógio.Start();
+        }
+
+        private void CORAC_TPrincipal_FormClosed(object sender, FormClosedEventArgs e)
+        {
+        }
+
+        private void CORAC_TPrincipal_VisibleChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 
@@ -1420,6 +1615,7 @@ namespace CORAC
         [JsonProperty("Signacture")]
         public string Signacture { get; set; }
     }
+
 
 
 }

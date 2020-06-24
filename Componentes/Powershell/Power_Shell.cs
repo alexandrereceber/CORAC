@@ -20,6 +20,13 @@ using Newtonsoft.Json;
  **/
 namespace Power_Shell.AmbienteExecucao
 {
+    /**
+        <summary>
+            <para>Data: 23/06/2020</para>
+            <para>Representa as informações básica que serão informadas ao sistema de gereciamento central WEB CORAC.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     class InformacoesGerais
     {
         public string Usuario { get; }
@@ -53,6 +60,13 @@ namespace Power_Shell.AmbienteExecucao
         public string Trilha;
     }
 
+    /**
+        <summary>
+            <para>Data: 23/06/2020</para>
+            <para>Representa o ambiente de execução poweshell.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     class Ambiente_PowerShell : Tratador_Erros, IRuntime, IServidor
     {
         private SecureString CrypSenha = new SecureString();
@@ -61,11 +75,10 @@ namespace Power_Shell.AmbienteExecucao
         private PowerShell Servidor;
         private string LinhaComando;
         private TiposSaidas TSaida = TiposSaidas.HTML;
-        private Collection<PSObject> OutComandos_Unico;
 
         private Collection<PSObject> OutComandos_Script;
+        private Collection<PSObject> OutComandos_Unico;
 
-        private Erros Erro = new Erros { error = false, Mensagem = "", Trilha = "" };
         private bool Active = false;
 
         string Result;
@@ -81,6 +94,13 @@ namespace Power_Shell.AmbienteExecucao
 
         }
 
+        /**
+            <summary>
+                <para>Data: 23/06/2020</para>
+                <para>Inicia o serviço de powershell.</para>
+                <para>Return: </para>            
+            </summary>
+         */
         public bool StartServidor()
         {
             try

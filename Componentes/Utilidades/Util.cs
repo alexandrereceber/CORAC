@@ -17,6 +17,13 @@ using System.Diagnostics;
 
 namespace ServerClienteOnline.Utilidades
 {
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe que representa a inicialização da conversa entre serviços, passando informações da máquina e parâmetros de comunicação.</para>
+            <para>Return: ParametrosInicializacao</para>            
+        </summary>
+    */
     public class ParametrosInicializacao
     {
         [JsonProperty("Maquina")]
@@ -31,6 +38,14 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("TipoCriptografia")]
         public string TipoCriptografia { get; set; }
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe utilizada em todas as comunicações entre clientes e servidores. Principal função é transportar todas as outras classes.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     [Serializable]
     public class Pacote_Base
     {
@@ -46,12 +61,26 @@ namespace ServerClienteOnline.Utilidades
 
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe que transporta a chave de autenticação que foi realizada pelo usuário do sistema.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Chave
     {
         [JsonProperty("enviarChaves")]
         public string enviarChaves { set; get; }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe utilizada na inicialização da comunicação entre clientes e servidores com propósito de troca de parâmetros inciciais de comunicação.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     [Serializable]
     public class Pacote_Inicializacao : ITipoPacote
     {
@@ -80,6 +109,14 @@ namespace ServerClienteOnline.Utilidades
             return "";
         }
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Pedi resposta a uma outra instância do sistema CORAC desktop.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_PingEcho : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -105,6 +142,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe que informa que ocorreram erros durante a execução..</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Error : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -130,6 +174,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações sobre a inicialização do acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_AcessoRemoto_Config_INIT : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -165,7 +216,11 @@ namespace ServerClienteOnline.Utilidades
     }
 
     /**
-     * Pacote vem do cliente, informando qual tela deseja visualizar
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe que transporta as imagens das telas do agente autônomo.</para>
+            <para>Return: </para>            
+        </summary>
      */
     public class ConfigImagem_Monitor : ITipoPacote
 
@@ -216,6 +271,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Realiza o pedido de fechamento da caixa de diálogo do acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_UserCloseDialog : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -240,6 +302,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Requisita um pedido de fechamento da conexão estabelecida entre os agentes.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_CloseConection : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -253,20 +322,32 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("Error")]
         public bool Error = false;
-        string ITipoPacote.GetResultado()
+        public string GetResultado()
         {
             return Mensagem;
         }
 
-        TipoPacote ITipoPacote.GetTipoPacote()
+        public TipoPacote GetTipoPacote()
         {
             return Pacote;
         }
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe que captura as imagens dos dispositivos de imagem.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_FrameTelas : ITipoPacote
     {
         /**
-         * Classe convertida em json e enviada para o cliente
+            <summary>
+                <para>Data: 22/06/2020</para>
+                <para>SubClasse que mantém informações sobre os dispositivos de imagem.</para>
+                <para>Return: </para>            
+            </summary>
          */
         public class Tela 
         {
@@ -382,8 +463,12 @@ namespace ServerClienteOnline.Utilidades
     }
 
     /**
-    * Pacote referente ao acesso remoto à máquina do agente autônomo.
-    */
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Requisita o pedido de acesso para o WebSocket.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_AcessoRemoto_SYN : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -419,6 +504,14 @@ namespace ServerClienteOnline.Utilidades
             return Chave;
         }
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações dos eventos do mouse enviados do cliente de acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_EventMouse: ITipoPacote
     {
         public TipoPacote Pacote = TipoPacote.EventMouse;
@@ -466,6 +559,14 @@ namespace ServerClienteOnline.Utilidades
             return Pacote;
         }
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações do deslocamento do mouse enviados do cliente de acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_MouseRemoto : ITipoPacote
     {
         [DllImport("user32.dll")]
@@ -587,17 +688,9 @@ namespace ServerClienteOnline.Utilidades
         bool Botao1_press = false;
         bool Botao2_press = false;
 
-        private Screen Primary = null;
         public Pacote_MouseRemoto()
         {
-            //foreach(Screen i in Screen.AllScreens)
-            //{
-            //    if (i.Primary)
-            //    {
-            //        Primary = i;
-            //        break;
-            //    }
-            //}
+
         }
 
         [JsonProperty("Pacote")]
@@ -747,30 +840,21 @@ namespace ServerClienteOnline.Utilidades
                     return false;
             }
 
-            //System.Windows.Forms.Cursor.Position = new Point(Evt.x, Evt.y);
-            //System.Windows.Input.Mouse.UpdateCursor();
-
-            //Console.CursorVisible = true;
-
-            //SetCursorPos(Evt.x, Evt.y);
-            //Cursor.Show();
-
-            //INPUT structInput = new INPUT();
-            //structInput.type = SendInputEventType.InputMouse;
-            //structInput.mkhi.mi.dwFlags = MouseEventFlags.ABSOLUTE | MouseEventFlags.LEFTDOWN | MouseEventFlags.LEFTUP;
-            //structInput.mkhi.mi.dx = 500;
-            //structInput.mkhi.mi.dy = 500;
-            //uint i = SendInput(1, ref structInput, Marshal.SizeOf(new INPUT()));
 
             Console.WriteLine(Evt.type);
             return true;
         }
 
      }
-        /*
-         * Pacote recebido do cliente que está enviando, pelo acesso remoto, teclas.
-         */
-        public class Pacote_TecladoRemoto : ITipoPacote
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações dos eventos de tecla do tecado enviados do cliente de acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
+    public class Pacote_TecladoRemoto : ITipoPacote
     {
         const string SHIFT = "+", CTRL = "^", ALT = "%";
         private string TECLAS = "{SHIFT}{CTRL}{ALT}{key}";
@@ -908,8 +992,23 @@ namespace ServerClienteOnline.Utilidades
 
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações, requisitadas pelo cliente, sobre os dispositivos de imagem do servidor.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_AcessoRemoto_Resposta : ITipoPacote
     {
+
+        /**
+            <summary>
+                <para>Data: 22/06/2020</para>
+                <para>Transporta informações sobre os dispositivos de imagem do servidor.</para>
+                <para>Return: </para>            
+            </summary>
+         */
         public class Display
         {
             [JsonProperty("DeviceName")]
@@ -1005,6 +1104,13 @@ namespace ServerClienteOnline.Utilidades
 
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Resposta ao pedido de informações sobre o agente.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_PingReplay : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1032,6 +1138,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações sobre autenticação.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Auth : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1117,6 +1230,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta pedido de executação de comandos do powershell.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Comando : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1150,12 +1270,17 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
-
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações sobre um determinado arquivo.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_File : ITipoPacote
     {
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.File;
-
 
         [JsonProperty("Path")]
         public string Path { get; set; }
@@ -1193,13 +1318,20 @@ namespace ServerClienteOnline.Utilidades
 
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações sobre uma estrutura de diretório.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_SystemFile : ITipoPacote
     {
         [JsonProperty("Pacote")]
         public TipoPacote Pacote = TipoPacote.FileSystem;
 
         [JsonProperty("Conteudo")]
-        public string Origem { get; set; }
+        public string Conteudo { get; set; }
         public TipoPacote GetTipoPacote()
         {
             return Pacote;
@@ -1211,31 +1343,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
-    public class Pacote_Confirmacao : ITipoPacote
-    {
-        [JsonProperty("Pacote")]
-        public TipoPacote Pacote = TipoPacote.Confirmacao;
-
-        [JsonProperty("Confirm")]
-        public bool Confirm = true;
-
-        [JsonProperty("Error")]
-        public bool Error = false;
-
-        [JsonProperty("Metodo")]
-        public TipoPacote PacoteConfirmado { get; set; }
-
-        public TipoPacote GetTipoPacote()
-        {
-            return Pacote;
-        }
-
-        public string GetResultado()
-        {
-            return "";
-        }
-    }
-
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações sobre o usuário e senha para autentição no sistema CORAC WEB.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Login : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1271,6 +1385,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta mensagem do chat do cliente.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_ChatUser : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1296,6 +1417,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Mensagem de que o cliente esta digitando na caixa de mensagem.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_ChatDigitando : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1315,6 +1443,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta mensagem do atendente.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_ChatSuporte : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1340,6 +1475,13 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Transporta informações de autenticãção para a execução do programa de instalação de softwares do sistema CORAC.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public class Pacote_Credencial : ITipoPacote
     {
         [JsonProperty("Pacote")]
@@ -1365,12 +1507,52 @@ namespace ServerClienteOnline.Utilidades
         }
     }
 
+    /**
+        <summary>
+            <para>Data: 23/06/2020</para>
+            <para>Transporta informações sobre as configurações do CORAC desktop.</para>
+            <para>Return: </para>            
+        </summary>
+     */
+    class ConfiguracoesCORAC
+    {
+        /**
+            <summary>
+                <para>Data: 23/06/2020</para>
+                <para>Transporta informações de configurações dos serviços disponíveis no CORAC desktop.</para>
+                <para>Return: </para>            
+            </summary>
+         */
+        public class Services
+        {
+            public int PowerShell { set; get; }
+            public int AR { set; get; }
 
+        }
+
+        public Services Servicos { get; set; }
+    }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumeração dos tipos de requisição do acesso remoto.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum TiposRequisicaoAR
     {
         Pedido_Acesso = 0,
         Resposta = 1
     }
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos de serviços existentes no servidor.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum TipoServico
     {
         Powershell = 0,
@@ -1378,6 +1560,13 @@ namespace ServerClienteOnline.Utilidades
         Chat = 2
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera do tipos de mecanismos de acesso que podem ser utilizados.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum TipoMecanismo
     {
         Navegador = 0,
@@ -1392,15 +1581,26 @@ namespace ServerClienteOnline.Utilidades
         Componente = 4,
         ComponenteAndFile = 5
     };
+
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos de chaves de registro que o agente autônomo reconhece.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum TipoChave
     {
         LocalMachine = 0,
         CurrenteUser = 1
     }
+
     /**
-     * <summary>
-     * Formato do pacote será transmitido entre os serviços de Cliente/Serviço.
-     * </summary>
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos de pacotes reconhecidos pelo sistema CORAC desktop.</para>
+            <para>Return: </para>            
+        </summary>
      */
     public enum TipoPacote
     {
@@ -1432,26 +1632,22 @@ namespace ServerClienteOnline.Utilidades
 
     };
 
-    public enum TiposSaidas { TXT = 0, JSON = 1, XML = 2, CVS = 3, HTML = 4 }
     /**
-     * <summary>
-     * Informa ao servidor qual a fonte de dados que será utilizada para autenticar o usuário antes de respondê-lo.
-     * <para>LDAP - Autenticação será realizada pelo servidor de domínio da instituição</para>
-     * <para>LocalHost - Autenticação será realizada utilizando-se os usuário local da máquina onde o server esta rodando</para>
-     * <para>BancoDados - Autenticação será via página de PHP via json em um banco de dados local internet</para>
-     * <para>Google - Autenticação será realizada pelo google</para>
-     * <para>Livre - Não realização autenticação, ficando o servidor respondendo à qualquer requisiçaõ.</para>
-     * * </summary>
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos de saída de informações.</para>
+            <para>Return: </para>            
+        </summary>
      */
-    public enum Autenticacao
-    {
-        LDAP = 0,
-        LocalHost = 1,
-        BancoDados = 2,
-        Google = 3,
-        Livre = 4
-    };
+    public enum TiposSaidas { TXT = 0, JSON = 1, XML = 2, CVS = 3, HTML = 4 }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Struct sobre informações de erros.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public struct TError
     {
         public bool Error;
@@ -1459,24 +1655,52 @@ namespace ServerClienteOnline.Utilidades
         public object Pacote;
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos agentes de autenticação existente.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum __Autenticacao
     {
         Cliente = 0x00000A,
         Servidor = 0xFFFFFF
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Campos existentes no registro windows.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     struct CamposCORAC
     {
         public string Path_ServerWEB_CORAC;
 
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os estados do registro de máquina no CORAC WEB.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     enum StatusRegistro
     {
         Habilitado = 0,
         Desabilitado = 1
     }
 
+    /**
+    <summary>
+        <para>Data: 22/06/2020</para>
+        <para>Enumera os tipos de linguagens que são reconhecidas pelo sistema.</para>
+        <para>Return: </para>            
+    </summary>
+ */
     public enum Remetente
     {
         PHP = 0,
@@ -1484,6 +1708,13 @@ namespace ServerClienteOnline.Utilidades
         Javascript = 2
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Enumera os tipos de imagem que poderão ser utilizadas no sistema.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     public enum TiposImagem
     {
         MemoryBmp = 0,
@@ -1503,6 +1734,13 @@ namespace ServerClienteOnline.Utilidades
         public string Chave_BD = null;
     }
 
+    /**
+        <summary>
+            <para>Data: 22/06/2020</para>
+            <para>Classe estática que convert string em classes reconhecidas pelo sitema.</para>
+            <para>Return: </para>            
+        </summary>
+     */
     class Converter_JSON_String
     {
         public static string SerializarPacote(ITipoPacote Conteudo)

@@ -55,7 +55,11 @@ namespace ServerClienteOnline.Interfaces
         TipoPacote GetTipoPacote();
         string GetResultado();
     }
-
+    /**
+    <summary>
+       Interface de serviços de servidor.
+    </summary>
+    */
     public interface IServidor
     {
         bool StartServidor();

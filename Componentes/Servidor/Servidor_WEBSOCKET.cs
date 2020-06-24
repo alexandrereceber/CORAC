@@ -150,7 +150,7 @@ namespace ServerClienteOnline.Server
         private Thread Marca_Dagua;
         Process Installer = null;
 
-        Task Instalar_Softares = null;
+        //Task Instalar_Softares = null;
         private bool Gerente_WEBSOCKET(int IP)
         {
             

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Net.NetworkInformation;
 using ServerClienteOnline.TratadorDeErros;
+using ServerClienteOnline.Utilidades;
 
 namespace ServerClienteOnline.Conectividade
 {
@@ -31,7 +32,8 @@ namespace ServerClienteOnline.Conectividade
     {
         private static List<ListaConexoesHost> IPIdentificados;
         private static Exception Erros = null;
-
+        public static ConfiguracoesCORAC Config { get; set; }
+        public static bool ConfigLoad = false;
         /**
          * <summary>
          * Verifica a conectividade do host com a rede local ou internet.
@@ -105,15 +107,7 @@ namespace ServerClienteOnline.Conectividade
         {
             return "*";
         }
-        /**
-            <summary>
-                Especifica o número da porta que o powershell ficará escutando as conexões.
-            </summary>
-         */
-        public static int Porta_Powershell()
-        {
-            return 1119;
-        }
+
         /**
             <summary>
                 Especifica a url que o sistema ficará escutando.
@@ -123,14 +117,6 @@ namespace ServerClienteOnline.Conectividade
         {
             return "*";
         }
-        /**
-            <summary>
-                Especifica o número da porta que o serviço de acesso remoto ficará escutando as conexões.
-            </summary>
-         */
-        public static int Porta_AcessoRemoto()
-        {
-            return 1199;
-        }
+
     }
 }
