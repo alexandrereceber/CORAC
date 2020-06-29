@@ -24,6 +24,7 @@ using Power_Shell.AmbienteExecucao;
 using CamadaDeDados.RESTFormat;
 using CORAC.Chat;
 using System.Management.Automation;
+using System.Diagnostics;
 
 namespace CORAC
 {
@@ -43,6 +44,7 @@ namespace CORAC
         private Autenticador_WEB Autent_WEB = null;
         private RegistroCORAC Registro_Corac = new RegistroCORAC();
 
+        private bool ChaveEnderecoCORAC = false;
         //Form CaixaDialog = new Chat_CORAC();
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
@@ -274,7 +276,7 @@ namespace CORAC
                     throw new Exception("Sem conectividade");
                 }
                 pictureBox_Servidor_WEB.Image = Properties.Resources.Wait;
-                Uri EndURI = new Uri(textBox_Path_ServerWEB_CORAC.Text);
+                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
 
                 HttpClient URL = new HttpClient();
                 var pairs = new List<KeyValuePair<string, string>>
@@ -398,6 +400,11 @@ namespace CORAC
                                         {
                                             button_Start_PowerShellCORAC.Enabled = true;
                                             button_Start_AR_CORAC.Enabled = true;
+                                        }
+                                        else
+                                        {
+                                            Iniciar_Servidor_PowerShell();
+                                            Iniciar_Servidor_AcessoRemoto();
                                         }
 
                                     }
@@ -937,9 +944,24 @@ namespace CORAC
 
             ObterConfiguracoes();
 
-            InitializeComponent();
+            if((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC") == "")
+            {
+                InitializeComponent();
+                Control[] TStatus = tabCORAC.Controls.Find("Tab_Status", false);
+                Control[] TLog = tabCORAC.Controls.Find("Tab_Log", false);
 
-            Loaders();
+                tabCORAC.Controls.Remove(TStatus[0]);
+                tabCORAC.Controls.Remove(TLog[0]);
+
+                MessageBox.Show("Endereço do servidor CORAC WEB está vazio!\nFavor entrar em contato com o departamento de tecnologia.", "Servidor CORAC", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                InitializeComponent();
+                Loaders();
+            }
+
+
             //Application.ApplicationExit += SairSistema;
         }
 
@@ -1029,23 +1051,29 @@ namespace CORAC
         {
             try
             {
-                DialogResult Resposta = MessageBox.Show("Tem certeza que deseja realizar essa operação?", "Salvar configurações", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                if (Resposta == DialogResult.Yes)
+                if (KeysValues == null) MessageBox.Show("Nenhuma alteração foi identificada.", "Alterações",MessageBoxButtons.OK,MessageBoxIcon.Error);
+                else
                 {
-                    if (KeysValues == null) MessageBox.Show("Nenhuma alteração foi identificada.", "Alterações");
-                    if (KeysValues.Count > 0)
+                    DialogResult Resposta = MessageBox.Show("Tem certeza que deseja realizar essa operação?", "Salvar configurações", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    if (Resposta == DialogResult.Yes)
                     {
-                        if(ChavesCORAC.Gravar_ConteudoCampo(TipoChave.LocalMachine, "software\\CORAC", ref KeysValues))
+
+                        if (KeysValues.Count > 0)
                         {
-                            MessageBox.Show("O dados foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            ObterConfiguracoes();                   }
-                        else
-                        {
-                            MessageBox.Show("O dados não foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            if (ChavesCORAC.Gravar_ConteudoCampo(TipoChave.LocalMachine, "software\\CORAC", ref KeysValues))
+                            {
+                                MessageBox.Show("O dados foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                ObterConfiguracoes();
+                            }
+                            else
+                            {
+                                MessageBox.Show("O dados não foram salvos com sucesso!", "Salvar alterações", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
+                            //KeysValues.Clear();
                         }
-                        //KeysValues.Clear();
                     }
                 }
+
             }
             catch (Exception E)
             {
@@ -1516,6 +1544,7 @@ namespace CORAC
             bool Assinatura = await ObterAssinatura();
             if (Assinatura)
             {
+                button_RegistroMaquina.Enabled = true;
                 await Verificar_Registro();
                 onAssinatura.Stop();
             }
@@ -1547,6 +1576,27 @@ namespace CORAC
         private void onConnect_Tick(object sender, EventArgs e)
         {
 
+        }
+
+        private void reiniciarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult Restart = MessageBox.Show("Tem certeza que deseja reiniciar a aplicação?", "Reiniciar aplicação", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if(Restart == DialogResult.Yes)
+                Application.Restart();
+        }
+
+        private void sairToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult Restart = MessageBox.Show("Tem certeza que deseja sair da aplicação?", "Sair", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (Restart == DialogResult.Yes)
+                Application.Exit();
+        }
+
+        private void Reiniciar_Click(object sender, EventArgs e)
+        {
+            DialogResult Restart = MessageBox.Show("Tem certeza que deseja reiniciar a aplicação?", "Reiniciar aplicação", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+            if (Restart == DialogResult.Yes)
+                Application.Restart();
         }
     }
 

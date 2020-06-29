@@ -66,8 +66,8 @@
             this.listBox_FILE_LOG = new System.Windows.Forms.ListBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.context_CORAC_ICONE_MAN = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.toolStripMenuItem1_MAN = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Status = new System.Windows.Forms.ToolStripMenuItem();
+            this.exist = new System.Windows.Forms.ToolStripMenuItem();
             this.Notificacao = new System.Windows.Forms.NotifyIcon(this.components);
             this.Status_Informacao = new System.Windows.Forms.ToolStripStatusLabel();
             this.Data_Sistema_TLPrincipal = new System.Windows.Forms.ToolStripStatusLabel();
@@ -77,6 +77,11 @@
             this.onConnect = new System.Windows.Forms.Timer(this.components);
             this.onAssinatura = new System.Windows.Forms.Timer(this.components);
             this.onNetwork = new System.Windows.Forms.Timer(this.components);
+            this.MenuPrincipal = new System.Windows.Forms.MenuStrip();
+            this.Arquivo = new System.Windows.Forms.ToolStripMenuItem();
+            this.reiniciarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.Reiniciar = new System.Windows.Forms.ToolStripMenuItem();
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
             this.Layout_Organizacao_CORAC.SuspendLayout();
@@ -99,6 +104,7 @@
             this.groupBox_LogSystem.SuspendLayout();
             this.context_CORAC_ICONE_MAN.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.MenuPrincipal.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabCORAC
@@ -574,29 +580,30 @@
             // context_CORAC_ICONE_MAN
             // 
             this.context_CORAC_ICONE_MAN.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItem1_MAN,
-            this.exitToolStripMenuItem});
+            this.Reiniciar,
+            this.Status,
+            this.exist});
             this.context_CORAC_ICONE_MAN.Name = "context_CORAC_ICONE_MAN";
             this.context_CORAC_ICONE_MAN.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.context_CORAC_ICONE_MAN.ShowCheckMargin = true;
-            this.context_CORAC_ICONE_MAN.Size = new System.Drawing.Size(217, 48);
+            this.context_CORAC_ICONE_MAN.Size = new System.Drawing.Size(217, 92);
             // 
-            // toolStripMenuItem1_MAN
+            // Status
             // 
-            this.toolStripMenuItem1_MAN.Image = global::CORAC.Properties.Resources.Configuracoes_fw;
-            this.toolStripMenuItem1_MAN.Name = "toolStripMenuItem1_MAN";
-            this.toolStripMenuItem1_MAN.Size = new System.Drawing.Size(216, 22);
-            this.toolStripMenuItem1_MAN.Text = "Status / Configurações";
-            this.toolStripMenuItem1_MAN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripMenuItem1_MAN.Click += new System.EventHandler(this.toolStripMenuItem1_MAN_Click);
+            this.Status.Image = global::CORAC.Properties.Resources.Configuracoes_fw;
+            this.Status.Name = "Status";
+            this.Status.Size = new System.Drawing.Size(216, 22);
+            this.Status.Text = "Status / Configurações";
+            this.Status.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.Status.Click += new System.EventHandler(this.toolStripMenuItem1_MAN_Click);
             // 
-            // exitToolStripMenuItem
+            // exist
             // 
-            this.exitToolStripMenuItem.Image = global::CORAC.Properties.Resources.Sair1;
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            this.exist.Image = global::CORAC.Properties.Resources.Sair1;
+            this.exist.Name = "exist";
+            this.exist.Size = new System.Drawing.Size(216, 22);
+            this.exist.Text = "Exit";
+            this.exist.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
             // Notificacao
             // 
@@ -655,6 +662,47 @@
             this.onNetwork.Interval = 10000;
             this.onNetwork.Tick += new System.EventHandler(this.onNetwork_Tick);
             // 
+            // MenuPrincipal
+            // 
+            this.MenuPrincipal.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.Arquivo});
+            this.MenuPrincipal.Location = new System.Drawing.Point(5, 5);
+            this.MenuPrincipal.Name = "MenuPrincipal";
+            this.MenuPrincipal.Size = new System.Drawing.Size(904, 24);
+            this.MenuPrincipal.TabIndex = 3;
+            this.MenuPrincipal.Text = "&Arquivo";
+            // 
+            // Arquivo
+            // 
+            this.Arquivo.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.reiniciarToolStripMenuItem,
+            this.sairToolStripMenuItem});
+            this.Arquivo.Name = "Arquivo";
+            this.Arquivo.Size = new System.Drawing.Size(61, 20);
+            this.Arquivo.Text = "&Arquivo";
+            // 
+            // reiniciarToolStripMenuItem
+            // 
+            this.reiniciarToolStripMenuItem.Name = "reiniciarToolStripMenuItem";
+            this.reiniciarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reiniciarToolStripMenuItem.Text = "&Reiniciar";
+            this.reiniciarToolStripMenuItem.Click += new System.EventHandler(this.reiniciarToolStripMenuItem_Click);
+            // 
+            // sairToolStripMenuItem
+            // 
+            this.sairToolStripMenuItem.Name = "sairToolStripMenuItem";
+            this.sairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sairToolStripMenuItem.Text = "&Sair";
+            this.sairToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
+            // 
+            // Reiniciar
+            // 
+            this.Reiniciar.Name = "Reiniciar";
+            this.Reiniciar.Size = new System.Drawing.Size(216, 22);
+            this.Reiniciar.Text = "Reiniciar";
+            this.Reiniciar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Reiniciar.Click += new System.EventHandler(this.Reiniciar_Click);
+            // 
             // CORAC_TPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -662,10 +710,12 @@
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(914, 602);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.MenuPrincipal);
             this.Controls.Add(this.tabCORAC);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.ImeMode = System.Windows.Forms.ImeMode.Alpha;
+            this.MainMenuStrip = this.MenuPrincipal;
             this.Name = "CORAC_TPrincipal";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -699,6 +749,8 @@
             this.context_CORAC_ICONE_MAN.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.MenuPrincipal.ResumeLayout(false);
+            this.MenuPrincipal.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -726,9 +778,9 @@
         private System.Windows.Forms.Button button_Servidor_WEB;
         private System.Windows.Forms.TextBox textBox_Path_ServerWEB_CORAC;
         private System.Windows.Forms.ContextMenuStrip context_CORAC_ICONE_MAN;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1_MAN;
+        private System.Windows.Forms.ToolStripMenuItem Status;
         public System.Windows.Forms.NotifyIcon Notificacao;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exist;
         private System.Windows.Forms.ToolStripStatusLabel Status_Informacao;
         private System.Windows.Forms.ToolStripStatusLabel Data_Sistema_TLPrincipal;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -753,6 +805,11 @@
         private System.Windows.Forms.Timer onConnect;
         private System.Windows.Forms.Timer onAssinatura;
         private System.Windows.Forms.Timer onNetwork;
+        private System.Windows.Forms.MenuStrip MenuPrincipal;
+        private System.Windows.Forms.ToolStripMenuItem Arquivo;
+        private System.Windows.Forms.ToolStripMenuItem reiniciarToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sairToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem Reiniciar;
     }
 }
 
