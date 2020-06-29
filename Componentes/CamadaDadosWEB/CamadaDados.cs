@@ -231,11 +231,11 @@ struct InforError
      */
     class Tabelas : HttpClient
     {
-        const string 
-            Select  = "ab58b01839a6d92154c615db22ea4b8f", 
-            Insert  = "5a59ffc82a16fc2b17daa935c1aed3e9", 
-            Update  = "1b24931707c03902dad1ae4b42266fd6", 
-            Delete  = "1570ef32c1a283e79add799228203571";
+        private const string 
+                                Select  = "ab58b01839a6d92154c615db22ea4b8f", 
+                                Insert  = "5a59ffc82a16fc2b17daa935c1aed3e9", 
+                                Update  = "1b24931707c03902dad1ae4b42266fd6", 
+                                Delete  = "1570ef32c1a283e79add799228203571";
 
         private readonly Uri Dados_Endereco = null;
         private readonly string Chave_Sessao;

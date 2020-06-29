@@ -1861,11 +1861,7 @@ namespace ServerClienteOnline.Utilidades
             
         }
 
-        internal static string SerializarPacote(Pacote_Base pct)
-        {
-            throw new NotImplementedException();
-        }
-    }
+     }
 
     //class Mensagem
     //{

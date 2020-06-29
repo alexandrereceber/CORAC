@@ -27,8 +27,7 @@ namespace ServerClienteOnline.Server
         private IAuthHTML _Auth;
         private IGClienteHTML _GerenciadorCliente;
 
-        Pacote_Base Base;
-        public Servidor_HTTP()
+         public Servidor_HTTP()
         {
             try
             {
@@ -287,7 +286,7 @@ namespace ServerClienteOnline.Server
                             P_Error.Mensagem = "Esse tipo de pacote não existe.";
                             P_Error.Numero = DadosExcecao.HResult;
 
-                        DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
+                            DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
                             ObterResposta.ContentLength64 = DadosPacote.Length;
                             ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
                             ObterResposta.Close();

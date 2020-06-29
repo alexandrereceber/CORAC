@@ -319,6 +319,7 @@ namespace CORAC
         /**
          * <summary>
             Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
+            Obs. IMPORTANTE: ESSE MÉTODO ENVIA UM INFORMAÇÃO DE QUE A MÁQUINA ESTÁ LIGADA. MAS NO FUTURO SERÁ CRIADO UM SERVIÇO PARA REALIZAR ESSA OPERAÇÃO, FICANDO A MESMA OBSOLETA.
          * </summary>
          */
         private async Task<bool> Verificar_Registro()
@@ -1543,6 +1544,10 @@ namespace CORAC
 
         }
 
+        private void onConnect_Tick(object sender, EventArgs e)
+        {
+
+        }
     }
 
 

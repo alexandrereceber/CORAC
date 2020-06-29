@@ -641,6 +641,10 @@
             this.Relógio.Interval = 1000;
             this.Relógio.Tick += new System.EventHandler(this.Relógio_Tick);
             // 
+            // onConnect
+            // 
+            this.onConnect.Tick += new System.EventHandler(this.onConnect_Tick);
+            // 
             // onAssinatura
             // 
             this.onAssinatura.Interval = 10000;
