@@ -265,7 +265,55 @@ namespace CORAC
                 return false;
             }
         }
+        private async Task<bool> ObterAssinatura(string PathCORAC)
+        {
+            try
+            {
+                if (!await Conexoes.VerificarConectividade())
+                {
+                    MessageBox.Show("Não há conectividade!", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw new Exception("Sem conectividade");
+                }
+                Uri EndURI = new Uri(PathCORAC);
 
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                var content = new FormUrlEncodedContent(pairs);
+
+                URL.Timeout = TimeSpan.FromSeconds(30);
+
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
+
+                if (Conteudo.Result.IsSuccessStatusCode)
+                {
+                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
+                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                    if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception E)
+            {
+                return false;
+            }
+        }
         private async Task<bool> ObterAssinatura()
         {
             try
@@ -333,7 +381,7 @@ namespace CORAC
             {
                 String Estado = "";
 
-                if (await ObterAssinatura())
+                if (await ObterAssinatura((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC")))
                 {
                     string NomeEstacao = Dns.GetHostName();
 
@@ -396,15 +444,31 @@ namespace CORAC
 
                                     if (!(ServidorWEB_Local == null))
                                     {
-                                        if (ServidorWEB_Local.StatusServidor())
+                                        if (!ServidorWEB_Local.StatusServidor())
                                         {
-                                            button_Start_PowerShellCORAC.Enabled = true;
-                                            button_Start_AR_CORAC.Enabled = true;
-                                        }
-                                        else
-                                        {
-                                            Iniciar_Servidor_PowerShell();
-                                            Iniciar_Servidor_AcessoRemoto();
+                                            bool psStart = await Iniciar_Servidor_PowerShell();
+                                            bool ARStart = await Iniciar_Servidor_AcessoRemoto();
+
+                                            if (psStart) {
+                                                button_Start_PowerShellCORAC.Enabled = false;
+                                                button_Stop_PowerShellCORAC.Enabled = true;
+                                            }
+                                            else
+                                            {
+                                                button_Start_PowerShellCORAC.Enabled = true;
+                                                button_Stop_PowerShellCORAC.Enabled = false;
+                                            }
+
+                                            if(ARStart)
+                                            {
+                                                button_Start_AR_CORAC.Enabled = false;
+                                                button_Stop_AR_CORAC.Enabled = true;
+                                            }
+                                            else
+                                            {
+                                                button_Start_AR_CORAC.Enabled = true;
+                                                button_Stop_AR_CORAC.Enabled = false;
+                                            }
                                         }
 
                                     }
@@ -445,6 +509,7 @@ namespace CORAC
                         else
                         {
                             int Chassi = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "ChassisTypes")[0];
+                            string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
 
                             List<KeyValuePair<string, string>> IDados = new List<KeyValuePair<string, string>>();
                             IDados.Add(new KeyValuePair<string, string>("Tipo", Convert.ToString(Chassi)));
@@ -527,21 +592,23 @@ namespace CORAC
                 //-------------------SERVIDOR HTTP-------------------------------------------------------------------
 
 
-                bool Server_HTTP = await Task.Run(ServidorWEB_Socket.StopServidor);
+                bool Server_WEBSOCKT = await Task.Run(ServidorWEB_Socket.StopServidor);
 
                 //------------------------------------------------------------------------------------------------------
 
                 pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                if (Server_HTTP)
+                if (Server_WEBSOCKT)
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
+                    pictureBox_AcessoRemoto.Tag = "O serviço de acesso remoto foi interrompido com sucesso!";
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
                     return true;
                 }
                 else
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
+                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro ao parar o serviço de acesso remoto.";
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw;
                     return true;
                 }
@@ -599,13 +666,16 @@ namespace CORAC
 
                 if (Server_HTTP)
                 {
-                   // Bitmap Internet_ON = Change_Color(Properties.Resources.po, Azul, Vermelho);
+                    // Bitmap Internet_ON = Change_Color(Properties.Resources.po, Azul, Vermelho);
+                    pictureBox_Powershell.Tag = "O serviço de powershell foi parado corretamento.";
+
                     pictureBox_Powershell.Image = Properties.Resources.Powershell_Cinza_fw ;
                     return true;
                 }
                 else
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
+                    pictureBox_Powershell.Tag = "Ocorreu um erro ao parar o serviço de powershell.";
                     pictureBox_Powershell.Image = Properties.Resources.Powershell_Color_fw ;
                     return true;
                 }
@@ -760,23 +830,23 @@ namespace CORAC
                 ServidorWEB_Socket.Gerenciador_Cliente = GerenteClientes;
 
                 
-                bool Server_HTTP = await Task.Run(ServidorWEB_Socket.StartServidor);
+                bool Server_WEBSOCKET = await Task.Run(ServidorWEB_Socket.StartServidor);
 
                 //------------------------------------------------------------------------------------------------------
 
                 pictureBox_AcessoRemoto.SizeMode = PictureBoxSizeMode.StretchImage;
 
-                if (Server_HTTP)
+                if (Server_WEBSOCKET)
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
-                    pictureBox_AcessoRemoto.Tag = "Serviço de powershell instanciado corretamente.";
+                    pictureBox_AcessoRemoto.Tag = "Serviço de acesso remoto foi carregado corretamente.";
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw ;
                     return true;
                 }
                 else
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
-                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
+                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro ao iniciar o serviço de acesso remoto desta estação.";
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
                     return false;
                 }
@@ -823,7 +893,7 @@ namespace CORAC
                     {
                         Servicos.Remove(Tarefa);
                         button_AtualizacoesCORAC.Enabled = true;
-
+                        
                     }
                     else if (Tarefa.Id == Registro_ID)
                     {
@@ -1001,7 +1071,6 @@ namespace CORAC
         {
             if (e.CloseReason == CloseReason.UserClosing)
             {
-                Relógio.Stop();
                 e.Cancel = true;
                 this.Hide();
             }
@@ -1099,15 +1168,21 @@ namespace CORAC
         {
             if (textBox_Path_ServerWEB_CORAC.Text.Length > 0)
             {
+                button_Servidor_WEB.Enabled = false;
+                SalvaConfiguracoes.Enabled = false;
+                pictureBox_Servidor_WEB.Image = Properties.Resources.Wait;
 
-                if(await ObterAssinatura())
+                if (await ObterAssinatura(textBox_Path_ServerWEB_CORAC.Text))
                 {
                     pictureBox_Servidor_WEB.Image = Properties.Resources.Acepty;
+                    SalvaConfiguracoes.Enabled = true;
                 }
                 else
                 {
                     pictureBox_Servidor_WEB.Image = Properties.Resources.No_Acepty;
                 }
+                button_Servidor_WEB.Enabled = true;
+
             }
             else
             {
@@ -1513,7 +1588,7 @@ namespace CORAC
             }
             else
             {
-                Status_Informacao.Text = "O repositório de configurações está inacessível. Verificação: " + DateTime.Now.ToString();
+                Status_Informacao.Text = "O repositório de configurações dos serviços CORAC está inacessível. Verificação: " + DateTime.Now.ToString();
             }
 
         }
@@ -1541,7 +1616,7 @@ namespace CORAC
 
         private async void onAssinatura_Tick(object sender, EventArgs e)
         {
-            bool Assinatura = await ObterAssinatura();
+            bool Assinatura = await Verificar_Registro();
             if (Assinatura)
             {
                 button_RegistroMaquina.Enabled = true;
@@ -1550,7 +1625,7 @@ namespace CORAC
             }
             else
             {
-                Status_Informacao.Text = "A assinatura CORAC não está acessível ou não corresponde à correta, favor entrar em contato com os administradores. Verificação: " + DateTime.Now.ToString();
+                Status_Informacao.Text = "Assinatura não está acessível ou incorreta. Favor contactar os administradores. Verificação: " + DateTime.Now.ToString();
             }
         }
 
@@ -1597,6 +1672,11 @@ namespace CORAC
             DialogResult Restart = MessageBox.Show("Tem certeza que deseja reiniciar a aplicação?", "Reiniciar aplicação", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
             if (Restart == DialogResult.Yes)
                 Application.Restart();
+        }
+
+        private void pictureBox_AcessoRemoto_MouseEnter(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = (string)(sender as PictureBox).Tag;
         }
     }
 

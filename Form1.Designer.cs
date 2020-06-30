@@ -66,6 +66,7 @@
             this.listBox_FILE_LOG = new System.Windows.Forms.ListBox();
             this.webBrowser1 = new System.Windows.Forms.WebBrowser();
             this.context_CORAC_ICONE_MAN = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.Reiniciar = new System.Windows.Forms.ToolStripMenuItem();
             this.Status = new System.Windows.Forms.ToolStripMenuItem();
             this.exist = new System.Windows.Forms.ToolStripMenuItem();
             this.Notificacao = new System.Windows.Forms.NotifyIcon(this.components);
@@ -77,11 +78,11 @@
             this.onConnect = new System.Windows.Forms.Timer(this.components);
             this.onAssinatura = new System.Windows.Forms.Timer(this.components);
             this.onNetwork = new System.Windows.Forms.Timer(this.components);
+            this.panel1 = new System.Windows.Forms.Panel();
             this.MenuPrincipal = new System.Windows.Forms.MenuStrip();
             this.Arquivo = new System.Windows.Forms.ToolStripMenuItem();
             this.reiniciarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.Reiniciar = new System.Windows.Forms.ToolStripMenuItem();
             this.tabCORAC.SuspendLayout();
             this.Tab_Status.SuspendLayout();
             this.Layout_Organizacao_CORAC.SuspendLayout();
@@ -104,6 +105,7 @@
             this.groupBox_LogSystem.SuspendLayout();
             this.context_CORAC_ICONE_MAN.SuspendLayout();
             this.statusStrip1.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.MenuPrincipal.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -112,10 +114,10 @@
             this.tabCORAC.Controls.Add(this.Tab_Status);
             this.tabCORAC.Controls.Add(this.Tab_Config);
             this.tabCORAC.Controls.Add(this.Tab_Log);
-            this.tabCORAC.Location = new System.Drawing.Point(8, 8);
+            this.tabCORAC.Location = new System.Drawing.Point(3, 3);
             this.tabCORAC.Name = "tabCORAC";
             this.tabCORAC.SelectedIndex = 0;
-            this.tabCORAC.Size = new System.Drawing.Size(901, 564);
+            this.tabCORAC.Size = new System.Drawing.Size(898, 564);
             this.tabCORAC.TabIndex = 0;
             // 
             // Tab_Status
@@ -125,7 +127,7 @@
             this.Tab_Status.Location = new System.Drawing.Point(4, 22);
             this.Tab_Status.Name = "Tab_Status";
             this.Tab_Status.Padding = new System.Windows.Forms.Padding(3);
-            this.Tab_Status.Size = new System.Drawing.Size(893, 538);
+            this.Tab_Status.Size = new System.Drawing.Size(890, 538);
             this.Tab_Status.TabIndex = 0;
             this.Tab_Status.Text = "Status";
             // 
@@ -388,12 +390,14 @@
             this.pictureBox_AcessoRemoto.TabIndex = 3;
             this.pictureBox_AcessoRemoto.TabStop = false;
             this.pictureBox_AcessoRemoto.Tag = "Serviço de Acesso Remoto";
+            this.pictureBox_AcessoRemoto.MouseEnter += new System.EventHandler(this.pictureBox_AcessoRemoto_MouseEnter);
             this.pictureBox_AcessoRemoto.MouseLeave += new System.EventHandler(this.pictureBox_AcessoRemoto_MouseLeave);
             // 
             // button_Stop_AR_CORAC
             // 
             this.button_Stop_AR_CORAC.Enabled = false;
-            this.button_Stop_AR_CORAC.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Lime;
+            this.button_Stop_AR_CORAC.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            this.button_Stop_AR_CORAC.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
             this.button_Stop_AR_CORAC.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button_Stop_AR_CORAC.Location = new System.Drawing.Point(153, 192);
             this.button_Stop_AR_CORAC.Name = "button_Stop_AR_CORAC";
@@ -411,12 +415,13 @@
             this.Tab_Config.Location = new System.Drawing.Point(4, 22);
             this.Tab_Config.Name = "Tab_Config";
             this.Tab_Config.Padding = new System.Windows.Forms.Padding(3);
-            this.Tab_Config.Size = new System.Drawing.Size(893, 538);
+            this.Tab_Config.Size = new System.Drawing.Size(890, 538);
             this.Tab_Config.TabIndex = 1;
             this.Tab_Config.Text = "Configurações";
             // 
             // SalvaConfiguracoes
             // 
+            this.SalvaConfiguracoes.Enabled = false;
             this.SalvaConfiguracoes.Location = new System.Drawing.Point(812, 509);
             this.SalvaConfiguracoes.Name = "SalvaConfiguracoes";
             this.SalvaConfiguracoes.Size = new System.Drawing.Size(75, 23);
@@ -427,9 +432,7 @@
             // 
             // tableLayoutPanel_Principal
             // 
-            this.tableLayoutPanel_Principal.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tableLayoutPanel_Principal.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.tableLayoutPanel_Principal.AutoScroll = true;
             this.tableLayoutPanel_Principal.CausesValidation = false;
             this.tableLayoutPanel_Principal.ColumnCount = 2;
@@ -439,24 +442,19 @@
             this.tableLayoutPanel_Principal.Controls.Add(this.pictureBox6, 0, 0);
             this.tableLayoutPanel_Principal.Location = new System.Drawing.Point(6, 6);
             this.tableLayoutPanel_Principal.Name = "tableLayoutPanel_Principal";
-            this.tableLayoutPanel_Principal.RowCount = 6;
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.57218F));
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 17.13714F));
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.57267F));
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.57267F));
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.57267F));
-            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 16.57267F));
-            this.tableLayoutPanel_Principal.Size = new System.Drawing.Size(881, 506);
+            this.tableLayoutPanel_Principal.RowCount = 1;
+            this.tableLayoutPanel_Principal.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel_Principal.Size = new System.Drawing.Size(878, 496);
             this.tableLayoutPanel_Principal.TabIndex = 0;
             // 
             // groupBox4
             // 
-            this.groupBox4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.groupBox4.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.groupBox4.Controls.Add(this.pictureBox_Servidor_WEB);
             this.groupBox4.Controls.Add(this.button_Servidor_WEB);
             this.groupBox4.Controls.Add(this.textBox_Path_ServerWEB_CORAC);
             this.groupBox4.Controls.Add(this.label4);
-            this.groupBox4.Location = new System.Drawing.Point(85, 8);
+            this.groupBox4.Location = new System.Drawing.Point(84, 3);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(784, 67);
             this.groupBox4.TabIndex = 6;
@@ -509,9 +507,9 @@
             // 
             // pictureBox6
             // 
-            this.pictureBox6.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pictureBox6.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox6.Image = global::CORAC.Properties.Resources.Configuracoes_fw;
-            this.pictureBox6.Location = new System.Drawing.Point(3, 8);
+            this.pictureBox6.Location = new System.Drawing.Point(3, 3);
             this.pictureBox6.Name = "pictureBox6";
             this.pictureBox6.Size = new System.Drawing.Size(68, 67);
             this.pictureBox6.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -524,7 +522,7 @@
             this.Tab_Log.Controls.Add(this.groupBox_LogSystem);
             this.Tab_Log.Location = new System.Drawing.Point(4, 22);
             this.Tab_Log.Name = "Tab_Log";
-            this.Tab_Log.Size = new System.Drawing.Size(893, 538);
+            this.Tab_Log.Size = new System.Drawing.Size(890, 538);
             this.Tab_Log.TabIndex = 2;
             this.Tab_Log.Text = "Log";
             // 
@@ -586,7 +584,15 @@
             this.context_CORAC_ICONE_MAN.Name = "context_CORAC_ICONE_MAN";
             this.context_CORAC_ICONE_MAN.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.context_CORAC_ICONE_MAN.ShowCheckMargin = true;
-            this.context_CORAC_ICONE_MAN.Size = new System.Drawing.Size(217, 92);
+            this.context_CORAC_ICONE_MAN.Size = new System.Drawing.Size(217, 70);
+            // 
+            // Reiniciar
+            // 
+            this.Reiniciar.Name = "Reiniciar";
+            this.Reiniciar.Size = new System.Drawing.Size(216, 22);
+            this.Reiniciar.Text = "Reiniciar";
+            this.Reiniciar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.Reiniciar.Click += new System.EventHandler(this.Reiniciar_Click);
             // 
             // Status
             // 
@@ -632,7 +638,7 @@
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Status_Informacao,
             this.Data_Sistema_TLPrincipal});
-            this.statusStrip1.Location = new System.Drawing.Point(5, 575);
+            this.statusStrip1.Location = new System.Drawing.Point(5, 605);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(904, 22);
             this.statusStrip1.TabIndex = 2;
@@ -662,14 +668,23 @@
             this.onNetwork.Interval = 10000;
             this.onNetwork.Tick += new System.EventHandler(this.onNetwork_Tick);
             // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tabCORAC);
+            this.panel1.Location = new System.Drawing.Point(5, 35);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(904, 567);
+            this.panel1.TabIndex = 3;
+            // 
             // MenuPrincipal
             // 
             this.MenuPrincipal.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.Arquivo});
             this.MenuPrincipal.Location = new System.Drawing.Point(5, 5);
             this.MenuPrincipal.Name = "MenuPrincipal";
+            this.MenuPrincipal.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
             this.MenuPrincipal.Size = new System.Drawing.Size(904, 24);
-            this.MenuPrincipal.TabIndex = 3;
+            this.MenuPrincipal.TabIndex = 4;
             this.MenuPrincipal.Text = "&Arquivo";
             // 
             // Arquivo
@@ -695,27 +710,18 @@
             this.sairToolStripMenuItem.Text = "&Sair";
             this.sairToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
             // 
-            // Reiniciar
-            // 
-            this.Reiniciar.Name = "Reiniciar";
-            this.Reiniciar.Size = new System.Drawing.Size(216, 22);
-            this.Reiniciar.Text = "Reiniciar";
-            this.Reiniciar.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.Reiniciar.Click += new System.EventHandler(this.Reiniciar_Click);
-            // 
             // CORAC_TPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(914, 602);
-            this.Controls.Add(this.statusStrip1);
+            this.ClientSize = new System.Drawing.Size(914, 632);
             this.Controls.Add(this.MenuPrincipal);
-            this.Controls.Add(this.tabCORAC);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.statusStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.ImeMode = System.Windows.Forms.ImeMode.Alpha;
-            this.MainMenuStrip = this.MenuPrincipal;
             this.Name = "CORAC_TPrincipal";
             this.Padding = new System.Windows.Forms.Padding(5);
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -749,6 +755,7 @@
             this.context_CORAC_ICONE_MAN.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
+            this.panel1.ResumeLayout(false);
             this.MenuPrincipal.ResumeLayout(false);
             this.MenuPrincipal.PerformLayout();
             this.ResumeLayout(false);
@@ -805,11 +812,12 @@
         private System.Windows.Forms.Timer onConnect;
         private System.Windows.Forms.Timer onAssinatura;
         private System.Windows.Forms.Timer onNetwork;
+        private System.Windows.Forms.ToolStripMenuItem Reiniciar;
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.MenuStrip MenuPrincipal;
         private System.Windows.Forms.ToolStripMenuItem Arquivo;
         private System.Windows.Forms.ToolStripMenuItem reiniciarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sairToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem Reiniciar;
     }
 }
 

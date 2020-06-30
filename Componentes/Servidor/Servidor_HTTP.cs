@@ -119,12 +119,13 @@ namespace ServerClienteOnline.Server
                 Servidor.Start();
                 
                 IAsyncResult AceitarCliente = Servidor.BeginGetContext(new AsyncCallback(IniciarConversa), Servidor);
-
-                return true; ;
+                Active = true;
+                return true; 
             }
             catch (Exception e)
             {
-                
+                Active = false;
+
                 TratadorErros(e, this.GetType().Name);
                 return false;
             }
