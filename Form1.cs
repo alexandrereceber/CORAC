@@ -153,8 +153,10 @@ namespace CORAC
             {
                 picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
                 picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
-                
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+
+                string Path_Config = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
+                string ConfPath = Regex.Replace(Path_Config, "/Checked/", "/Update/", RegexOptions.IgnoreCase);
+                Uri EndURI = new Uri(ConfPath);
 
                 HttpClient URL = new HttpClient();
                 var pairs = new List<KeyValuePair<string, string>>
@@ -204,6 +206,67 @@ namespace CORAC
             }
         }
 
+        private async Task<bool> Verificar_Atualizacoes_Botao()
+        {
+
+            //Color Vermelho = Color.FromArgb(255, 255, 0, 0);
+            //Color Azul = Color.FromArgb(255, 0, 1, 255);
+
+            try
+            {
+                picture_Atualizacoes_CORAC.Image = Properties.Resources.Wait;
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.CenterImage;
+
+                string Path_Config = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
+                string ConfPath = Regex.Replace(Path_Config, "/Checked/", "/Update/", RegexOptions.IgnoreCase);
+                Uri EndURI = new Uri(ConfPath);
+
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>>
+                                        {
+                                            new KeyValuePair<string, string>("login", "abc")
+                                        };
+
+                var content = new FormUrlEncodedContent(pairs);
+                URL.Timeout = TimeSpan.FromSeconds(30);
+
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
+
+
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+
+                if (Conteudo.Result.IsSuccessStatusCode)
+                {
+                    //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Vermelho, Azul);
+                    picture_Internet_Status.Tag = "";
+                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Color_fw;
+                    MessageBox.Show("Repositório localizado." + " - Tempo: " + DateTime.Now.ToString(), "Atualização CORAC", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return true;
+                }
+                else
+                {
+                    picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Cinza_fw;
+                    MessageBox.Show("O sistema de atualização não responde." + " - Tempo: " + DateTime.Now.ToString(), "Atualização CORAC", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return false;
+                }
+
+            }
+            catch (Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                picture_Atualizacoes_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                //Bitmap Internet_ON = Change_Color(Properties.Resources.Update_System_256px, Azul, Vermelho);
+
+                picture_Atualizacoes_CORAC.Image = Properties.Resources.Atualizacoes_Cinza_fw;
+                MessageBox.Show("Ocorreu uma falha no repositório." + " - Tempo: " + DateTime.Now.ToString(), "Atualização CORAC", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                return false;
+            }
+        }
         /**
         * <summary>
         * Criado: 23/06/2020 -
@@ -256,6 +319,12 @@ namespace CORAC
                 }
             }
         }
+
+        /**
+            <summary>
+                Método utilizado na guia configurações
+            </summary>
+         */
         private async Task<bool> ObterAssinatura(string PathCORAC)
         {
             try
@@ -306,12 +375,12 @@ namespace CORAC
         }
         private async Task<bool> ObterAssinatura()
         {
-            try
+            while (true)
             {
-                Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
-                
-                while (true)
+                try
                 {
+                    Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
+
                     HttpClient URL = new HttpClient();
                     var pairs = new List<KeyValuePair<string, string>> { };
 
@@ -343,15 +412,15 @@ namespace CORAC
                     }
                     else
                     {
-                        return false;
+                        Thread.Sleep(TimeSleep);
                     }
-                }
-                
 
-            }
-            catch (Exception E)
-            {
-                return false;
+                }
+                catch (Exception E)
+                {
+                    MsgIniciar.Add("Servidor ou página inacessível." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                    Thread.Sleep(TimeSleep);
+                }
             }
         }
         /**
@@ -949,12 +1018,12 @@ namespace CORAC
                     {
                         Servicos.Remove(Tarefa);
 
-                        pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
-                        pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Color_fw;
-
                         Task<bool> ResultConfig = (Task<bool>)Tarefa;
                         if (ResultConfig.Result)
                         {
+                            pictureBox_Registro_CORAC.SizeMode = PictureBoxSizeMode.StretchImage;
+                            pictureBox_Registro_CORAC.Image = Properties.Resources.Registro_Color_fw;
+
                             Powerhell_WEB = Task.Run(Iniciar_Servidor_PowerShell);
                             Powerhell_WEB_ID = Powerhell_WEB.Id;
                             Servicos.Add(Powerhell_WEB);
@@ -1266,7 +1335,7 @@ namespace CORAC
             B.Enabled = false;
             try
             {
-                await Verificar_Atualizacoes();
+                await Verificar_Atualizacoes_Botao();
             }finally
             {
                 B.Enabled = true;
@@ -1630,6 +1699,11 @@ namespace CORAC
                     MSGInfo.AppendText(Msgs);
                 }
             }
+        }
+
+        private void picture_Internet_Status_MouseLeave(object sender, EventArgs e)
+        {
+            Status_Informacao.Text = "";
         }
     }
 

@@ -199,6 +199,7 @@
             this.picture_Internet_Status.TabStop = false;
             this.picture_Internet_Status.Tag = "Acesso à rede.";
             this.picture_Internet_Status.MouseEnter += new System.EventHandler(this.Picture_Internet_Status_MouseEnter);
+            this.picture_Internet_Status.MouseLeave += new System.EventHandler(this.picture_Internet_Status_MouseLeave);
             // 
             // Atualizacao_Status_GoupBox
             // 
