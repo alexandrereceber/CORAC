@@ -59,6 +59,9 @@
             this.textBox_Path_ServerWEB_CORAC = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.pictureBox6 = new System.Windows.Forms.PictureBox();
+            this.tab_Mensagens = new System.Windows.Forms.TabPage();
+            this.Caixa_Msg = new System.Windows.Forms.GroupBox();
+            this.MSGInfo = new System.Windows.Forms.RichTextBox();
             this.Tab_Log = new System.Windows.Forms.TabPage();
             this.groupBox_LogSystem = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
@@ -73,10 +76,7 @@
             this.Status_Informacao = new System.Windows.Forms.ToolStripStatusLabel();
             this.Data_Sistema_TLPrincipal = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.ConfiguracoesCORAC = new System.Windows.Forms.Timer(this.components);
             this.Relógio = new System.Windows.Forms.Timer(this.components);
-            this.onConnect = new System.Windows.Forms.Timer(this.components);
-            this.onAssinatura = new System.Windows.Forms.Timer(this.components);
             this.onNetwork = new System.Windows.Forms.Timer(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             this.MenuPrincipal = new System.Windows.Forms.MenuStrip();
@@ -101,6 +101,8 @@
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Servidor_WEB)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).BeginInit();
+            this.tab_Mensagens.SuspendLayout();
+            this.Caixa_Msg.SuspendLayout();
             this.Tab_Log.SuspendLayout();
             this.groupBox_LogSystem.SuspendLayout();
             this.context_CORAC_ICONE_MAN.SuspendLayout();
@@ -113,12 +115,14 @@
             // 
             this.tabCORAC.Controls.Add(this.Tab_Status);
             this.tabCORAC.Controls.Add(this.Tab_Config);
+            this.tabCORAC.Controls.Add(this.tab_Mensagens);
             this.tabCORAC.Controls.Add(this.Tab_Log);
             this.tabCORAC.Location = new System.Drawing.Point(3, 3);
             this.tabCORAC.Name = "tabCORAC";
             this.tabCORAC.SelectedIndex = 0;
             this.tabCORAC.Size = new System.Drawing.Size(898, 564);
             this.tabCORAC.TabIndex = 0;
+            this.tabCORAC.SelectedIndexChanged += new System.EventHandler(this.tabCORAC_SelectedIndexChanged);
             // 
             // Tab_Status
             // 
@@ -516,6 +520,35 @@
             this.pictureBox6.TabIndex = 6;
             this.pictureBox6.TabStop = false;
             // 
+            // tab_Mensagens
+            // 
+            this.tab_Mensagens.BackColor = System.Drawing.SystemColors.Control;
+            this.tab_Mensagens.Controls.Add(this.Caixa_Msg);
+            this.tab_Mensagens.Location = new System.Drawing.Point(4, 22);
+            this.tab_Mensagens.Name = "tab_Mensagens";
+            this.tab_Mensagens.Size = new System.Drawing.Size(890, 538);
+            this.tab_Mensagens.TabIndex = 3;
+            this.tab_Mensagens.Text = "Mensagens";
+            // 
+            // Caixa_Msg
+            // 
+            this.Caixa_Msg.BackColor = System.Drawing.SystemColors.Control;
+            this.Caixa_Msg.Controls.Add(this.MSGInfo);
+            this.Caixa_Msg.Location = new System.Drawing.Point(3, 13);
+            this.Caixa_Msg.Name = "Caixa_Msg";
+            this.Caixa_Msg.Size = new System.Drawing.Size(884, 522);
+            this.Caixa_Msg.TabIndex = 0;
+            this.Caixa_Msg.TabStop = false;
+            this.Caixa_Msg.Text = "Mensagens";
+            // 
+            // MSGInfo
+            // 
+            this.MSGInfo.Location = new System.Drawing.Point(0, 19);
+            this.MSGInfo.Name = "MSGInfo";
+            this.MSGInfo.Size = new System.Drawing.Size(878, 476);
+            this.MSGInfo.TabIndex = 2;
+            this.MSGInfo.Text = "";
+            // 
             // Tab_Log
             // 
             this.Tab_Log.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -541,7 +574,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(0, 472);
+            this.button1.Location = new System.Drawing.Point(0, 478);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(139, 28);
             this.button1.TabIndex = 3;
@@ -563,7 +596,7 @@
             this.listBox_FILE_LOG.FormattingEnabled = true;
             this.listBox_FILE_LOG.Location = new System.Drawing.Point(0, 41);
             this.listBox_FILE_LOG.Name = "listBox_FILE_LOG";
-            this.listBox_FILE_LOG.Size = new System.Drawing.Size(139, 420);
+            this.listBox_FILE_LOG.Size = new System.Drawing.Size(139, 433);
             this.listBox_FILE_LOG.TabIndex = 1;
             this.listBox_FILE_LOG.SelectedValueChanged += new System.EventHandler(this.listBox_FILE_LOG_SelectedValueChanged);
             // 
@@ -644,24 +677,10 @@
             this.statusStrip1.TabIndex = 2;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // ConfiguracoesCORAC
-            // 
-            this.ConfiguracoesCORAC.Interval = 20000;
-            this.ConfiguracoesCORAC.Tick += new System.EventHandler(this.ConfiguracoesCORAC_Tick);
-            // 
             // Relógio
             // 
             this.Relógio.Interval = 1000;
             this.Relógio.Tick += new System.EventHandler(this.Relógio_Tick);
-            // 
-            // onConnect
-            // 
-            this.onConnect.Tick += new System.EventHandler(this.onConnect_Tick);
-            // 
-            // onAssinatura
-            // 
-            this.onAssinatura.Interval = 10000;
-            this.onAssinatura.Tick += new System.EventHandler(this.onAssinatura_Tick);
             // 
             // onNetwork
             // 
@@ -686,6 +705,7 @@
             this.MenuPrincipal.Size = new System.Drawing.Size(904, 24);
             this.MenuPrincipal.TabIndex = 4;
             this.MenuPrincipal.Text = "&Arquivo";
+            this.MenuPrincipal.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.MenuPrincipal_ItemClicked);
             // 
             // Arquivo
             // 
@@ -699,14 +719,14 @@
             // reiniciarToolStripMenuItem
             // 
             this.reiniciarToolStripMenuItem.Name = "reiniciarToolStripMenuItem";
-            this.reiniciarToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.reiniciarToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.reiniciarToolStripMenuItem.Text = "&Reiniciar";
             this.reiniciarToolStripMenuItem.Click += new System.EventHandler(this.reiniciarToolStripMenuItem_Click);
             // 
             // sairToolStripMenuItem
             // 
             this.sairToolStripMenuItem.Name = "sairToolStripMenuItem";
-            this.sairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sairToolStripMenuItem.Size = new System.Drawing.Size(119, 22);
             this.sairToolStripMenuItem.Text = "&Sair";
             this.sairToolStripMenuItem.Click += new System.EventHandler(this.sairToolStripMenuItem_Click);
             // 
@@ -749,6 +769,8 @@
             this.groupBox4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_Servidor_WEB)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox6)).EndInit();
+            this.tab_Mensagens.ResumeLayout(false);
+            this.Caixa_Msg.ResumeLayout(false);
             this.Tab_Log.ResumeLayout(false);
             this.groupBox_LogSystem.ResumeLayout(false);
             this.groupBox_LogSystem.PerformLayout();
@@ -807,10 +829,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button_Stop_PowerShellCORAC;
         private System.Windows.Forms.Button button_Start_AR_CORAC;
-        private System.Windows.Forms.Timer ConfiguracoesCORAC;
         private System.Windows.Forms.Timer Relógio;
-        private System.Windows.Forms.Timer onConnect;
-        private System.Windows.Forms.Timer onAssinatura;
         private System.Windows.Forms.Timer onNetwork;
         private System.Windows.Forms.ToolStripMenuItem Reiniciar;
         private System.Windows.Forms.Panel panel1;
@@ -818,6 +837,9 @@
         private System.Windows.Forms.ToolStripMenuItem Arquivo;
         private System.Windows.Forms.ToolStripMenuItem reiniciarToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sairToolStripMenuItem;
+        private System.Windows.Forms.TabPage tab_Mensagens;
+        private System.Windows.Forms.GroupBox Caixa_Msg;
+        private System.Windows.Forms.RichTextBox MSGInfo;
     }
 }
 

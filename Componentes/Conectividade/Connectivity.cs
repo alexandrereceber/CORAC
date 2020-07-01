@@ -33,7 +33,7 @@ namespace ServerClienteOnline.Conectividade
         private static List<ListaConexoesHost> IPIdentificados;
         private static Exception Erros = null;
         public static ConfiguracoesCORAC Config { get; set; }
-        public static bool ConfigLoad = false;
+        public static string EndPadrao = "www.google.com.br";
         /**
          * <summary>
          * Verifica a conectividade do host com a rede local ou internet.
@@ -56,7 +56,7 @@ namespace ServerClienteOnline.Conectividade
                 byte[] Bufered = new byte[78];
 
                 
-                Endereco = Endereco == null ? "www.google.com.br": Endereco;
+                Endereco = Endereco == null ? EndPadrao: Endereco;
                 PingReply Replay = await Enviar.SendPingAsync(Endereco, 1000, Bufered, Opcoes);
 
                 if (Replay.Status == IPStatus.Success) return true; else return false;

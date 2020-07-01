@@ -1875,5 +1875,7 @@ namespace ServerClienteOnline.Utilidades
 
         [JsonProperty("Signacture")]
         public string Signacture { get; set; }
+
+        public bool Valida = false;
     }
 }
