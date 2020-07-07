@@ -232,6 +232,7 @@ namespace ServerClienteOnline.Server
             try
             {
 
+                string DadosPacote;
 
                 string __Conteudo = _Conteudo.ReadLine();
                 /*-----------------------Processamento----------------------------*/
@@ -261,13 +262,29 @@ namespace ServerClienteOnline.Server
                             throw new Exception("Ocorreram erros ao executar o comando!");
                         }
 
-                        Pacote_Comando PCT = new Pacote_Comando();
-                        PCT.Resposta = Executar;
-                        string DadosPacote = Converter_JSON_String.SerializarPacote(PCT);
-                        //Obtém o Barramento de escrita com a cliente
-                        ObterResposta.ContentLength64 = DadosPacote.Length;
-                        ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                        ObterResposta.Close();
+                        if(Executar != null)
+                        {
+                            Pacote_Comando PCT = new Pacote_Comando();
+                            PCT.Resposta = Executar;
+                            DadosPacote = Converter_JSON_String.SerializarPacote(PCT);
+                            //Obtém o Barramento de escrita com a cliente
+                            ObterResposta.ContentLength64 = DadosPacote.Length;
+                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                            ObterResposta.Close();
+                        }
+                        else
+                        {
+                            P_Error = new Pacote_Error();
+                            P_Error.Error = true;
+                            P_Error.Mensagem = "Esse comando não existe.";
+                            P_Error.Numero = 50000;
+
+                            DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
+                            ObterResposta.ContentLength64 = DadosPacote.Length;
+                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                            ObterResposta.Close();
+                        }
+
 
                         break;
 

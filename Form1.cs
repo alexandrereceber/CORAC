@@ -1664,11 +1664,15 @@ namespace CORAC
                 Application.Restart();
         }
 
-        private void sairToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void sairToolStripMenuItem_Click(object sender, EventArgs e)
         {
             DialogResult Restart = MessageBox.Show("Tem certeza que deseja sair da aplicação?", "Sair", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (Restart == DialogResult.Yes)
+            {
+                await SairSistema();
                 Application.Exit();
+
+            }
         }
 
         private void Reiniciar_Click(object sender, EventArgs e)

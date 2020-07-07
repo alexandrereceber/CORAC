@@ -1245,6 +1245,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Comando")]
         public string Comando { get; set; }
 
+        [JsonProperty("ScriptBD")]
+        public bool ScriptBD { get; set; }
+
         [JsonProperty("Resposta")]
         public string Resposta { get; set; }
 

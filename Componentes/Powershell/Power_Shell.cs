@@ -113,7 +113,7 @@ namespace Power_Shell.AmbienteExecucao
             catch (Exception ex)
             {
                 TratadorErros(ex, this.GetType().Name);
-                Active = true;
+                Active = false;
                 return false;
             }
         }
@@ -164,18 +164,32 @@ namespace Power_Shell.AmbienteExecucao
 
         /**
          * <summary>
-         * Método assíncrono, utilizado para realizar a execução de um comando, powershell, e retornar de um dos formatos
+         * Utilizado para realizar a execução de um script, que foi recuperado do banco de dados, em um ambiente powershell.
+         * O formato do retorno é string mas o conteúdo e formatado de acordo com a estrutura interna do script.
+         * <para><paramref name="Script"/> - Script que será executado no espaço do powershell</para>
+         * <para>Método Síncrono com conteúdo assíncrono.</para>
+         * </summary>
+         */
+        public bool ExecutarScript_BD(Pacote_Comando PCT)
+        {
+
+            return true;
+        }
+
+        /**
+         * <summary>
+         * Utilizado para realizar a execução de um script, powershell, e retornar de um dos formatos
          * existentes json, html, cvs, xml
-         * <para><paramref name="Comando"/> - Comando que será executado no espaço do powershell</para>
+         * <para><paramref name="Script"/> - Script que será executado no espaço do powershell</para>
          * <para>Método Síncrono</para>
          * </summary>
          */
-        public bool ExecutarScript(string Comando)
+        public bool ExecutarScript_Local(string Script)
         {
             string output;
             try
             {
-                LinhaComando = Comando;
+                LinhaComando = Script;
 
                 switch (TSaida)
                 {
@@ -221,8 +235,7 @@ namespace Power_Shell.AmbienteExecucao
 
         /**
          * <summary>
-         * Gera a saída em texto.
-         * <para><paramref name="Comando"/> - Comando que será executado no espaço do powershell</para>
+         * Gera a saída para dentro da variável Resulta.
          * <para>Método Síncrono</para>
          * </summary>
          */
@@ -310,7 +323,6 @@ namespace Power_Shell.AmbienteExecucao
         /**
          * <summary>
          * Gera a saída em texto.
-         * <para><paramref name="Comando"/> - Comando que será executado no espaço do powershell</para>
          * <para>Método Síncrono</para>
          * </summary>
          */
@@ -651,20 +663,37 @@ namespace Power_Shell.AmbienteExecucao
 
         }
 
+        private string Get_ScriptCompleto(Pacote_Comando Script = null)
+        {
+            return "";
+        }
         public bool Route(Pacote_Comando PCT)
         {
             //Informa à saída o tipo de formato requisitado json, html, xml entre outros.
             TSaida = PCT.Formato;
-            if (Get_ComandosPersonalizados(PCT)) return true;
-
-            if ((ExecutarScript(PCT.Comando)) && (PCT.Comando != ""))
+            if (!PCT.ScriptBD)
             {
-                if (gerarSaida()) return true; else return false;
+                if (Get_ComandosPersonalizados(PCT)) return true;
+
+                if ((ExecutarScript_Local(PCT.Comando)) && (PCT.Comando != ""))
+                {
+                    if (gerarSaida()) return true; else return false;
+                }
+                else
+                {
+                    if ((ExecutarScript_BD(PCT)))
+                    {
+                        if (gerarSaida()) return true; else return false;
+                    }
+                    return false;
+                }
             }
             else
             {
+
                 return false;
             }
+
         }
 
         public void Dispose()
