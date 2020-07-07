@@ -71,14 +71,9 @@ struct InforError
         /**
          * Construtor da classe que recebe, como parâmetro, o endereço do servidor que criará a saída de dados.
          */
-        public LogarSistema(string End)
+        public LogarSistema(Uri End)
         {
-            Regex Valid_End = new Regex(@"\bhttp://\b",RegexOptions.IgnoreCase);
-            if (!Valid_End.IsMatch(End))
-            {
-                End = "http://" + End;
-            }
-            Dados_Endereco = new Uri(End);
+            Dados_Endereco = End;
         }
         /**
          * Autentica o usuário no sistema.

@@ -373,6 +373,46 @@ namespace CORAC
                 return false;
             }
         }
+
+        private async Task<bool> ObterFuncoesPowershell()
+        {
+            while (true)
+            {
+                try
+                {
+                    string Path_Config = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
+                    string ConfPath = Regex.Replace(Path_Config, "/Checked/", "/Validar/", RegexOptions.IgnoreCase);
+                    Uri EndURI = new Uri(ConfPath);
+
+                    LogarSistema Logar = new LogarSistema(EndURI);
+                    await Logar.Logar(PerfilCORAC.UsuarioCORAC, PerfilCORAC.SenhaCORAC);
+                    if (Logar.is_Logado())
+                    {
+                        PerfilCORAC.ChaveLogin = Logar.getChaveSessao();
+                    }
+                    else
+                    {
+                        if (Logar.GetInforError().Error)
+                        {
+                            MsgIniciar.Add(Logar.GetInforError().Mensagem + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                        }
+                        else
+                        {
+                            MsgIniciar.Add("Error na autenticação do usuário CORAC. Favor entrar em contato com o departamento de tecnologia." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                        }
+
+                        Thread.Sleep(TimeSleep);
+                    }
+
+                }
+                catch (Exception E)
+                {
+                    MsgIniciar.Add("Servidor ou página inacessível." + " - Tempo: " + DateTime.Now.ToString() + "\n" + "Error: " + E.Message);
+                    Thread.Sleep(TimeSleep);
+                }
+            }
+        }
+
         private async Task<bool> ObterAssinatura()
         {
             while (true)
@@ -958,17 +998,35 @@ namespace CORAC
                 picture_Internet_Status.SizeMode = PictureBoxSizeMode.StretchImage;
                 picture_Internet_Status.Image = Properties.Resources.Internet_Cor_fw;
 
-                Task Atualizar, Assinatura ,Registro, BuscarConfiguracoes,Powerhell_WEB, Acesso_Remoto;
-                int Atualizar_ID = 0, Assinatura_ID = 0, BuscarConfiguracoes_ID = 0, Registro_ID = 0, Powerhell_WEB_ID = 0, Acesso_Remoto_ID = 0, SPower = 0, SAR = 0;
+                Task Atualizar, 
+                    Assinatura, 
+                    Registro, 
+                    BuscarConfiguracoes,
+                    Powerhell_WEB, 
+                    Acesso_Remoto, 
+                    LogonUserCorac;
+
+                int Atualizar_ID = 0,
+                    Assinatura_ID = 0,
+                    BuscarConfiguracoes_ID = 0,
+                    Registro_ID = 0,
+                    Powerhell_WEB_ID = 0,
+                    Acesso_Remoto_ID = 0,
+                    LogonUserCorac_ID = 0,
+                    SPower = 0, SAR = 0;
                 List<Task> Servicos = new List<Task>();
 
                 Atualizar = Task.Run(Verificar_Atualizacoes);
                 Atualizar_ID = Atualizar.Id;
 
+                LogonUserCorac = Task.Run(ObterFuncoesPowershell);
+                LogonUserCorac_ID = LogonUserCorac.Id;
+
                 Assinatura = Task.Run(ObterAssinatura);
                 Assinatura_ID = Assinatura.Id;
 
                 Servicos.Add(Atualizar);
+                Servicos.Add(LogonUserCorac);
                 Servicos.Add(Assinatura);
 
                 while (Servicos.Count > 0)
@@ -980,7 +1038,13 @@ namespace CORAC
                     {
                         Servicos.Remove(Tarefa);
                         button_AtualizacoesCORAC.Enabled = true;
-                        
+
+                    }
+
+                    else if (Tarefa.Id == LogonUserCorac_ID)
+                    {
+                        Servicos.Remove(Tarefa);
+
                     }
 
                     else if (Tarefa.Id == Assinatura_ID)
