@@ -12,22 +12,26 @@ using ServerClienteOnline.Utilidades;
 using ServerClienteOnline.Interfaces;
 using ServerClienteOnline.TratadorDeErros;
 using System.Threading.Tasks;
+using System.Net.Http;
+using CamadaDeDados.RESTFormat;
+using Newtonsoft.Json.Linq;
+using CORAC;
 
 namespace ServerClienteOnline.Server
 {
-    class Servidor_HTTP: Tratador_Erros, IDisposable, IServidor
+    class Servidor_HTTP : Tratador_Erros, IDisposable, IServidor
     {
         HttpListener Servidor;
         private bool Active = false;
 
         public __Autenticacao TEndPoint { get; set; }
-        List<string> Prefixos= new List<string>();
+        List<string> Prefixos = new List<string>();
 
         private IRuntime _CMDs;
         private IAuthHTML _Auth;
         private IGClienteHTML _GerenciadorCliente;
 
-         public Servidor_HTTP()
+        public Servidor_HTTP()
         {
             try
             {
@@ -119,6 +123,7 @@ namespace ServerClienteOnline.Server
                 Servidor.Start();
                 
                 IAsyncResult AceitarCliente = Servidor.BeginGetContext(new AsyncCallback(IniciarConversa), Servidor);
+
                 Active = true;
                 return true; 
             }

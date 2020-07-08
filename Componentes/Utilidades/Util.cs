@@ -1887,5 +1887,6 @@ namespace ServerClienteOnline.Utilidades
         public static string UsuarioCORAC   = "CORAC@corax.com";
         public static string SenhaCORAC     = "Al$#2810";
         public static string ChaveLogin     = "";
+        public static bool isLogon          = false;
     }
 }

@@ -44,7 +44,7 @@ struct InforError
     /**
      * Classe que realiza a autenticação no sistema através da internet.
      */
-    class LogarSistema : HttpClient
+    class LogarSistema : HttpClient, IDisposable
     {
         private readonly Uri Dados_Endereco = null;
         private string Chave_Sessao = null;
@@ -58,6 +58,11 @@ struct InforError
         private string ResultSET = null;
         private JObject ResultSETJSON;
 
+        ~LogarSistema()
+        {
+            ChamadaREST = null;
+            ResultSETJSON = null;
+        }
         /**
          * Representa o nome do usuário que esta tentando logar no sistema.
          */
@@ -224,7 +229,7 @@ struct InforError
     /**
      * Classe que busca dos dados das tabelas nos bancos de dados.
      */
-    class Tabelas : HttpClient
+    class Tabelas : HttpClient, IDisposable
     {
         private const string 
                                 Select  = "ab58b01839a6d92154c615db22ea4b8f", 
@@ -259,6 +264,16 @@ struct InforError
         private HttpResponseMessage ChamadaREST = null;
         private string ResultSET = null;
         private JObject ResultSETJSON;
+        private void Dispose() {
+            ListaFiltrosPadroes = null;
+            ConjuntoDadosInserir = null;
+            ConjuntoKey = null;
+            ConjuntoDadosAtualizar = null;
+            EnviarParametros = null;
+            EnviarParametrosSelect = null;
+            ChamadaREST = null;
+            ResultSETJSON = null;
+        }
         public Tabelas(string End, string Chave = null)
         {
             Chave_Sessao = Chave;

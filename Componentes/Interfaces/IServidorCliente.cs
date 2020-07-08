@@ -18,7 +18,7 @@ namespace ServerClienteOnline.Interfaces
     {
         bool Route(Pacote_Comando pct);
         string Get_Resultado();
-        bool ExecutarScript_BD(Pacote_Comando PCT);
+        //bool ExecutarScript_BD(Pacote_Comando PCT);
     }
 
     /**

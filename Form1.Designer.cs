@@ -544,8 +544,10 @@
             // 
             // MSGInfo
             // 
+            this.MSGInfo.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MSGInfo.Location = new System.Drawing.Point(0, 19);
             this.MSGInfo.Name = "MSGInfo";
+            this.MSGInfo.ReadOnly = true;
             this.MSGInfo.Size = new System.Drawing.Size(878, 476);
             this.MSGInfo.TabIndex = 2;
             this.MSGInfo.Text = "";

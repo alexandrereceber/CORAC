@@ -46,8 +46,8 @@ namespace CORAC
         private RegistroCORAC Registro_Corac = new RegistroCORAC();
 
         private Assinatura Sign;
-        private int TimeSleep = 20000;
-        private List<string> MsgIniciar = new List<string>();
+        public static int TimeSleep = 20000;
+        public static List<string> MsgIniciar = new List<string>();
         //Form CaixaDialog = new Chat_CORAC();
 
         private bool ArmazenarAlteracoesCampos(string Chave, string Valor)
@@ -374,7 +374,7 @@ namespace CORAC
             }
         }
 
-        private async Task<bool> ObterFuncoesPowershell()
+        private async Task<bool> AutenticarUsuarioCORAC()
         {
             while (true)
             {
@@ -389,16 +389,22 @@ namespace CORAC
                     if (Logar.is_Logado())
                     {
                         PerfilCORAC.ChaveLogin = Logar.getChaveSessao();
+                        PerfilCORAC.isLogon = true;
+                        MsgIniciar.Add("A autenticação do usuário CORAC WEB foi realizada com sucesso!." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                        
+                        return true;
                     }
                     else
                     {
                         if (Logar.GetInforError().Error)
                         {
                             MsgIniciar.Add(Logar.GetInforError().Mensagem + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                            PerfilCORAC.isLogon = false;
                         }
                         else
                         {
                             MsgIniciar.Add("Error na autenticação do usuário CORAC. Favor entrar em contato com o departamento de tecnologia." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                            PerfilCORAC.isLogon = false;
                         }
 
                         Thread.Sleep(TimeSleep);
@@ -408,6 +414,7 @@ namespace CORAC
                 catch (Exception E)
                 {
                     MsgIniciar.Add("Servidor ou página inacessível." + " - Tempo: " + DateTime.Now.ToString() + "\n" + "Error: " + E.Message);
+                    PerfilCORAC.isLogon = false;
                     Thread.Sleep(TimeSleep);
                 }
             }
@@ -841,6 +848,7 @@ namespace CORAC
                 //------------------SERVIDOR POWERSHELL-----------------------------------------------------------------
 
                 AbrirComando = new Ambiente_PowerShell();
+                AbrirComando.setPath_CORACWEB = (string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC");
                 AbrirComando.StartServidor();
 
                 Autent_WEB = new Autenticador_WEB();
@@ -1019,7 +1027,7 @@ namespace CORAC
                 Atualizar = Task.Run(Verificar_Atualizacoes);
                 Atualizar_ID = Atualizar.Id;
 
-                LogonUserCorac = Task.Run(ObterFuncoesPowershell);
+                LogonUserCorac = Task.Run(AutenticarUsuarioCORAC);
                 LogonUserCorac_ID = LogonUserCorac.Id;
 
                 Assinatura = Task.Run(ObterAssinatura);
@@ -1172,9 +1180,11 @@ namespace CORAC
                 InitializeComponent();
                 Control[] TStatus = tabCORAC.Controls.Find("Tab_Status", false);
                 Control[] TLog = tabCORAC.Controls.Find("Tab_Log", false);
+                Control[] TMsg = tabCORAC.Controls.Find("tab_Mensagens", false);
 
                 tabCORAC.Controls.Remove(TStatus[0]);
                 tabCORAC.Controls.Remove(TLog[0]);
+                tabCORAC.Controls.Remove(TMsg[0]);
 
                 MessageBox.Show("Endereço do servidor CORAC WEB está vazio!\nFavor entrar em contato com o departamento de tecnologia.", "Servidor CORAC", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -1706,7 +1716,7 @@ namespace CORAC
             }
             else
             {
-                MsgIniciar.Add("A conectividade ainda não foi reestabelecida. Verificação: " + DateTime.Now.ToString()+"\n");
+                MsgIniciar.Add("A conectividade ainda não foi reestabelecida. Verificação: " + DateTime.Now.ToString()+ "\n");
 
             }
         }
@@ -1764,7 +1774,7 @@ namespace CORAC
                 MSGInfo.Clear();
                 foreach(string Msgs in MsgIniciar)
                 {
-                    MSGInfo.AppendText(Msgs);
+                    MSGInfo.AppendText(Msgs + "\n");
                 }
             }
         }
