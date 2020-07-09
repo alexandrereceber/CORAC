@@ -85,7 +85,8 @@ namespace Power_Shell.AmbienteExecucao
 
         private string PathCORACWEB = null;
         private List<KeyValuePair<string, string>> FunctionsBD = null; 
-        
+        private List<KeyValuePair<string, string>> FunctionsBDCMPExcluidos = null;
+
         private bool Active = false;
 
         string Result;
@@ -103,6 +104,7 @@ namespace Power_Shell.AmbienteExecucao
         {
             Servidor = null;
             FunctionsBD = null;
+            FunctionsBDCMPExcluidos = null;
             OutComandos_Script = null;
         }
 
@@ -113,10 +115,12 @@ namespace Power_Shell.AmbienteExecucao
                 foreach(KeyValuePair<string, string> i in FunctionsBD)
                 {
                     Servidor.AddScript(i.Value);
+
                 }
+                Collection<PSObject> Resultado = Servidor.Invoke();
+
                 try
                 {
-                    Collection<PSObject> Resultado = Servidor.Invoke();
                     CORAC_TPrincipal.MsgIniciar.Add("As funções foram carregadas com sucesso no ambiente powershell." + " - Tempo: " + DateTime.Now.ToString() + "\n");
 
                 }
@@ -159,10 +163,13 @@ namespace Power_Shell.AmbienteExecucao
                             CORAC_TPrincipal.MsgIniciar.Add("As funções foram carregadas da base de dados CORAC." + " - Tempo: " + DateTime.Now.ToString() + "\n");
 
                             FunctionsBD = new List<KeyValuePair<string, string>>();
+                            FunctionsBDCMPExcluidos = new List<KeyValuePair<string, string>>();
 
                             foreach (JArray i in Dados.Value)
                             {
                                 FunctionsBD.Add(new KeyValuePair<string, string>((string)i[1], (string)i[2]));
+                                if ((string)i[6] != "")
+                                    FunctionsBDCMPExcluidos.Add(new KeyValuePair<string, string>((string)i[1], (string)i[6]));
                             }
 
                             AdicionarScriptsAmbienteExecucao();
@@ -542,6 +549,7 @@ namespace Power_Shell.AmbienteExecucao
           * */
         private bool Transfor_JSON(ref Collection<PSObject> Objeto, string Campos = null, string Excluidos = null)
         {
+            if (Objeto[0].BaseObject.GetType().Name == "String") { Result = "[{ \"ResultadoHTML\":\"" + Objeto[0].BaseObject + "\"}]"; return true; };
             string Linha = "";
             string _JSON = "";
             string[] _Campos;
@@ -565,7 +573,18 @@ namespace Power_Shell.AmbienteExecucao
                     if (!Lista_Incluidos | Lista_Excluidos) continue;
                     try
                     {
-                        Linha += (count == 0 ? "" : ", ") + "\"" + ii.Name + "\"" + " : " + "\"" + ii.Value + "\"";
+                        if(ii.Value != null)
+                        {
+                            if (ii.Value.GetType().Name == "String")
+                                Linha += (count == 0 ? "" : ", ") + "\"" + ii.Name + "\"" + " : " + "\"" + ii.Value.ToString().Replace("\\", "#") + "\"";
+                            else
+                                Linha += (count == 0 ? "" : ", ") + "\"" + ii.Name + "\"" + " : " + "\"" + ii.Value + "\"";
+                        }
+                        else
+                        {
+                            Linha += (count == 0 ? "" : ", ") + "\"" + ii.Name + "\"" + " : " + "\"" + ii.Value + "\"";
+                        }
+
                     }
                     catch (Exception e)
                     {
@@ -670,7 +689,7 @@ namespace Power_Shell.AmbienteExecucao
             int i = 1;
             string TCampos = null;
 
-            string Excluidos = "StartTime";
+            string Excluidos = "Path,Options,ClassPath,Properties,SystemProperties,Qualifiers,Scope,__NAMESPACE";
 
             if (Parametros.Contains<string>("-campos"))
             {
@@ -712,14 +731,48 @@ namespace Power_Shell.AmbienteExecucao
             return true; ;
         }
 
+        /**
+          * <summary>
+          * <para>Data Criação: 09/07/2020</para>
+          * Busca os campos de um determinado comando que deverão ser excluídos na criação do json. Obs: Seu uso se dá muitas vezes por ter campos incompatível com json enviando caracteres que confundem o json, principalmente no PHP.
+          * <paramref name="Campos"/> Representa os campos que serão gerados como saída.
+          * <para>Método Síncrono</para>
+          * <para>Retorno: string</para>
+          * </summary>
+          * */
+        private string ObterCMPExcluidosBD(string Comando)
+        {
+            if(FunctionsBDCMPExcluidos != null)
+                if(FunctionsBDCMPExcluidos.Count > 0)
+                    foreach(KeyValuePair<string, string> i in FunctionsBDCMPExcluidos)
+                    {
+                        if(i.Key.Equals(Comando,StringComparison.OrdinalIgnoreCase))
+                        {
+                            return i.Value;
+                        }
+                    }
+            return "";
+        }
+
+        /**
+          * <summary>
+          * <para>Data Criação: 09/07/2020</para>
+          * Busca os campos de um determinado comando que deverão ser excluídos na criação do json.
+          * <paramref name="Camando"/> Representa o comando que deverá ser executado no ambiente powershell.
+          * <paramref name="Parametros"/> Representa os campos que serão gerados como saída json.
+          * <para>Método Síncrono</para>
+          * <para>Retorno: string</para>
+          * </summary>
+          * */
         private bool OtherCommands(string Comando, string[] Parametros)
         {
             try
             {
                 int i = 1;
                 string TCampos = null;
+                string ExcluidosBD = ObterCMPExcluidosBD(Comando);
 
-                string Excluidos = "StartTime";
+                string Excluidos = "Path,Options,ClassPath,Properties,SystemProperties,Qualifiers,Scope,__NAMESPACE,__PATH,__RELPATH" + (ExcluidosBD == "" ? "" : ("," + ExcluidosBD));
 
                 if (Parametros.Contains<string>("-campos"))
                 {
@@ -731,6 +784,8 @@ namespace Power_Shell.AmbienteExecucao
 
                 Servidor.AddScript(Comando);
                 OutComandos_Script = Servidor.Invoke();
+
+                if (OutComandos_Script.Count == 0) return false;
 
                 switch (TSaida)
                 {
@@ -819,34 +874,11 @@ namespace Power_Shell.AmbienteExecucao
         }
         public bool Route(Pacote_Comando PCT)
         {
-            //Informa à saída o tipo de formato requisitado json, html, xml entre outros.
             TSaida = PCT.Formato;
-            //if (!PCT.ScriptBD)
-            //{
-
-            if (Get_Comandos(PCT)) 
-                return true; 
+            
+            if (Get_Comandos(PCT))
+                return true;
             else return false;
-
-                //if ((ExecutarScript_Local(PCT.Comando)) && (PCT.Comando != ""))
-                //{
-                //    return true;
-                //    //if (gerarSaida()) return true; else return false;
-                //}
-                //else
-                //{
-                //    if ((ExecutarScript_BD(PCT)))
-                //    {
-                //        if (gerarSaida()) return true; else return false;
-                //    }
-                //    return false;
-                //}
-            //}
-            //else
-            //{
-
-            //    return false;
-            //}
 
         }
 
