@@ -31,32 +31,32 @@ namespace Power_Shell.AmbienteExecucao
             <para>Return: </para>            
         </summary>
      */
-    class InformacoesGerais
-    {
-        public string Usuario { get; }
-        public string PlacaMae { get; }
-        public string NumeroSerie { get; }
-        public string Versao { get; }
-        public string SO { get; }
-        public string SOCaption { get; }
-        public string Processador { get; }
-        public int Memoria { get; }
-        public int Antivirus { get; }
-        public InformacoesGerais()
-        {
-            Usuario = ((string)Get_WMI.Obter_Atributo("Win32_ComputerSystem", "Username")).Replace("\\","-");
-            PlacaMae = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Manufacturer");
-            NumeroSerie = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "SerialNumber");
-            Versao = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Version");
-            SOCaption = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "Caption");
-            SO = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "OSArchitecture");
-            Memoria = (int)Get_WMI.Obter_Atributo("Win32_OperatingSystem", "TotalVisibleMemorySize");
-            Processador = Get_WMI.Obter_Atributo("Win32_Processor", "Name");
+    //class InformacoesGerais
+    //{
+    //    public string Usuario { get; }
+    //    public string PlacaMae { get; }
+    //    public string NumeroSerie { get; }
+    //    public string Versao { get; }
+    //    public string SO { get; }
+    //    public string SOCaption { get; }
+    //    public string Processador { get; }
+    //    public int Memoria { get; }
+    //    public int Antivirus { get; }
+    //    public InformacoesGerais()
+    //    {
+    //        //Usuario = ((string)Get_WMI.Obter_Atributo("Win32_ComputerSystem", "Username")).Replace("\\","-");
+    //        PlacaMae = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Manufacturer");
+    //        NumeroSerie = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "SerialNumber");
+    //        Versao = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "Version");
+    //        SOCaption = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "Caption");
+    //        SO = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "OSArchitecture");
+    //        Memoria = (int)Get_WMI.Obter_Atributo("Win32_OperatingSystem", "TotalVisibleMemorySize");
+    //        Processador = Get_WMI.Obter_Atributo("Win32_Processor", "Name");
             
-        }
+    //    }
 
 
-    }
+    //}
 
     public struct Erros
     {
@@ -685,52 +685,52 @@ namespace Power_Shell.AmbienteExecucao
             return true; ;
         }
 
-        public bool get_InfoGeral(string[] Parametros)
-        {
-            int i = 1;
-            string TCampos = null;
+        //public bool get_InfoGeral(string[] Parametros)
+        //{
+        //    int i = 1;
+        //    string TCampos = null;
 
-            string Excluidos = "Path,Options,ClassPath,Properties,SystemProperties,Qualifiers,Scope,__NAMESPACE";
+        //    string Excluidos = "Path,Options,ClassPath,Properties,SystemProperties,Qualifiers,Scope,__NAMESPACE";
 
-            if (Parametros.Contains<string>("-campos"))
-            {
-                for (i = 1; i <= Parametros.Length; i++)
-                {
-                    if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
-                }
-            }
-            PSObject Saida = new PSObject(new InformacoesGerais());
+        //    if (Parametros.Contains<string>("-campos"))
+        //    {
+        //        for (i = 1; i <= Parametros.Length; i++)
+        //        {
+        //            if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
+        //        }
+        //    }
+        //    PSObject Saida = new PSObject(new InformacoesGerais());
             
-            Collection<PSObject> Saidas = new Collection<PSObject>();
-            Saidas.Add(Saida);
+        //    Collection<PSObject> Saidas = new Collection<PSObject>();
+        //    Saidas.Add(Saida);
             
             
-            if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
+        //    if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
 
-            switch (TSaida)
-            {
-                case TiposSaidas.HTML:
-                    break;
+        //    switch (TSaida)
+        //    {
+        //        case TiposSaidas.HTML:
+        //            break;
 
-                case TiposSaidas.CVS:
-                    break;
+        //        case TiposSaidas.CVS:
+        //            break;
 
-                case TiposSaidas.JSON:
-                    return Transfor_JSON(ref Saidas, TCampos, Excluidos);
+        //        case TiposSaidas.JSON:
+        //            return Transfor_JSON(ref Saidas, TCampos, Excluidos);
 
 
-                case TiposSaidas.XML:
-                    break;
+        //        case TiposSaidas.XML:
+        //            break;
 
-                case TiposSaidas.TXT:
-                    break;
+        //        case TiposSaidas.TXT:
+        //            break;
 
-                default:
-                    break;
-            }
+        //        default:
+        //            break;
+        //    }
 
-            return true; ;
-        }
+        //    return true; ;
+        //}
 
         /**
           * <summary>
@@ -851,11 +851,11 @@ namespace Power_Shell.AmbienteExecucao
                         else
                             return false;
 
-                    case "get_InfoGeral":
-                        if (get_InfoGeral(Partes_Comando))
-                            return true;
-                        else
-                            return false;
+                    //case "get_InfoGeral":
+                    //    if (get_InfoGeral(Partes_Comando))
+                    //        return true;
+                    //    else
+                    //        return false;
 
 
                     default:
