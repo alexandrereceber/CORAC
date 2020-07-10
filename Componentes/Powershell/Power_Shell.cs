@@ -41,6 +41,7 @@ namespace Power_Shell.AmbienteExecucao
         public string SOCaption { get; }
         public string Processador { get; }
         public int Memoria { get; }
+        public int Antivirus { get; }
         public InformacoesGerais()
         {
             Usuario = ((string)Get_WMI.Obter_Atributo("Win32_ComputerSystem", "Username")).Replace("\\","-");
@@ -51,7 +52,7 @@ namespace Power_Shell.AmbienteExecucao
             SO = Get_WMI.Obter_Atributo("Win32_OperatingSystem", "OSArchitecture");
             Memoria = (int)Get_WMI.Obter_Atributo("Win32_OperatingSystem", "TotalVisibleMemorySize");
             Processador = Get_WMI.Obter_Atributo("Win32_Processor", "Name");
-
+            
         }
 
 
@@ -549,7 +550,7 @@ namespace Power_Shell.AmbienteExecucao
           * */
         private bool Transfor_JSON(ref Collection<PSObject> Objeto, string Campos = null, string Excluidos = null)
         {
-            if (Objeto[0].BaseObject.GetType().Name == "String") { Result = "[{ \"ResultadoHTML\":\"" + Objeto[0].BaseObject + "\"}]"; return true; };
+            if (Objeto[0].BaseObject.GetType().Name == "String") { Result = (string)Objeto[0].BaseObject; return true; };
             string Linha = "";
             string _JSON = "";
             string[] _Campos;
@@ -900,7 +901,7 @@ namespace Power_Shell.AmbienteExecucao
 
         public string Get_Resultado()
         {
-            string Saida = Result;
+            string Saida = Result.Replace("\r","").Replace("\n","").Replace("\\","#");
             Result = null;
             return Saida;
         }

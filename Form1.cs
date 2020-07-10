@@ -645,7 +645,7 @@ namespace CORAC
                         else
                         {
                             int Chassi = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "ChassisTypes")[0];
-                            string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
+                            //string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
 
                             List<KeyValuePair<string, string>> IDados = new List<KeyValuePair<string, string>>();
                             IDados.Add(new KeyValuePair<string, string>("Tipo", Convert.ToString(Chassi)));

@@ -1755,7 +1755,7 @@ namespace ServerClienteOnline.Utilidades
             PctBase.Conteudo = SubPct;
 
             string SerializarPacote = JsonConvert.SerializeObject(PctBase);
-            return SerializarPacote + "     ";
+            return SerializarPacote + "                       ";
 
         }
 
