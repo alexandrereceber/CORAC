@@ -864,7 +864,7 @@ namespace CORAC
                 
                 ServidorWEB_Local.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
-                ServidorWEB_Local.AddPrefixos(null, EndString, "Pacotes/", EndPorta);
+                ServidorWEB_Local.AddPrefixos(null, EndString, "SYNCPCT/", EndPorta);
 
                 ServidorWEB_Local.AtribuirExecutor = AbrirComando;
                 ServidorWEB_Local.Autenticador = Autent_WEB;

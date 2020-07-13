@@ -118,10 +118,11 @@ namespace Power_Shell.AmbienteExecucao
                     Servidor.AddScript(i.Value);
 
                 }
-                Collection<PSObject> Resultado = Servidor.Invoke();
-
                 try
                 {
+                    Collection<PSObject> Resultado = Servidor.Invoke();
+
+
                     CORAC_TPrincipal.MsgIniciar.Add("As funções foram carregadas com sucesso no ambiente powershell." + " - Tempo: " + DateTime.Now.ToString() + "\n");
 
                 }
@@ -145,7 +146,7 @@ namespace Power_Shell.AmbienteExecucao
                     Tabelas BuscarRegistro_CORAC = new Tabelas(pth, PerfilCORAC.ChaveLogin);
 
                     List<KeyValuePair<int, string[]>> FiltrosB = new List<KeyValuePair<int, string[]>>();
-                    FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "5", "=", "Load", "0" }));
+                    FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "6", "=", "Load", "0" }));
                     BuscarRegistro_CORAC.setFiltros(TipoFiltro.Buscar, FiltrosB);
                     BuscarRegistro_CORAC.sendTabela = "5ca5579ec4bd2e5ca5d9608be68ae733";
 
@@ -168,9 +169,12 @@ namespace Power_Shell.AmbienteExecucao
 
                             foreach (JArray i in Dados.Value)
                             {
-                                FunctionsBD.Add(new KeyValuePair<string, string>((string)i[1], (string)i[2]));
-                                if ((string)i[6] != "")
-                                    FunctionsBDCMPExcluidos.Add(new KeyValuePair<string, string>((string)i[1], (string)i[6]));
+                                if((int)i[8] == 1)
+                                {
+                                    FunctionsBD.Add(new KeyValuePair<string, string>((string)i[2], (string)i[3]));
+                                    if ((string)i[6] != "")
+                                        FunctionsBDCMPExcluidos.Add(new KeyValuePair<string, string>((string)i[2], (string)i[7]));
+                                }
                             }
 
                             AdicionarScriptsAmbienteExecucao();
@@ -195,8 +199,6 @@ namespace Power_Shell.AmbienteExecucao
                 }
 
             }
-
-
 
         }
 
@@ -228,121 +230,7 @@ namespace Power_Shell.AmbienteExecucao
                 return false;
             }
         }
-        /**
-         * <summary>
-         * Configura o tipo de saída que será gerada pelo executor de comandos.
-         * <para><paramref name="sda"/> - Parâmetro com entradas - TipoDaida: JSON; XML; HTML; CSV</para>
-         * <para></para>
-         * <para>Método Síncrono</para>
-         * </summary>
-         */
-        public void tipoSaida(TiposSaidas sda)
-        {
-            TSaida = sda;
-        }
 
-        /**
-         * <summary>
-         * Executar apena um comando por vez, caso precise de parâmetros tem que adicioná-los.
-         * <para></para>Retorna apenas true ou false. True para execução foi concluída com sucesso e false para algum tipo de erro.
-         * <para><paramref name="Comando"/> - Comando que será executado no espaço do powershell</para>
-         * <para><paramref name="Parametros"/> - Parametros que serão utilizados pelo comando.</para>
-         * <para>Método Síncrono</para>
-         * </summary>
-         */
-        public bool ExecutarComando(string Comando, List<string> Parametros = null)
-        {
-            try
-            {
-                Servidor.AddCommand(Comando);
-
-                if (Parametros != null)
-                {
-                    foreach(var i in Parametros)
-                    {
-                        Servidor.AddParameter(i);
-                    }
-                }
-                OutComandos_Unico = Servidor.Invoke();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                TratadorErros(ex, this.GetType().Name);
-                return false;
-            }
-        }
-
-        /**
-         * <summary>
-         * Utilizado para realizar a execução de um script, que foi recuperado do banco de dados, em um ambiente powershell.
-         * O formato do retorno é string mas o conteúdo e formatado de acordo com a estrutura interna do script.
-         * <para><paramref name="Script"/> - Script que será executado no espaço do powershell</para>
-         * <para>Método Síncrono com conteúdo assíncrono.</para>
-         * </summary>
-         */
-        //public bool ExecutarScript_BD(Pacote_Comando PCT)
-        //{
-
-        //    return true;
-        //}
-
-        /**
-         * <summary>
-         * Utilizado para realizar a execução de um script, powershell, e retornar de um dos formatos
-         * existentes json, html, cvs, xml
-         * <para><paramref name="Script"/> - Script que será executado no espaço do powershell</para>
-         * <para>Método Síncrono</para>
-         * </summary>
-         */
-        //public bool ExecutarScript_Local(string Script)
-        //{
-        //    string output;
-        //    try
-        //    {
-        //        LinhaComando = Script;
-
-        //        switch (TSaida)
-        //        {
-        //            case TiposSaidas.HTML:
-        //                output = "|ConvertTo-Html";
-        //                break;
-
-        //            case TiposSaidas.CVS:
-        //                output = "|ConvertTo-CVS";
-        //                break;
-
-        //            case TiposSaidas.JSON:
-        //                output = "|ConvertTo-Json";
-        //                break;
-
-        //            case TiposSaidas.XML:
-        //                output = "|ConvertTo-XML";
-        //                break;
-
-        //            case TiposSaidas.TXT:
-        //                output = "";
-        //                break;
-
-        //            default:
-        //                output = "ConvertTo-Html";
-        //                break;
-        //        }
-
-        //        //LinhaComando += output;
-        //        Servidor.AddScript(LinhaComando);
-                
-        //        OutComandos_Script = Servidor.Invoke();
-                
-        //        return true;
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        TratadorErros(ex, this.GetType().Name);
-        //        return false;
-        //    }
-        //}
 
         /**
          * <summary>
@@ -519,20 +407,71 @@ namespace Power_Shell.AmbienteExecucao
           * <para>Retorno: boolean</para>
           * </summary>
           */
-        public Collection<PSObject> ExecutarScript_Personalizados(string Comando)
+        public bool ExecutarScript_BD(string Comando)
         {
             try
             {
-                LinhaComando = Comando;
-                Servidor.AddScript(LinhaComando);
-                OutComandos_Script = Servidor.Invoke();
 
-                return OutComandos_Script;
+                if (PerfilCORAC.isLogon)
+                {
+
+                    Uri EndURI = new Uri(PathCORACWEB);
+                    string pth = EndURI.Scheme + "://" + EndURI.Host + ":" + EndURI.Port + "/CORAC/ControladorTabelas/";
+                    Tabelas BuscarRegistro_CORAC = new Tabelas(pth, PerfilCORAC.ChaveLogin);
+
+                    List<KeyValuePair<int, string[]>> FiltrosB = new List<KeyValuePair<int, string[]>>();
+                    FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "6", "=", "Runtime", "0" }));
+                    FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "2", "=", Comando, "1" }));
+                    BuscarRegistro_CORAC.setFiltros(TipoFiltro.Buscar, FiltrosB);
+                    BuscarRegistro_CORAC.sendTabela = "5ca5579ec4bd2e5ca5d9608be68ae733";
+
+                    Task<bool> BuscarScriptBD = BuscarRegistro_CORAC.SelectTabelaJSON();
+                    BuscarScriptBD.Wait();
+
+                    if (!BuscarRegistro_CORAC.getError)
+                    {
+
+                        JProperty Dados = BuscarRegistro_CORAC.getDados().ResultadoDados;
+                        if (Dados.Value.HasValues)
+                        {
+                            /**
+                             * Destroy as variável de memoria da tabelaHTML;
+                             */
+                            BuscarRegistro_CORAC.Dispose();
+
+                            JArray LoadBD = (JArray)Dados.Value;
+                            string LoadScriptBD = (string)LoadBD[0][3];
+
+                            Servidor.AddScript(LoadScriptBD);
+                            return true;
+
+                        }
+                        else
+                        {
+                            Result = "Não foi encontrada nenhuma função a ser carregada." + " - Tempo: " + DateTime.Now.ToString();
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Result = "Error: " + BuscarRegistro_CORAC.GetInfoError().Mensagem + " - Tempo: " + DateTime.Now.ToString();
+                        return false;
+                    }
+                }
+                else
+                {
+                    Result  = "Chave de acesso ao CORAC WEB não foi carregada." + " - Tempo: " + DateTime.Now.ToString();
+                    return false;
+                }
+
+
             }
             catch (Exception ex)
             {
                 TratadorErros(ex, this.GetType().Name);
-                return null;
+                Result = ex.Message;
+
+                return false;
             }
         }
        
@@ -599,138 +538,7 @@ namespace Power_Shell.AmbienteExecucao
             Result = "[" + _JSON + "]";
             return true;
         }
-        public bool get_childrem(string[] Parametros)
-        {
-            int i = 1;
-            string TCampos = null;
 
-            string Excluidos = "StartTime";
-
-            if (Parametros.Contains<string>("-campos"))
-            {
-                for (i = 1; i <= Parametros.Length; i++)
-                {
-                    if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
-                }
-            }
-            Collection<PSObject> Saida = ExecutarScript_Personalizados("Get-ChildItem");
-            if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
-
-            switch (TSaida)
-            {
-                case TiposSaidas.HTML:
-                    break;
-
-                case TiposSaidas.CVS:
-                    break;
-
-                case TiposSaidas.JSON:
-                    return Transfor_JSON(ref Saida, TCampos, Excluidos);
-
-                case TiposSaidas.XML:
-                    break;
-
-                case TiposSaidas.TXT:
-                    break;
-
-                default:
-                    break;
-            }
-
-            return true; ;
-        }
-
-        public bool get_process(string[] Parametros)
-        {
-            int i = 1;
-            string TCampos = null;
-
-            string Excluidos = "StartTime";
-
-            if (Parametros.Contains<string>("-campos"))
-            {
-                for (i = 1; i <= Parametros.Length; i++)
-                {
-                    if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
-                }
-            }
-
-
-            
-
-            Collection<PSObject> Saida = ExecutarScript_Personalizados("get-process");
-            if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
-
-            switch (TSaida)
-            {
-                case TiposSaidas.HTML:
-                    break;
-
-                case TiposSaidas.CVS:
-                    break;
-
-                case TiposSaidas.JSON:
-                    return Transfor_JSON(ref Saida, TCampos, Excluidos);
-
-                case TiposSaidas.XML:
-                    break;
-
-                case TiposSaidas.TXT:
-                    break;
-
-                default:
-                    break;
-            }
-
-            return true; ;
-        }
-
-        //public bool get_InfoGeral(string[] Parametros)
-        //{
-        //    int i = 1;
-        //    string TCampos = null;
-
-        //    string Excluidos = "Path,Options,ClassPath,Properties,SystemProperties,Qualifiers,Scope,__NAMESPACE";
-
-        //    if (Parametros.Contains<string>("-campos"))
-        //    {
-        //        for (i = 1; i <= Parametros.Length; i++)
-        //        {
-        //            if (Parametros[i] == "-campos") { TCampos = Parametros[i + 1]; break; } else TCampos = null;
-        //        }
-        //    }
-        //    PSObject Saida = new PSObject(new InformacoesGerais());
-            
-        //    Collection<PSObject> Saidas = new Collection<PSObject>();
-        //    Saidas.Add(Saida);
-            
-            
-        //    if (Saida == null) throw new Exception("A saída do powershell não retornou nenhum valor. get_process");
-
-        //    switch (TSaida)
-        //    {
-        //        case TiposSaidas.HTML:
-        //            break;
-
-        //        case TiposSaidas.CVS:
-        //            break;
-
-        //        case TiposSaidas.JSON:
-        //            return Transfor_JSON(ref Saidas, TCampos, Excluidos);
-
-
-        //        case TiposSaidas.XML:
-        //            break;
-
-        //        case TiposSaidas.TXT:
-        //            break;
-
-        //        default:
-        //            break;
-        //    }
-
-        //    return true; ;
-        //}
 
         /**
           * <summary>
@@ -785,6 +593,7 @@ namespace Power_Shell.AmbienteExecucao
 
                 Servidor.AddScript(Comando);
                 OutComandos_Script = Servidor.Invoke();
+                Servidor.Commands.Clear();
 
                 if (OutComandos_Script.Count == 0) return false;
 
@@ -828,39 +637,45 @@ namespace Power_Shell.AmbienteExecucao
           * */
         private bool Get_Comandos(Pacote_Comando CMD = null)
         {
-            string Comando = CMD?.Comando;
 
+            string Comando = CMD?.Comando;
+            
             if(Comando != null && Comando != "")
             {
                 char[] Separador = new char[]{' '};
                 string[] Partes_Comando = Comando.Split(Separador,StringSplitOptions.None);
                 Partes_Comando[0] = Partes_Comando[0].Replace("-", "_");
-                System.Reflection.MethodInfo Metodo = GetType().GetMethod(Partes_Comando[0]);
-                
-                switch (Partes_Comando[0])
+                //System.Reflection.MethodInfo Metodo = GetType().GetMethod(Partes_Comando[0]);
+
+                if (CMD.Modo == "RUNTIME")
                 {
-                    case "get_process":
-                        if (get_process(Partes_Comando))
-                            return true;
-                        else
-                            return false;
-
-                    case "get_childrem":
-                        if (get_childrem(Partes_Comando))
-                            return true;
-                        else
-                            return false;
-
-                    //case "get_InfoGeral":
-                    //    if (get_InfoGeral(Partes_Comando))
-                    //        return true;
-                    //    else
-                    //        return false;
-
-
-                    default:
-                        return OtherCommands(Comando, Partes_Comando);
+                    bool Encontrou = ExecutarScript_BD(Partes_Comando[0]);
+                    if (!Encontrou)
+                    {
+                        return false;
+                    }
                 }
+
+                return OtherCommands(Comando, Partes_Comando);
+
+                //switch (Partes_Comando[0])
+                //{
+                //    case "get_process":
+                //        if (get_process(Partes_Comando))
+                //            return true;
+                //        else
+                //            return false;
+
+                //    case "get_childrem":
+                //        if (get_childrem(Partes_Comando))
+                //            return true;
+                //        else
+                //            return false;
+
+
+                //    default:
+                //        return OtherCommands(Comando, Partes_Comando);
+                //}
             }
             else
             {

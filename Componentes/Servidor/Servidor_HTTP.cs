@@ -16,9 +16,13 @@ using System.Net.Http;
 using CamadaDeDados.RESTFormat;
 using Newtonsoft.Json.Linq;
 using CORAC;
+using System.Net.WebSockets;
+using System.Windows.Forms;
 
 namespace ServerClienteOnline.Server
 {
+
+
     class Servidor_HTTP : Tratador_Erros, IDisposable, IServidor
     {
         HttpListener Servidor;
@@ -135,21 +139,6 @@ namespace ServerClienteOnline.Server
                 return false;
             }
 
-            // Note: The GetContext method blocks while waiting for a request. 
-            //HttpListenerContext context = Servidor.GetContext();
-
-            //HttpListenerRequest request = context.Request;
-            //// Obtain a response object.
-            //HttpListenerResponse response = context.Response;
-            //// Construct a response.
-            //string responseString = "<HTML><BODY> Hello world!</BODY></HTML>";
-            //byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-            //// Get a response stream and write the response to it.
-            //response.ContentLength64 = buffer.Length;
-            //System.IO.Stream output = response.OutputStream;
-            //output.Write(buffer, 0, buffer.Length);
-            //// You must close the output stream.
-            //output.Close();
 
         }
 
@@ -170,7 +159,7 @@ namespace ServerClienteOnline.Server
                 /*Habilita possibilidade de vários tipos de redirecionamentos.*/
                 switch (aceita.Request.RawUrl)
                 {
-                    case "/Pacotes/":
+                    case "/SYNCPCT/":
                         Criar = new Thread(Receber_Dados_Responder);
                         Criar.Start(aceita);
 
@@ -281,7 +270,7 @@ namespace ServerClienteOnline.Server
                         {
                             P_Error = new Pacote_Error();
                             P_Error.Error = true;
-                            P_Error.Mensagem = "Esse comando não existe.";
+                            P_Error.Mensagem = "Esse comando não existe ou não produziu resultado.";
                             P_Error.Numero = 50000;
 
                             DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);

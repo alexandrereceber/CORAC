@@ -1245,8 +1245,11 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Comando")]
         public string Comando { get; set; }
 
-        [JsonProperty("ScriptBD")]
-        public bool ScriptBD { get; set; }
+        [JsonProperty("Tipo")]
+        public String Tipo { get; set; }
+
+        [JsonProperty("Modo")]
+        public String Modo { get; set; }
 
         [JsonProperty("Resposta")]
         public string Resposta { get; set; }
@@ -1755,7 +1758,7 @@ namespace ServerClienteOnline.Utilidades
             PctBase.Conteudo = SubPct;
 
             string SerializarPacote = JsonConvert.SerializeObject(PctBase);
-            return SerializarPacote + "                       ";
+            return SerializarPacote + "                    ";
 
         }
 
