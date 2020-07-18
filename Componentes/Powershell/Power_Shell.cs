@@ -214,7 +214,7 @@ namespace Power_Shell.AmbienteExecucao
         {
             try
             {
-                TSaida_Error = TipoSaidaErros.ShowWindow;
+                TSaida_Error = TipoSaidaErros.Arquivo;
                 Servidor = PowerShell.Create();
 
                 Task BuscarFunctions = new Task(LoadsFunctionsBD);
@@ -622,6 +622,7 @@ namespace Power_Shell.AmbienteExecucao
                 return false;
             }catch(Exception e)
             {
+                SetTratador_Erros(TipoSaidaErros.Arquivo);
                 TratadorErros(e, this.GetType().Name);
                 return false;
             }

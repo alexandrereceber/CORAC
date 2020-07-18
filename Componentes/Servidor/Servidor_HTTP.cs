@@ -236,48 +236,48 @@ namespace ServerClienteOnline.Server
                 switch (Base.Pacote)
                     {
                         case TipoPacote.Comando:
-                        Pacote_Comando CMM = (Pacote_Comando)QTP; //Transforma string em um objeto da classe Pacote_Auth
+                            Pacote_Comando CMM = (Pacote_Comando)QTP; //Transforma string em um objeto da classe Pacote_Auth
 
-                        //_GerenciadorCliente?._OAuth(CMM.Chave);
+                            //_GerenciadorCliente?._OAuth(CMM.Chave);
 
-                        bool _Autenticado = (bool)_Auth.HTML_Autenticado(CMM.Chave);
+                            bool _Autenticado = (bool)_Auth.HTML_Autenticado(CMM.Chave);
 
-                        if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
+                            if (!_Autenticado) throw new Exception("Usuário não autenticado ou bloqueado.");
 
-                        //Qualifica o tipo de serviço que requisitou a autenticação;
-                        _Auth.GetAutenticacao.Servico = TipoServico.AcessoRemoto;
+                            //Qualifica o tipo de serviço que requisitou a autenticação;
+                            _Auth.GetAutenticacao.Servico = TipoServico.Powershell;
 
-                        _GerenciadorCliente?.ConectarCliente(Conexao.Request.RemoteEndPoint, _Auth.GetAutenticacao);
+                            _GerenciadorCliente?.ConectarCliente(Conexao.Request.RemoteEndPoint, _Auth.GetAutenticacao);
 
-                        string Executar = _ResponderRequisicao(CMM);
+                            string Executar = _ResponderRequisicao(CMM);
 
-                        if (Excecao)
-                        {
-                            throw new Exception("Ocorreram erros ao executar o comando!");
-                        }
+                            if (Excecao)
+                            {
+                                throw new Exception("Ocorreram erros ao executar o comando!");
+                            }
 
-                        if(Executar != null)
-                        {
-                            Pacote_Comando PCT = new Pacote_Comando();
-                            PCT.Resposta = Executar;
-                            DadosPacote = Converter_JSON_String.SerializarPacote(PCT);
-                            //Obtém o Barramento de escrita com a cliente
-                            ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                            ObterResposta.Close();
-                        }
-                        else
-                        {
-                            P_Error = new Pacote_Error();
-                            P_Error.Error = true;
-                            P_Error.Mensagem = "Esse comando não existe ou não produziu resultado.";
-                            P_Error.Numero = 50000;
+                            if(Executar != null)
+                            {
+                                Pacote_Comando PCT = new Pacote_Comando();
+                                PCT.Resposta = Executar;
+                                DadosPacote = Converter_JSON_String.SerializarPacote(PCT);
+                                //Obtém o Barramento de escrita com a cliente
+                                ObterResposta.ContentLength64 = DadosPacote.Length;
+                                ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                ObterResposta.Close();
+                            }
+                            else
+                            {
+                                P_Error = new Pacote_Error();
+                                P_Error.Error = true;
+                                P_Error.Mensagem = "Esse comando não existe ou não produziu resultado.";
+                                P_Error.Numero = 50000;
 
-                            DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
-                            ObterResposta.ContentLength64 = DadosPacote.Length;
-                            ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
-                            ObterResposta.Close();
-                        }
+                                DadosPacote = Converter_JSON_String.SerializarPacote(P_Error);
+                                ObterResposta.ContentLength64 = DadosPacote.Length;
+                                ObterResposta.OutputStream.Write(ASCIIEncoding.UTF8.GetBytes(DadosPacote), 0, DadosPacote.Length);
+                                ObterResposta.Close();
+                            }
 
 
                         break;
