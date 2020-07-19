@@ -26,6 +26,7 @@ using CORAC.Chat;
 using System.Management.Automation;
 using System.Diagnostics;
 using System.Threading;
+using System.Security.Cryptography;
 
 namespace CORAC
 {
@@ -89,7 +90,7 @@ namespace CORAC
         {
             ChavesCORAC = new RegistroWin32();
             ChavesCORAC.SetTratador_Erros(TipoSaidaErros.ComponenteAndFile);
-
+            
             if (!ChavesCORAC.Existe_Chave_CORAC())
             {
                 if (!ChavesCORAC.Criar_Chaves_Campos_CORAC())
@@ -470,6 +471,27 @@ namespace CORAC
                 }
             }
         }
+
+        public string CalculaHash(string Senha)
+        {
+            try
+            {
+                System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create();
+                byte[] inputBytes = System.Text.Encoding.ASCII.GetBytes(Senha);
+                byte[] hash = md5.ComputeHash(inputBytes);
+                System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                for (int i = 0; i < hash.Length; i++)
+                {
+                    sb.Append(hash[i].ToString("X2"));
+                }
+                return sb.ToString(); // Retorna senha criptografada 
+            }
+            catch (Exception)
+            {
+                return null; // Caso encontre erro retorna nulo
+            }
+        }
+
         /**
          * <summary>
             Verifica se o software CORAC está licenciado. Esta verificação ocorre através da internet em umm site próprio do CORAC.
@@ -507,23 +529,38 @@ namespace CORAC
                             string Status = (string)Dados.Value[0][3];
                             if (Status == "Ativado")
                             {
-                                /**
-                                 * Informando que a máquina está ligada
-                                 */
-                                string getChave = Dados.Value[0][0].Value<string>();
-                                /*
-                                 * Registro encontrado e equipamento ativado
-                                 */
-                                Registro_Corac.Status = StatusRegistro.Habilitado;
-                                Registro_Corac.Chave_BD = getChave;
-                                MsgIniciar.Add("Registro encontrado e equipamento ativado." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                                string Registro = (string)Dados.Value[0][2];
+                                string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
+                                SerieHD = CalculaHash(SerieHD);
 
-                                FiltrosB.Clear();
-                                return true;
+                                if(Registro == SerieHD)
+                                {
+                                    /**
+                                    * Informando que a máquina está ligada
+                                    */
+                                    string getChave = Dados.Value[0][0].Value<string>();
+                                    /*
+                                     * Registro encontrado e equipamento ativado
+                                     */
+                                    Registro_Corac.Status = StatusRegistro.Habilitado;
+                                    Registro_Corac.Chave_BD = getChave;
+                                    MsgIniciar.Add("Equipamento e registro encontrados e ativados." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+
+                                    FiltrosB.Clear();
+                                    return true;
+                                }
+                                else
+                                {
+                                    MsgIniciar.Add("Equipamento com registro inválido!" + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                                    Thread.Sleep(TimeSleep);
+
+                                }
+
+
                             }
                             else
                             {
-                                MsgIniciar.Add("Registro encontrado e equipamento desativado. Requisitar habilitação em sua unidade de Tecnologia." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                                MsgIniciar.Add("Equipamento encontrado e desativado. Requisitar habilitação em sua unidade de Tecnologia." + " - Tempo: " + DateTime.Now.ToString() + "\n");
                                 FiltrosB.Clear();
                                 Thread.Sleep(TimeSleep);
                             }
@@ -533,10 +570,13 @@ namespace CORAC
                         {
                             int Chassi = Get_WMI.Obter_Atributo("Win32_SystemEnclosure", "ChassisTypes")[0];
                             string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
+                            SerieHD = CalculaHash(SerieHD);
+
 
                             List<KeyValuePair<string, string>> IDados = new List<KeyValuePair<string, string>>();
                             IDados.Add(new KeyValuePair<string, string>("Tipo", Convert.ToString(Chassi)));
                             IDados.Add(new KeyValuePair<string, string>("Nome", NomeEstacao));
+                            IDados.Add(new KeyValuePair<string, string>("Registro", SerieHD));
 
                             BuscarRegistro_CORAC.sendTabela = "334644edbd3aecbe746b32f4f2e8e5fb";
                             BuscarRegistro_CORAC.setDadosInserir(IDados);
