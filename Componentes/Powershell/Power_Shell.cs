@@ -120,6 +120,7 @@ namespace Power_Shell.AmbienteExecucao
                 }
                 try
                 {
+                    Servidor.AddScript("function getChave(){return $Chave_Session = '" + PerfilCORAC.ChaveLogin + "';}");
                     Collection<PSObject> Resultado = Servidor.Invoke();
 
 

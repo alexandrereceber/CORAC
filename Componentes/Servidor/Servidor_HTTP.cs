@@ -159,7 +159,7 @@ namespace ServerClienteOnline.Server
                 /*Habilita possibilidade de vários tipos de redirecionamentos.*/
                 switch (aceita.Request.RawUrl)
                 {
-                    case "/SYNCPCT/":
+                    case "/CORAC/SYNCPCT/":
                         Criar = new Thread(Receber_Dados_Responder);
                         Criar.Start(aceita);
 

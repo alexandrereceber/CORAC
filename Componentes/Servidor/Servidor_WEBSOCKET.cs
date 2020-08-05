@@ -753,7 +753,7 @@ namespace ServerClienteOnline.Server
 
                         break;
 
-                    case "/AA_AcessoRemoto_SYN/":
+                    case "/CORAC/AA_AcessoRemoto_SYN/":
                         try
                         {
                             string __Conteudo = _Conteudo.ReadLine();

@@ -893,7 +893,7 @@ namespace CORAC
 
                 Autent_WEB = new Autenticador_WEB();
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
-                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLogin/");
+                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLoginAA/");
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
 
@@ -904,7 +904,7 @@ namespace CORAC
                 
                 ServidorWEB_Local.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
-                ServidorWEB_Local.AddPrefixos(null, EndString, "SYNCPCT/", EndPorta);
+                ServidorWEB_Local.AddPrefixos(null, EndString, "CORAC/SYNCPCT/", EndPorta);
 
                 ServidorWEB_Local.AtribuirExecutor = AbrirComando;
                 ServidorWEB_Local.Autenticador = Autent_WEB;
@@ -920,6 +920,7 @@ namespace CORAC
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Vermelho, Azul);
                     pictureBox_Powershell.Tag = "Serviço powershell carregado corretamente.";
+                    CORAC_TPrincipal.MsgIniciar.Add("Serviço powershell carregado corretamente.\n");
                     pictureBox_Powershell.Image = Properties.Resources.Powershell_Color_fw;
                     return true;
                 }
@@ -927,6 +928,7 @@ namespace CORAC
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_PS_Core_128px, Azul, Vermelho);
                     pictureBox_Powershell.Tag = "Ocorreu um erro no serviço de powershell desta estação.";
+                    CORAC_TPrincipal.MsgIniciar.Add("Ocorreu um erro no serviço de powershell desta estação.\n");
                     pictureBox_Powershell.Image = Properties.Resources.Powershell_Cinza_fw; 
                     return false;
                 }
@@ -977,7 +979,7 @@ namespace CORAC
 
                 Autent_WEB = new Autenticador_WEB();
                 Uri EndURI = new Uri((string)ChavesCORAC.Obter_ConteudoCampo("Path_ServerWEB_CORAC"));
-                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLogin/");
+                Autent_WEB.Endereco_Autenticacao(EndURI, "/CORAC/ValidarLoginAA/");
 
 
                 //-------------------SERVIDOR DE HTTP-------------------------------------------------------------------
@@ -990,7 +992,7 @@ namespace CORAC
                 ServidorWEB_Socket.SetTratador_Erros(TipoSaidaErros.Arquivo);
 
                 ServidorWEB_Socket.AddPrefixos(null, EndString, "CORAC/AcessoRemoto/", EndPorta);
-                ServidorWEB_Socket.AddPrefixos(null, EndString, "AA_AcessoRemoto_SYN/", EndPorta);
+                ServidorWEB_Socket.AddPrefixos(null, EndString, "CORAC/AA_AcessoRemoto_SYN/", EndPorta);
 
                 ServidorWEB_Socket.Autenticador = Autent_WEB;
                 ServidorWEB_Socket.Gerenciador_Cliente = GerenteClientes;
@@ -1005,14 +1007,16 @@ namespace CORAC
                 if (Server_WEBSOCKET)
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Vermelho, Azul);
-                    pictureBox_AcessoRemoto.Tag = "Serviço de acesso remoto foi carregado corretamente.";
+                    pictureBox_AcessoRemoto.Tag = "Serviço de acesso remoto foi carregado corretamente.\n";
+                    CORAC_TPrincipal.MsgIniciar.Add("Serviço de acesso remoto foi carregado corretamente.\n");
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Color_fw ;
                     return true;
                 }
                 else
                 {
                     //Bitmap Internet_ON = Change_Color(Properties.Resources.Status_AcessoRemoto_128px, Azul, Vermelho);
-                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro ao iniciar o serviço de acesso remoto desta estação.";
+                    pictureBox_AcessoRemoto.Tag = "Ocorreu um erro ao iniciar o serviço de acesso remoto desta estação.\n";
+                    CORAC_TPrincipal.MsgIniciar.Add("Ocorreu um erro ao iniciar o serviço de acesso remoto desta estação.\n");
                     pictureBox_AcessoRemoto.Image = Properties.Resources.AcessoRemoto_Cinza_fw;
                     return false;
                 }
