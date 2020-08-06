@@ -359,11 +359,24 @@ namespace ServerClienteOnline.Server
                         case TipoPacote.Credencial:
                             try
                             {
+                                Pacote_Mensagens MSG = new Pacote_Mensagens();
+                                MSG.Error = false;
+                                MSG.Mensagem = "Abrindo o instalador, aguarde...";
+                                MSG.Tipo = 60000;
+                                await enviarPacotes(WebSocketMessageType.Text, MSG);
+
                                 await ExecutarInstalador((Pacote_Credencial)Saida);
+
+                                MSG.Error = false;
+                                MSG.Mensagem = "Concluído!";
+                                MSG.Tipo = 60001;
+                                await enviarPacotes(WebSocketMessageType.Text, MSG);
 
                             }
                             catch (Exception h)
                             {
+                                Installer.Dispose();
+                                Installer = null;
                                 Pacote_Error Chamad_Credenciais = new Pacote_Error();
                                 Chamad_Credenciais.Error = true;
                                 Chamad_Credenciais.Mensagem = h.Message;
@@ -437,7 +450,7 @@ namespace ServerClienteOnline.Server
             Installer.StartInfo.Domain = Auth.Dominio;
             Installer.StartInfo.RedirectStandardOutput = true;
             Installer.StartInfo.FileName = ".\\INSMSI.exe";
-
+            
             Installer.Start();
 
             int ID_Process_Saida = Convert.ToInt16(Installer.StandardOutput.ReadToEnd().Replace("\r\n",""));

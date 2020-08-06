@@ -173,7 +173,30 @@ namespace ServerClienteOnline.Utilidades
             return Mensagem;
         }
     }
+    public class Pacote_Mensagens : ITipoPacote
+    {
+        [JsonProperty("Pacote")]
+        public TipoPacote Pacote = TipoPacote.Mensagens;
 
+        [JsonProperty("Error")]
+        public bool Error { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Tipo")]
+        public int Tipo { get; set; }
+
+        public TipoPacote GetTipoPacote()
+        {
+            return Pacote;
+        }
+
+        public string GetResultado()
+        {
+            return Mensagem;
+        }
+    }
     /**
         <summary>
             <para>Data: 22/06/2020</para>
@@ -1634,7 +1657,8 @@ namespace ServerClienteOnline.Utilidades
         Chat_User = 21,
         Chat_Suporte = 22,
         Chat_Digitando = 23,
-        Credencial = 24
+        Credencial = 24,
+        Mensagens = 25
 
     };
 

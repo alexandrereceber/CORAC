@@ -173,6 +173,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CORAC_AR_fw {
+            get {
+                object obj = ResourceManager.GetObject("CORAC_AR_fw", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap enviarmensagem {
             get {
                 object obj = ResourceManager.GetObject("enviarmensagem", resourceCulture);
@@ -326,6 +336,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap sharescreen {
             get {
                 object obj = ResourceManager.GetObject("sharescreen", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Start_Win {
+            get {
+                object obj = ResourceManager.GetObject("Start_Win", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

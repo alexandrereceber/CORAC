@@ -27,6 +27,8 @@ using System.Management.Automation;
 using System.Diagnostics;
 using System.Threading;
 using System.Security.Cryptography;
+using System.Security.Principal;
+using System.DirectoryServices.AccountManagement;
 
 namespace CORAC
 {
@@ -1214,6 +1216,13 @@ namespace CORAC
 
         }
 
+        private bool IsAdministrator()
+        {
+            WindowsIdentity identity = WindowsIdentity.GetCurrent();
+            WindowsPrincipal principal = new WindowsPrincipal(identity);
+            return principal.IsInRole(WindowsBuiltInRole.Administrator);
+        }
+
         public CORAC_TPrincipal()
         {
 
@@ -1226,10 +1235,14 @@ namespace CORAC
                 Control[] TLog = tabCORAC.Controls.Find("Tab_Log", false);
                 Control[] TMsg = tabCORAC.Controls.Find("tab_Mensagens", false);
 
+
                 tabCORAC.Controls.Remove(TStatus[0]);
                 tabCORAC.Controls.Remove(TLog[0]);
                 tabCORAC.Controls.Remove(TMsg[0]);
-
+                if (!IsAdministrator())
+                {
+                    
+                }
                 MessageBox.Show("Endereço do servidor CORAC WEB está vazio!\nFavor entrar em contato com o departamento de tecnologia.", "Servidor CORAC", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
@@ -1290,13 +1303,23 @@ namespace CORAC
 
         private async void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            await SairSistema();
+            try
+            {
+                await SairSistema();
+            }
+            catch(Exception E)
+            {
+
+            }
             Application.Exit();
             
         }
 
         private async Task<bool> SairSistema()
         {
+
+            try
+            {
                 List<KeyValuePair<string, string>> KDados = new List<KeyValuePair<string, string>>();
                 KDados.Add(new KeyValuePair<string, string>("0", Registro_Corac.Chave_BD));
 
@@ -1304,17 +1327,16 @@ namespace CORAC
                 ADados.Add(new KeyValuePair<string, string>("SPowershell", "0"));
                 ADados.Add(new KeyValuePair<string, string>("SAcessoRemoto", "0"));
                 ADados.Add(new KeyValuePair<string, string>("SChat", "0"));
-            try
-            {
+                
                 await AtualizarTabelas_CORAC("334644edbd3aecbe746b32f4f2e8e5fb", KDados, ADados);
                 return true;
 
             }
             catch (Exception e)
             {
-                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
-                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
-                Gerar_Arquivo.TratadorErros(e, GetType().Name);
+                //Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                //Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.ShowWindow);
+                //Gerar_Arquivo.TratadorErros(e, GetType().Name);
                 return false;
 
             }
@@ -1787,7 +1809,14 @@ namespace CORAC
             DialogResult Restart = MessageBox.Show("Tem certeza que deseja sair da aplicação?", "Sair", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (Restart == DialogResult.Yes)
             {
-                await SairSistema();
+                try
+                {
+                    await SairSistema();
+                }
+                finally
+                {
+
+                }
                 Application.Exit();
 
             }
@@ -1826,6 +1855,126 @@ namespace CORAC
         private void picture_Internet_Status_MouseLeave(object sender, EventArgs e)
         {
             Status_Informacao.Text = "";
+        }
+        private bool Verify_Counta()
+        {
+            try
+            {
+                PrincipalContext oPrincipalContext = new PrincipalContext(ContextType.Machine);
+                UserPrincipal oUserPrincipal = UserPrincipal.FindByIdentity(oPrincipalContext, "CORAC");
+                if (oUserPrincipal != null)
+                {
+                    oUserPrincipal.Delete();
+                    return true;
+                }
+                else return true;
+
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+        }
+
+        private bool CriarConta_CORAC()
+        {
+            try
+            {
+                PrincipalContext oPrincipalContext = new PrincipalContext(ContextType.Machine);
+
+                UserPrincipal oUserPrincipal = new UserPrincipal(oPrincipalContext);
+                oUserPrincipal.Name = "CORAC";
+                oUserPrincipal.SetPassword("Al$#09005811");
+                oUserPrincipal.PasswordNeverExpires = true;
+                oUserPrincipal.UserCannotChangePassword = true;
+                oUserPrincipal.PasswordNotRequired = true;
+
+                //User Log on Name
+                //oUserPrincipal.UserPrincipalName = sUserName;
+                oUserPrincipal.Save();
+
+                GroupPrincipal oGruopAdministrators = GroupPrincipal.FindByIdentity(oPrincipalContext, "administradores");
+                oGruopAdministrators.Members.Add(oUserPrincipal);
+                oGruopAdministrators.Save();
+
+                return true;
+            }
+            catch(Exception E)
+            {
+                Tratador_Erros Gerar_Arquivo = new Tratador_Erros();
+                Gerar_Arquivo.SetTratador_Erros(TipoSaidaErros.Arquivo);
+                Gerar_Arquivo.TratadorErros(E, GetType().Name);
+
+                return false;
+            }
+
+
+            
+        }
+        private async void Admin_CriarUsuario_Click(object sender, EventArgs e)
+        {
+            if (IsAdministrator())
+            {
+                PCriar_Usuario.Image = Properties.Resources.Wait;
+                Admin_CriarUsuario.Enabled = false;
+
+                bool VAdmin = await Task.Run(() => Verify_Counta());
+
+                if (VAdmin)
+                {
+
+                    bool VConta = await Task.Run(() => CriarConta_CORAC());
+
+                    if (VConta)
+                    {
+                        MessageBox.Show("Usuário CORAC criado com sucesso!", "Sucesso!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Não foi possível criar o usuário CORAC, favor verificar os logs de erro.", "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Você não é administrador, favor elevar os privilégio!", "Usuário CORAC", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                }
+
+                PCriar_Usuario.Image = null;
+                Admin_CriarUsuario.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Você não é administrador, favor elevar os privilégios!", "Usuário CORAC", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            }
+
+        }
+
+        private void Start_Win_Click(object sender, EventArgs e)
+        {
+
+            if (IsAdministrator())
+            {
+                try
+                {
+                    List<KeyValuePair<string, string>> CR = new List<KeyValuePair<string, string>>();
+                    CR.Add(new KeyValuePair<string, string>("CORAC", "%ProgramFiles(x86)%\\CORAC\\CORAC.exe"));
+                    RegistroWin32 Criar_Start = new RegistroWin32();
+                    Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR);
+                    MessageBox.Show("Inicialização automática configurada!", "Start Automático", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+            }
+            else
+            {
+                MessageBox.Show("Você não é administrador, favor elevar os privilégios!", "Start Automático", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+            }
         }
     }
 
