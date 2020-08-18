@@ -253,6 +253,16 @@ namespace CORAC.Properties {
         /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Password {
+            get {
+                object obj = ResourceManager.GetObject("Password", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Powershell_Cinza_fw {
             get {
                 object obj = ResourceManager.GetObject("Powershell_Cinza_fw", resourceCulture);
@@ -341,16 +351,6 @@ namespace CORAC.Properties {
         }
         
         /// <summary>
-        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Start_Win {
-            get {
-                object obj = ResourceManager.GetObject("Start_Win", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Consulta um recurso localizado do tipo System.Drawing.Icon semelhante a (Ícone).
         /// </summary>
         internal static System.Drawing.Icon Status_Config {
@@ -366,6 +366,16 @@ namespace CORAC.Properties {
         internal static System.Drawing.Bitmap Wait {
             get {
                 object obj = ResourceManager.GetObject("Wait", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta um recurso localizado do tipo System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Win_Station {
+            get {
+                object obj = ResourceManager.GetObject("Win_Station", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -560,7 +560,7 @@
             // pictureBox2
             // 
             this.pictureBox2.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.Image = global::CORAC.Properties.Resources.Win_Station;
             this.pictureBox2.Location = new System.Drawing.Point(3, 149);
             this.pictureBox2.Name = "pictureBox2";
             this.pictureBox2.Size = new System.Drawing.Size(68, 67);
@@ -640,7 +640,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pictureBox1.Image = global::CORAC.Properties.Resources.CORAC_AR_fw;
+            this.pictureBox1.Image = global::CORAC.Properties.Resources.Password;
             this.pictureBox1.Location = new System.Drawing.Point(3, 76);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(68, 67);
@@ -940,11 +940,11 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ListBox listBox_FILE_LOG;
         private System.Windows.Forms.WebBrowser webBrowser1;
-        private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.PictureBox PCriar_Usuario;
         private System.Windows.Forms.Button Admin_CriarUsuario;
+        private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button Start_Win;
     }

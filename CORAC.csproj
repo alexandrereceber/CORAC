@@ -85,6 +85,7 @@
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Management" />
@@ -131,6 +132,12 @@
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="InstCORAC.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InstCORAC.Designer.cs">
+      <DependentUpon>InstCORAC.cs</DependentUpon>
     </Compile>
     <Compile Include="Logo\LogoAcessoRemoto.cs">
       <SubType>Form</SubType>
@@ -254,6 +261,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="512px_Corac_3.fw-1.ico" />
+    <None Include="Resources\Password.png" />
     <None Include="Resources\windows256_flag.png" />
     <None Include="Resources\windows_flag.png" />
     <None Include="Resources\CORAC_AR.fw.png" />

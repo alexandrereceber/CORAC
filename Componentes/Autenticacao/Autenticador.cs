@@ -104,7 +104,7 @@ namespace ServerClienteOnline.MetodosAutenticacao
         }
 
 
-        public void Dispose()
+        public new void Dispose()
         {
             throw new NotImplementedException();
         }

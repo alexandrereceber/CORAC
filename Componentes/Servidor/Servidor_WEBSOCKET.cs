@@ -334,7 +334,7 @@ namespace ServerClienteOnline.Server
                     bool isPacoteFim = Pacote_String.Substring(I - 1, 2) == "}\0";
                     if (!isPacoteInicio || !isPacoteFim) continue;
 
-                    Console.WriteLine(Pacote_String);
+                    //Console.WriteLine(Pacote_String);
                     Converter_JSON_String.DeserializarPacote(Pacote_String, out Pacote_Base Base, out object Saida);
 
                     switch (Base.Pacote)
@@ -536,7 +536,7 @@ namespace ServerClienteOnline.Server
 
                 while (Semafaro || SMF) {
                     SMF = Caixa == null ? false : Caixa.getSemafaro();
-                    Console.Write("Semafaro" + GetType().Name);
+                    //Console.Write("Semafaro" + GetType().Name);
                 }
 
                 Semafaro = true; Caixa?.setSemafaro(true); 
@@ -590,7 +590,7 @@ namespace ServerClienteOnline.Server
                     EnviandoDados = new ArraySegment<byte>(ASCIIEncoding.UTF8.GetBytes(Converter_JSON_String.SerializarPacote(CapturarTelas)));
                     
                     while (Semafaro || Caixa.getSemafaro()) {
-                        Console.Write("Semafaro" + GetType().Name);
+                        //Console.Write("Semafaro" + GetType().Name);
                     }
                     
                     Semafaro = true; Caixa.setSemafaro(true); 

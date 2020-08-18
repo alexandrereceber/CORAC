@@ -226,5 +226,36 @@ namespace RegistroWindows
             LocalMachine.Close();
             Corrente_User.Close();
         }
+
+        public bool DeleteChave(TipoChave TipoChave, string Raiz, string SubChave)
+        {
+            RegistryKey CORAC = LocalMachine.OpenSubKey(Raiz, true);
+            if (TipoChave == TipoChave.LocalMachine)
+            {
+                CORAC.DeleteSubKey(SubChave, true);
+                return true;
+            }
+            else
+            {
+                CORAC.DeleteSubKey(SubChave, true);
+                return true;
+            }
+        }
+
+        public bool DeleteValorChave(TipoChave TipoChave, string Chave, string Campo)
+        {
+            RegistryKey CORAC = LocalMachine.OpenSubKey(Chave, true);
+
+            if (TipoChave == TipoChave.LocalMachine)
+            {
+                CORAC.DeleteValue(Campo, true);
+                return true;
+            }
+            else
+            {
+                CORAC.DeleteValue(Campo, true);
+                return true;
+            }
+        }
     }
 }

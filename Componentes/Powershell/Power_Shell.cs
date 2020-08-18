@@ -648,8 +648,8 @@ namespace Power_Shell.AmbienteExecucao
                 string[] Partes_Comando = Comando.Split(Separador,StringSplitOptions.None);
                 Partes_Comando[0] = Partes_Comando[0].Replace("-", "_");
                 //System.Reflection.MethodInfo Metodo = GetType().GetMethod(Partes_Comando[0]);
-
-                if (CMD.Modo == "RUNTIME")
+                bool BDRUNTIME = Partes_Comando[0].Substring(0, 1) == "BD";
+                if (CMD.Modo == "RUNTIME" || BDRUNTIME)
                 {
                     bool Encontrou = ExecutarScript_BD(Partes_Comando[0]);
                     if (!Encontrou)
@@ -700,7 +700,7 @@ namespace Power_Shell.AmbienteExecucao
 
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             Servidor.Stop();
         }

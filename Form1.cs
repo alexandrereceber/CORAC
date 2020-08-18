@@ -1765,7 +1765,7 @@ namespace CORAC
         private void Relógio_Tick(object sender, EventArgs e)
         {
             Data_Sistema_TLPrincipal.Text = DateTime.Now.ToString();
-            Console.WriteLine("Relogio");
+            //Console.WriteLine("Relogio");
         }
 
         private void CORAC_TPrincipal_Shown(object sender, EventArgs e)
@@ -1959,12 +1959,20 @@ namespace CORAC
                 try
                 {
                     List<KeyValuePair<string, string>> CR = new List<KeyValuePair<string, string>>();
-                    CR.Add(new KeyValuePair<string, string>("CORAC", "%ProgramFiles(x86)%\\CORAC\\CORAC.exe"));
+                    CR.Add(new KeyValuePair<string, string>("CORAC", "\"%ProgramFiles(x86)%\\CORAC\\CORAC.exe\""));
                     RegistroWin32 Criar_Start = new RegistroWin32();
-                    Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "Software\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR);
-                    MessageBox.Show("Inicialização automática configurada!", "Start Automático", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR))
+                    {
+                        MessageBox.Show("Inicialização automática configurada!", "Start Automático", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("Inicialização automática não foi configurada!", "Start Automático", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
@@ -1976,6 +1984,7 @@ namespace CORAC
 
             }
         }
+
     }
 
 

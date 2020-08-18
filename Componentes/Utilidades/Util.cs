@@ -838,7 +838,7 @@ namespace ServerClienteOnline.Utilidades
         }
         public bool Gerar_EventoMouse(Pacote_EventMouse Evt)
         {
-            Console.WriteLine(Evt.type);
+            //Console.WriteLine(Evt.type);
 
             switch (Evt.type)
             {
@@ -864,7 +864,7 @@ namespace ServerClienteOnline.Utilidades
             }
 
 
-            Console.WriteLine(Evt.type);
+            //Console.WriteLine(Evt.type);
             return true;
         }
 
@@ -1001,7 +1001,7 @@ namespace ServerClienteOnline.Utilidades
                 if (ctrlKey) TECLAS = TECLAS.Replace("{CTRL}", CTRL); else TECLAS = TECLAS.Replace("{CTRL}", "");
 
                 TECLAS = TECLAS.Replace("key", key);
-                Console.WriteLine(TECLAS);
+                //Console.WriteLine(TECLAS);
                 SendKeys.SendWait(TECLAS);
                 return true;
             }
@@ -1886,7 +1886,7 @@ namespace ServerClienteOnline.Utilidades
                 out_Base = new Pacote_Base();
                 out_Base.Pacote = TipoPacote.Error;
 
-                Console.Write(e.StackTrace);
+                //Console.Write(e.StackTrace);
             }
             
         }
