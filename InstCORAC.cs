@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Configuration.Install;
+using System.Diagnostics;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Security.Principal;
@@ -22,6 +23,47 @@ namespace CORAC
             InitializeComponent();
         }
 
+        private bool Admin_CriarLiberacaoPortas()
+        {
+            try
+            {
+                if (IsAdministrator())
+                {
+                    Process Installers = new Process();
+                    Installers.StartInfo.UseShellExecute = false;
+                    Installers.StartInfo.RedirectStandardOutput = true;
+                    Installers.StartInfo.Arguments = "http add urlacl url = http://*:8081/SYNCPCT/ user=Todos";
+                    Installers.StartInfo.FileName = "c:\\windows\\system32\\netsh.exe";
+                    Installers.Start();
+                    Installers.WaitForExit();
+
+                    Installers.StartInfo.Arguments = "http add urlacl url=http://*:8082/CORAC/AcessoRemoto/ user=Todos";
+                    Installers.StartInfo.FileName = "c:\\windows\\system32\\netsh.exe";
+                    Installers.Start();
+                    Installers.WaitForExit();
+
+                    Installers.StartInfo.Arguments = "http add urlacl url=http://*:8082/AA_AcessoRemoto_SYN/ user=Todos";
+                    Installers.StartInfo.FileName = "c:\\windows\\system32\\netsh.exe";
+                    Installers.Start();
+                    Installers.WaitForExit();
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show("Você não é administrador, favor elevar os privilégios!", "Usuário CORAC", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return false;
+
+                }
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show("Ocorreram erros ao tentar liberar as portas do CORAC.", "Usuário CORAC", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return false;
+            }
+
+
+        }
+
         public override void Install(System.Collections.IDictionary stateSaver)
         {
             Task<bool> Resultado = Task.Run(() => Admin_CriarUsuario());
@@ -35,6 +77,7 @@ namespace CORAC
             {
                 base.Rollback(stateSaver);
             }
+
         }
 
         public override void Commit(IDictionary savedState)
@@ -44,6 +87,7 @@ namespace CORAC
             try
             {
                 AddInitialAutomatic();
+                Admin_CriarLiberacaoPortas();
             }
             catch (Exception e)
             {

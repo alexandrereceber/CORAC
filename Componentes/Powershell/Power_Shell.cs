@@ -82,10 +82,13 @@ namespace Power_Shell.AmbienteExecucao
         private TiposSaidas TSaida = TiposSaidas.HTML;
 
         private Collection<PSObject> OutComandos_Script;
-        private Collection<PSObject> OutComandos_Unico;
 
         private string PathCORACWEB = null;
-        private List<KeyValuePair<string, string>> FunctionsBD = null; 
+        /**
+         * Nome de todas as funções que serão carregadas para a console powershell
+         */
+        private List<KeyValuePair<string, string>> FunctionsBD = null;
+
         private List<KeyValuePair<string, string>> FunctionsBDCMPExcluidos = null;
 
         private bool Active = false;
@@ -121,10 +124,18 @@ namespace Power_Shell.AmbienteExecucao
                 try
                 {
                     Servidor.AddScript("function getChave(){return $Chave_Session = '" + PerfilCORAC.ChaveLogin + "';}");
+                    /**
+                     * Executa uma função dentro do ambiente powershell inicializadora de outras funções quaisquer.
+                     * MUITO IMPORTANTE PARA REALIZAR VÁRIAS ATIVIDADES AUTOMATICAMENTE COMO: FUNCOES OU JOBS E OUTRAS COISAS MAIS.
+                     * OBS.: NO BANCO DE DADOS CONTÉM A ORDEM DE INICIALIZAÇÃO DAS FUNÇÕES. ATENÇÃO!
+                     * Vários erros aconteceram, durente fase de teste, porque não foi colocado os pontos e vírgulas no final das instruções. Fique atendo!
+                     */
+                    Servidor.AddScript("InicializarAmbiente");
+                    
                     Collection<PSObject> Resultado = Servidor.Invoke();
-
-
-                    CORAC_TPrincipal.MsgIniciar.Add("As funções foram carregadas com sucesso no ambiente powershell." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                    if(Resultado?.Count != 0)
+                        CORAC_TPrincipal.MsgIniciar.Add("A execução de todas as funções inicializadas pela função(InicializarAmbiente) foram executadas com sucesso!." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                    else  CORAC_TPrincipal.MsgIniciar.Add("Nem todas as funções inicializadas pela função(InicializarAmbiente) foram concluídas!." + " - Tempo: " + DateTime.Now.ToString() + "\n");
 
                 }
                 catch (Exception e)
@@ -148,6 +159,7 @@ namespace Power_Shell.AmbienteExecucao
 
                     List<KeyValuePair<int, string[]>> FiltrosB = new List<KeyValuePair<int, string[]>>();
                     FiltrosB.Add(new KeyValuePair<int, string[]>(0, new string[4] { "6", "=", "Load", "0" }));
+
                     BuscarRegistro_CORAC.setFiltros(TipoFiltro.Buscar, FiltrosB);
                     BuscarRegistro_CORAC.sendTabela = "5ca5579ec4bd2e5ca5d9608be68ae733";
 

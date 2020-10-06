@@ -535,7 +535,9 @@ namespace CORAC
                                 string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
                                 SerieHD = CalculaHash(SerieHD);
 
-                                if(Registro == SerieHD)
+                                MsgIniciar.Add("Chave de Registro: " + SerieHD + " - Tempo: " + DateTime.Now.ToString() + "\n");
+
+                                if (Registro == SerieHD)
                                 {
                                     /**
                                     * Informando que a máquina está ligada
