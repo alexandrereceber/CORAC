@@ -122,7 +122,14 @@ namespace CORAC
                 {
                     throw new Exception("Falha no registro. Chave: SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
                 }
+                CR.Clear();
+                CR = new List<KeyValuePair<string, string>>();
+                CR.Add(new KeyValuePair<string, string>("CORAC", "\"%ProgramFiles%\\CORAC\\CORAC.exe\""));
 
+                if (!Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR))
+                {
+                    throw new Exception("Falha no registro. Chave: SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+                }
 
             }
             else

@@ -323,59 +323,7 @@ namespace CORAC
             }
         }
 
-        /**
-            <summary>
-                Método utilizado na guia configurações
-            </summary>
-         */
-        private async Task<bool> ObterAssinatura(string PathCORAC)
-        {
-            try
-            {
-                if (!await Conexoes.VerificarConectividade())
-                {
-                    MessageBox.Show("Não há conectividade!", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    throw new Exception("Sem conectividade");
-                }
-                Uri EndURI = new Uri(PathCORAC);
 
-                HttpClient URL = new HttpClient();
-                var pairs = new List<KeyValuePair<string, string>>{};
-
-                var content = new FormUrlEncodedContent(pairs);
-
-                URL.Timeout = TimeSpan.FromSeconds(30);
-
-                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
-                await Task.WhenAll(Conteudo);
-
-                if (Conteudo.Result.IsSuccessStatusCode)
-                {
-                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
-                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
-                    if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
-                    {
-                        Sign.Valida = true;
-                        return true;
-                    }
-                    else
-                    {
-                        Sign.Valida = false;
-                        return false;
-                    }
-
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-            catch (Exception E)
-            {
-                return false;
-            }
-        }
 
         private async Task<bool> AutenticarUsuarioCORAC()
         {
@@ -420,6 +368,119 @@ namespace CORAC
                     PerfilCORAC.isLogon = false;
                     Thread.Sleep(TimeSleep);
                 }
+            }
+        }
+        private async Task<bool> ObterAssinatura_Externa()
+        {
+            while (true)
+            {
+                try
+                {
+                    string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
+                    SerieHD = CalculaHash(SerieHD);
+
+                    Uri EndURI = new Uri("http://192.168.15.10/CORAC/ValidarAAExterno/" + SerieHD + "/" + Dns.GetHostName() + "/" + Sign.Empresa + "/");
+
+                    HttpClient URL = new HttpClient();
+                    var pairs = new List<KeyValuePair<string, string>> { };
+
+                    var content = new FormUrlEncodedContent(pairs);
+
+                    URL.Timeout = TimeSpan.FromSeconds(30);
+
+                    Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                    await Task.WhenAll(Conteudo);
+
+                    if (Conteudo.Result.IsSuccessStatusCode)
+                    {
+                        string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
+                        AssinaturaExterna Signature = JsonConvert.DeserializeObject<AssinaturaExterna>(Dados);
+
+                        if(Signature.Tempo.Date < DateTime.Now)
+                        {
+                            return true;
+                        }
+
+                        if (Signature.Maquina == Dns.GetHostName() && Signature.Signature == SerieHD && Signature.Valida == true)
+                        {
+                            MsgIniciar.Add("A assinatura externa CORAC está OK." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                            Sign.Valida = true;
+                            return true;
+                        }
+                        else
+                        {
+                            MsgIniciar.Add("A assinatura externa CORAC inacessível ou inválida!" + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                            Sign.Valida = false;
+
+                            Thread.Sleep(TimeSleep);
+                        }
+
+                    }
+                    else
+                    {
+                        MsgIniciar.Add("Error ao buscar assinatura externa. Aguarde!" + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                        Thread.Sleep(TimeSleep);
+                    }
+
+                }
+                catch (Exception E)
+                {
+                    MsgIniciar.Add("Assinatura externa: Internet, servidor ou página inacessível." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                    Thread.Sleep(TimeSleep);
+                }
+            }
+        }
+        /**
+            <summary>
+                Método utilizado na guia configurações
+            </summary>
+         */
+        private async Task<bool> ObterAssinatura(string PathCORAC)
+        {
+            try
+            {
+                if (!await Conexoes.VerificarConectividade())
+                {
+                    MessageBox.Show("Não há conectividade!", "Internet", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    throw new Exception("Sem conectividade");
+                }
+                Uri EndURI = new Uri(PathCORAC);
+
+                HttpClient URL = new HttpClient();
+                var pairs = new List<KeyValuePair<string, string>> { };
+
+                var content = new FormUrlEncodedContent(pairs);
+
+                URL.Timeout = TimeSpan.FromSeconds(30);
+
+                Task<HttpResponseMessage> Conteudo = URL.PostAsync(EndURI, content);
+                await Task.WhenAll(Conteudo);
+
+                if (Conteudo.Result.IsSuccessStatusCode)
+                {
+                    string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
+                    Assinatura Sign = JsonConvert.DeserializeObject<Assinatura>(Dados);
+                    if (Sign.Sistema == "CORAC" && Sign.Signacture == "a4b315c63dca8337dc70ef6a336310f4")
+                    {
+                        Sign.Valida = true;
+                        return true;
+                    }
+                    else
+                    {
+                        Sign.Valida = false;
+                        return false;
+                    }
+
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception E)
+            {
+                return false;
             }
         }
 
@@ -1056,6 +1117,7 @@ namespace CORAC
 
                 Task Atualizar, 
                     Assinatura, 
+                    Assinatura_Externa,
                     Registro, 
                     BuscarConfiguracoes,
                     Powerhell_WEB, 
@@ -1064,6 +1126,7 @@ namespace CORAC
 
                 int Atualizar_ID = 0,
                     Assinatura_ID = 0,
+                    Assinatura_Externa_ID = 0,
                     BuscarConfiguracoes_ID = 0,
                     Registro_ID = 0,
                     Powerhell_WEB_ID = 0,
@@ -1080,6 +1143,7 @@ namespace CORAC
 
                 Assinatura = Task.Run(ObterAssinatura);
                 Assinatura_ID = Assinatura.Id;
+                
 
                 Servicos.Add(Atualizar);
                 Servicos.Add(LogonUserCorac);
@@ -1102,8 +1166,7 @@ namespace CORAC
                         Servicos.Remove(Tarefa);
 
                     }
-
-                    else if (Tarefa.Id == Assinatura_ID)
+                    else if (Tarefa.Id == Assinatura_Externa_ID)
                     {
                         Servicos.Remove(Tarefa);
 
@@ -1116,6 +1179,20 @@ namespace CORAC
                             Registro = Task.Run(Verificar_Registro);
                             Registro_ID = Registro.Id;
                             Servicos.Add(Registro);
+
+                        }
+
+                    }
+                    else if (Tarefa.Id == Assinatura_ID)
+                    {
+                        Servicos.Remove(Tarefa);
+
+                        Task<bool> ResultRegistro = (Task<bool>)Tarefa;
+                        if (ResultRegistro.Result)
+                        {
+                            Assinatura_Externa = Task.Run(ObterAssinatura_Externa);
+                            Assinatura_Externa_ID = Assinatura_Externa.Id;
+                            Servicos.Add(Assinatura_Externa);
                         }
 
                     }
@@ -1484,19 +1561,6 @@ namespace CORAC
             }
         }
 
-        private async void button_RegistroMaquina_Click(object sender, EventArgs e)
-        {
-            //Button B = (Button)sender;
-            //B.Enabled = false;
-            //try
-            //{
-            //    await Verificar_Registro_Botao();
-            //}
-            //finally
-            //{
-            //    B.Enabled = true;
-            //}
-        }
 
 
         private void button1_Click(object sender, EventArgs e)

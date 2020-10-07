@@ -52,7 +52,6 @@
             this.button_AtualizacoesCORAC = new System.Windows.Forms.Button();
             this.Registro_Status_GroupBox = new System.Windows.Forms.GroupBox();
             this.pictureBox_Registro_CORAC = new System.Windows.Forms.PictureBox();
-            this.button_RegistroMaquina = new System.Windows.Forms.Button();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.button_Stop_PowerShellCORAC = new System.Windows.Forms.Button();
             this.pictureBox_Powershell = new System.Windows.Forms.PictureBox();
@@ -349,7 +348,6 @@
             // 
             this.Registro_Status_GroupBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.Registro_Status_GroupBox.Controls.Add(this.pictureBox_Registro_CORAC);
-            this.Registro_Status_GroupBox.Controls.Add(this.button_RegistroMaquina);
             this.Registro_Status_GroupBox.Location = new System.Drawing.Point(591, 5);
             this.Registro_Status_GroupBox.Name = "Registro_Status_GroupBox";
             this.Registro_Status_GroupBox.Size = new System.Drawing.Size(285, 251);
@@ -374,20 +372,6 @@
             this.pictureBox_Registro_CORAC.Click += new System.EventHandler(this.pictureBox_Registro_CORAC_Click);
             this.pictureBox_Registro_CORAC.MouseEnter += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseEnter);
             this.pictureBox_Registro_CORAC.MouseLeave += new System.EventHandler(this.PictureBox_Registro_CORAC_MouseLeave);
-            // 
-            // button_RegistroMaquina
-            // 
-            this.button_RegistroMaquina.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.button_RegistroMaquina.Enabled = false;
-            this.button_RegistroMaquina.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Lime;
-            this.button_RegistroMaquina.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button_RegistroMaquina.Location = new System.Drawing.Point(86, 182);
-            this.button_RegistroMaquina.Name = "button_RegistroMaquina";
-            this.button_RegistroMaquina.Size = new System.Drawing.Size(119, 23);
-            this.button_RegistroMaquina.TabIndex = 4;
-            this.button_RegistroMaquina.Text = "Verificar";
-            this.button_RegistroMaquina.UseVisualStyleBackColor = true;
-            this.button_RegistroMaquina.Click += new System.EventHandler(this.button_RegistroMaquina_Click);
             // 
             // groupBox7
             // 
@@ -913,7 +897,6 @@
         private System.Windows.Forms.Button button_AtualizacoesCORAC;
         private System.Windows.Forms.GroupBox Registro_Status_GroupBox;
         private System.Windows.Forms.PictureBox pictureBox_Registro_CORAC;
-        private System.Windows.Forms.Button button_RegistroMaquina;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.Button button_Stop_PowerShellCORAC;
         private System.Windows.Forms.PictureBox pictureBox_Powershell;

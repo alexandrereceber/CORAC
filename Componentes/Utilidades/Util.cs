@@ -1900,11 +1900,49 @@ namespace ServerClienteOnline.Utilidades
 
     class Assinatura
     {
+        [JsonProperty("Empresa")]
+        public string Empresa { get; set; }
+
         [JsonProperty("Sistema")]
         public string Sistema { get; set; }
 
         [JsonProperty("Signacture")]
         public string Signacture { get; set; }
+
+        public bool Valida = false;
+    }
+
+    class AssinaturaExterna
+    {
+        [JsonProperty("Maquina")]
+        public string Maquina { get; set; }
+
+        [JsonProperty("idChave")]
+        public string Signature { get; set; }
+
+        [JsonProperty("Empresa")]
+        public string Empresa { get; set; }
+
+        [JsonProperty("dtCriado")]
+        public string dtCriado { get; set; }
+
+        [JsonProperty("Modo")]
+        public string Modo { get; set; }
+
+        [JsonProperty("Codigo")]
+        public string Codigo { get; set; }
+
+        [JsonProperty("Mensagem")]
+        public string Mensagem { get; set; }
+
+        [JsonProperty("Tracer")]
+        public string Tracer { get; set; }
+
+        [JsonProperty("File")]
+        public string File { get; set; }
+
+        [JsonProperty("Tempo")]
+        public DateTime Tempo { get; set; }
 
         public bool Valida = false;
     }
