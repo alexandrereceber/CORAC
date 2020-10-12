@@ -1909,6 +1909,9 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Signacture")]
         public string Signacture { get; set; }
 
+        [JsonProperty("EAEx")] //EAEx Endereço da Assintura Externa
+        public string EAEx { get; set; }
+
         public bool Valida = false;
     }
 
@@ -1944,7 +1947,8 @@ namespace ServerClienteOnline.Utilidades
         [JsonProperty("Tempo")]
         public DateTime Tempo { get; set; }
 
-        public bool Valida = false;
+        [JsonProperty("Habilitada")]
+        public int Habilitada = 0;
     }
 
     class PerfilCORAC

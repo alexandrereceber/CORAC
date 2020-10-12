@@ -133,6 +133,7 @@ namespace Power_Shell.AmbienteExecucao
                     Servidor.AddScript("InicializarAmbiente");
                     
                     Collection<PSObject> Resultado = Servidor.Invoke();
+                    Servidor.Commands.Clear();
                     if(Resultado?.Count != 0)
                         CORAC_TPrincipal.MsgIniciar.Add("A execução de todas as funções inicializadas pela função(InicializarAmbiente) foram executadas com sucesso!." + " - Tempo: " + DateTime.Now.ToString() + "\n");
                     else  CORAC_TPrincipal.MsgIniciar.Add("Nem todas as funções inicializadas pela função(InicializarAmbiente) foram concluídas!." + " - Tempo: " + DateTime.Now.ToString() + "\n");

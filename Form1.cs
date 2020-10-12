@@ -379,7 +379,7 @@ namespace CORAC
                     string SerieHD = Get_WMI.Obter_Atributo("win32_logicaldisk", "VolumeSerialNumber");
                     SerieHD = CalculaHash(SerieHD);
 
-                    Uri EndURI = new Uri("http://192.168.15.10/CORAC/ValidarAAExterno/" + SerieHD + "/" + Dns.GetHostName() + "/" + Sign.Empresa + "/");
+                    Uri EndURI = new Uri(Sign.EAEx + SerieHD + "/" + Dns.GetHostName() + "/" + Sign.Empresa + "/" + Sign.Signacture + "/");
 
                     HttpClient URL = new HttpClient();
                     var pairs = new List<KeyValuePair<string, string>> { };
@@ -396,24 +396,39 @@ namespace CORAC
                         string Dados = await Conteudo.Result.Content.ReadAsStringAsync();
                         AssinaturaExterna Signature = JsonConvert.DeserializeObject<AssinaturaExterna>(Dados);
 
-                        if(Signature.Tempo.Date < DateTime.Now)
+                        if(DateTime.Now <= Signature.Tempo.Date && Signature.Habilitada == 0)
                         {
-                            return true;
-                        }
+                            TimeSpan Exp = DateTime.Now - Signature.Tempo.Date;
 
-                        if (Signature.Maquina == Dns.GetHostName() && Signature.Signature == SerieHD && Signature.Valida == true)
-                        {
-                            MsgIniciar.Add("A assinatura externa CORAC está OK." + " - Tempo: " + DateTime.Now.ToString() + "\n");
-                            Sign.Valida = true;
+                            MsgIniciar.Add("A assinatura externa CORAC expirará em: " + (Exp.Days * (-1)) + " dia(s). " + " - Tempo: " + DateTime.Now.ToString() + "\n");
                             return true;
+
                         }
                         else
                         {
-                            MsgIniciar.Add("A assinatura externa CORAC inacessível ou inválida!" + " - Tempo: " + DateTime.Now.ToString() + "\n");
-                            Sign.Valida = false;
+                            if (Signature.Maquina == Dns.GetHostName() && Signature.Signature == SerieHD && Signature.Habilitada == 1)
+                            {
+                                MsgIniciar.Add("A assinatura externa CORAC está OK." + " - Tempo: " + DateTime.Now.ToString() + "\n");
+                                Sign.Valida = true;
 
-                            Thread.Sleep(TimeSleep);
+
+                                return true;
+                            }
+                            else
+                            {
+                                MsgIniciar.Add("A assinatura externa CORAC é inválida!. Próxima verificação em:" + TimeSleep + " segundos - Tempo: " + DateTime.Now.ToString() + "\n");
+                                Sign.Valida = false;
+
+                                Notificacao.BalloonTipTitle = "Assinatura expirada!";
+                                Notificacao.BalloonTipIcon = ToolTipIcon.Info;
+                                Notificacao.BalloonTipText = "A assinatura externa CORAC é inválida!";
+                                Notificacao.ShowBalloonTip(44);
+
+                                Thread.Sleep(TimeSleep);
+                            }
                         }
+
+
 
                     }
                     else
@@ -2050,7 +2065,6 @@ namespace CORAC
 
             }
         }
-
     }
 
 

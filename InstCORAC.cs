@@ -32,7 +32,7 @@ namespace CORAC
                     Process Installers = new Process();
                     Installers.StartInfo.UseShellExecute = false;
                     Installers.StartInfo.RedirectStandardOutput = true;
-                    Installers.StartInfo.Arguments = "http add urlacl url = http://*:8081/SYNCPCT/ user=Todos";
+                    Installers.StartInfo.Arguments = "http add urlacl url = http://*:8081/CORAC/SYNCPCT/ user=Todos";
                     Installers.StartInfo.FileName = "c:\\windows\\system32\\netsh.exe";
                     Installers.Start();
                     Installers.WaitForExit();
@@ -42,7 +42,7 @@ namespace CORAC
                     Installers.Start();
                     Installers.WaitForExit();
 
-                    Installers.StartInfo.Arguments = "http add urlacl url=http://*:8082/AA_AcessoRemoto_SYN/ user=Todos";
+                    Installers.StartInfo.Arguments = "http add urlacl url=http://*:8082/CORAC/AA_AcessoRemoto_SYN/ user=Todos";
                     Installers.StartInfo.FileName = "c:\\windows\\system32\\netsh.exe";
                     Installers.Start();
                     Installers.WaitForExit();
@@ -116,7 +116,7 @@ namespace CORAC
 
                 CR.Clear();
                 CR = new List<KeyValuePair<string, string>>();
-                CR.Add(new KeyValuePair<string, string>("CORAC", "\"%ProgramFiles(x86)%\\CORAC\\CORAC.exe\""));
+                CR.Add(new KeyValuePair<string, string>("CORACx86", "\"C:\\Program Files (x86)\\CORAC\\CORAC.exe\""));
 
                 if (!Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR))
                 {
@@ -124,7 +124,7 @@ namespace CORAC
                 }
                 CR.Clear();
                 CR = new List<KeyValuePair<string, string>>();
-                CR.Add(new KeyValuePair<string, string>("CORAC", "\"%ProgramFiles%\\CORAC\\CORAC.exe\""));
+                CR.Add(new KeyValuePair<string, string>("CORACx64", "\"C:\\Program Files\\CORAC\\CORAC.exe\""));
 
                 if (!Criar_Start.Gravar_ConteudoCampo(TipoChave.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", ref CR))
                 {
